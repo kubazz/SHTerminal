@@ -1,0 +1,205 @@
+Fetching host count. 
+Available hosts 14.
+Evaluating host 1.
+Connecting. Neural interface established. Asleep. No environment data. Evaluating host alert level. Checking pulse. Calm. Proceeding.
+Evaluating host 2.
+Connecting. Neural interface established. Asleep. No environment data. Evaluating host alert level. Calm. Proceeding.
+Evaluating host 3
+Connecting. Neural interface established. Asleep. No environment data. Evaluating host alert level. Calm. Proceeding.
+Evaluating host 4.
+Connecting. Neural interface established. Asleep. No environment data. Evaluating host alert level. Calm. Proceeding.
+Evaluating host 5.
+Connecting. Neural interface established. Work. Probing environment. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks.
+Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks.
+Bulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Complete.
+Evaluating host alert level. Calm. Proceeding.
+Resolving hosts... Connecting. Neural interface established. Asleep. Evaluating host alert level. Calm. Proceeding.
+Resolving hosts... Connecting. Neural interface established. Asleep. Evaluating host alert level. Calm. Proceeding.
+Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks.
+Bulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Complete.
+Evaluating host alert level. Calm. Proceeding.
+Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks.
+Bulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Complete.
+Evaluating host alert level. Calm. Proceeding.
+Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks.
+ulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Complete.
+ERROR. RETRYING.
+ulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Complete.ulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Complete.ulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Complete.
+ERROR.
+ulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Complete.ulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Complete.ulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Complete.
+Evaluating host alert level. Calm. Proceeding.
+Resolving hosts...
+Resolving hosts...
+Resolving hosts...
+Evaluating host 6 / 15.
+Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks.
+Bulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Complete.
+Evaluating host alert level. Nervous. Evaluating danger type.
+Danger. Host ready for intervention. Proceeding.
+Resolving hosts...
+Resolving hosts...
+Resolving hosts...
+Evaluating host 8 / 15.
+Resolving hosts...
+Resolving hosts...
+Evaluating host 9 / 15.
+Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks.
+Bulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Complete.
+Evaluating host alert level. Nervous. Evaluating danger type.
+Danger Proceeding.
+Resolving hosts...
+Resolving hosts...
+Resolving hosts...
+Evaluating host 10 / 15.
+Connecting. Neural interface established. Asleep. No environment data. Evaluating host alert level. Calm. Proceeding.
+Evaluating host 11 / 15.
+Connecting. Neural interface established. Asleep. No environment data. Evaluating host alert level. Calm. Proceeding.
+Evaluating host 12 / 15.
+Connecting. Neural interface established. Asleep. No environment data. Evaluating host alert level. Calm. Proceeding.
+Evaluating host 13 / 15.
+Connecting. Neural interface established. Asleep. No environment data. Evaluating host alert level. Calm. Proceeding.
+Evaluating host 14 / 15.
+Evaluating host 15 / 15.
+Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks. Fetching chunks.
+Bulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Complete.
+Evaluating host alert level. Nervous. Evaluating danger type.
+Danger Proceeding.
+Resolving hosts...
+Resolving hosts...
+Resolving hosts...
+ulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Complete.ulding ConcreteScape(TM) image. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising.Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising. Crystalising.
+Crystalising. Crystalising. Crystalising. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. 
+Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Concretizing. Complete.

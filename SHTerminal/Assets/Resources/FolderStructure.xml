@@ -1,0 +1,203 @@
+<Data>
+  <item type="exploit" name="superhot.exe"/>
+  <item type="last" name="supelast.exe" appclass="APPplaylast"/>
+  <story>
+  	<item type="storylevels" name="STORY"/>
+  </story>
+  <endless>
+    <item type="readme" name="readme.txt">
+A high-score based, arcade version of SUPERHOT gameplay.
+To unlock Endless Mode, finish Story Mode first.
+
+Scoring kills on Endless Mode unlocks modifiers to customize the game (check the MODS folder)
+
+More levels coming soon.
+ 	</item>
+    <item type="endlesslevels" name="ENDLESS"/>
+  </endless>
+  <mods>
+    <item type="readme" name="readme.txt">Unlock modifiers by scoring kills in Endless levels.
+
+You can combine mods and create your own game variants. Some make the
+game easier, some harder. Find your own balance.
+
+Mods work on both endless and story levels!
+ 	</item>
+    <item type="deactivate" name="reset.bat">Batch file shortcut for disabling all active modifiers.
+
+super.hot -disablemods
+
+</item>
+  	<item type="modslist" name="MODS"/>
+  </mods>
+  <settings>
+    <item type="settingInvert" name="invert.cfg">invert y-axis</item>
+    <item type="settingReset" name="reset.bat">reset story progress</item>
+    <item type="settingUnlock" name="unlock.bat">unlock everything. DEBUG ONLY, REMEMBER TO DISABLE</item>
+  </settings>
+  <replays>
+  </replays>
+	<item type="readme" name = "readme.txt" align="center">
+╔╦╗╔═╗╔═╗╔╦╗
+ ║ ╠═ ╠═╣║║║
+ ╩ ╚═╝╩ ╩╩ ╩
+╔═╗╦ ╦╔═╗╔═╗╦═╗╦ ╦╔═╗╔╦╗
+╚═╗║ ║╠═╝╠═ ╠╦╝╠═╣║ ║ ║ 
+╚═╝╚═╝╩  ╚═╝╩╚═╩ ╩╚═╝ ╩ 
+
+---Proudly Presents---
+
+Beta Version of SUPERHOT
+Released on 31 Jul 15
+
+For other quality releases 
+visit superhotgame.com:80
+    
+[RANDOM_TIME_PUN]
+  </item>
+  <item type="web" name ="feedback.url" url="http://superhotgame.com/feedback">Launches a new browser window with a form to share your feedback.
+
+Feel free to use this to share your impression of the current beta build or if you'd like to let us know that something went wrong.
+
+    superhotgame.com/feedback
+  </item>
+    <item type="app" name="quit.exe" appclass="APPquit" showInBarebones = "true"/>
+    <item type="app" name="credits.exe" appclass="APPcredits" showInBarebones = "false"/>
+    <item type="separator" name=""/>
+	<!--<files showInBarebones = "true">-->
+		<apps showInBarebones = "true">
+			<demos>
+				<item type="app" name ="sinus1.exe" appclass="APPsinus"/>
+				<item type="app" name ="sinus2.exe" appclass="APPsinus2"/>
+				<item type="app" name ="sinus3.exe" appclass="APPsinus3"/>
+				<item type="app" name ="stars.exe" appclass="APPstars"/>
+				<item type="app" name ="mirrors.exe" appclass="APPmirrors"/>
+				<item type="app" name ="letters.exe" appclass="APPletters"/>				
+			</demos>
+			<cellular>
+				<item type="app" name ="life.exe" appclass="APPConway"/>
+			    <item type="app" name ="ant.exe" appclass="APPAnt"/>
+			    <item type="app" name ="forest.exe" appclass="APPForest"/>
+				<item type="app" name ="sand.exe" appclass="APPsandbox"/>
+				<item type="app" name ="water.exe" appclass="APPwaterbox"/>
+			</cellular>
+			<wires>
+				<item type="wir" name ="wires.exe" wirname="schemEmpty"/>
+				<item type="wir" name ="diodes.wir" wirname="schemDiodes"/>
+				<item type="wir" name ="repeater.wir" wirname="schemRepeater"/>
+				<item type="wir" name ="gateAND1.wir" wirname="schemANDbasic"/>
+				<item type="wir" name ="gateAND2.wir" wirname="schemANDbasic2"/>
+				<item type="wir" name ="gateAND3.wir" wirname="schemANDbasic3"/>	
+				<item type="wir" name ="bigAND.wir" wirname="schemAND"/>
+				<item type="wir" name ="gateOR1.wir" wirname="schemORbasic"/>
+				<item type="wir" name ="gateOR2.wir" wirname="schemORbasic2"/>
+				<item type="wir" name ="gateOR3.wir" wirname="schemORbasic3"/>				
+				<item type="wir" name ="bigOR.wir" wirname="schemOR"/>
+				<item type="wir" name ="gateXOR1.wir" wirname="schemXORbasic"/>
+				<item type="wir" name ="gateXOR2.wir" wirname="schemXORbasic2"/>
+				<item type="wir" name ="gateXOR3.wir" wirname="schemXORbasic3"/>	
+				<item type="wir" name ="bigXOR.wir" wirname="schemXOR"/>
+				<item type="wir" name ="neon.wir" wirname="schemNeon"/>
+			</wires>
+			<VR>
+				<item type="app" name ="cube.exe" appclass="APPcube"/>
+				<item type="app" name ="cylinder.exe" appclass="APPcylinder"/>
+				<item type="app" name ="capsule.exe" appclass="APPcapsule"/>
+			</VR>
+			<item type="app" name ="popup.exe" appclass="APPpopup"/>
+			<item type="app" name ="carpets.exe" appclass="APPcarpets"/>
+			<item type="app" name ="cartrip.exe" appclass="APPautocarpets"/>
+  			<item type="app" name ="pipes.exe" appclass="APPpipes"/>
+		</apps>
+		<art showInBarebones = "true">
+			<other>
+				<something1>
+				</something1>
+				<something2>
+					<item type="readme" name = "readme.txt">Hi mattycfp!
+  					</item>
+				</something2>
+				<something3>
+					<secret>
+						<private>
+							<really>
+								<item type="readme" name = "porn.txt">What are you looking for here?
+:>
+</item>
+								<!--
+								<item type="art" name ="pinup.art" artname="pinup"/>
+								<item type="art" name ="krogg.art" artname="krogg"/>
+								<item type="art" name ="pr0n39.art" artname="pr0n39"/>
+								-->
+							</really>
+						</private>
+					</secret>
+				</something3>
+				<random>
+					<hypno>
+  						<item type="app" name ="diy.exe" appclass="APPshclicker"/>
+					</hypno>
+				</random>				
+			</other>
+			<item type="readme" name = "readme.txt">We would like to fill this 
+folder with LOTS of ASCIIart.
+
+Maybe you would like to
+place your signature here, 
+as a backer? It's an open 
+space for you guys!
+
+Maximim resolution for art
+is 62x22, so choose your
+characters wisely.
+
+Send your art to:
+ascii@superhotgame.com
+			</item>
+			<!--<item type="artcent" name ="super.art" artname="super"/>-->
+			<!--<item type="artcent" name ="hot.art" artname="hot"/>-->
+			<item type="artcent" name ="hot2.art" artname="hotsmall"/>
+			<item type="artcent" name ="super2.art" artname="supersmall"/>
+			<!---<item type="artcent" name ="tri.art" artname="tri"/>-->
+			<!--<item type="artcent" name ="cubes.art" artname="cubes"/>-->
+			<!---<item type="artcent" name="skull.art" artname="skull"/>-->
+			<!--<item type="art" name="skull2.art" artname="skull2"/>-->
+			<item type="artcent" name ="dog.art" artname="Dog"/>
+			<item type="artcent" name ="kickstrt.art" artname="Addict"/>
+			<item type="artcent" name ="alley.art" artname="Dark alley"/>
+			<item type="artcent" name ="hacker.art" artname="Hackerroom"/>
+			<item type="artcent" name ="corridor.art" artname="MadCorridor"/>
+			<item type="artcent" name ="drop.art" artname="Surrender or die"/>
+			<item type="artcent" name ="subway.art" artname="Subway station"/>
+			<item type="artcent" name ="jump.art" artname="Bunny jump"/>
+			<item type="artcent" name ="bar.art" artname="Bar"/>
+			<item type="artcent" name ="fightclb.art" artname="Cage fight"/>
+			<item type="artcent" name ="xu.art" artname="XU"/>
+			<item type="artcent" name ="you.art" artname="YOU"/>
+		</art>
+		<videos showInBarebones = "true">
+    		<!--<item type="vid" name ="taylor.avi" vidname="ss4"/>-->
+    		<item type="vid" name ="yes.avi" vidname="ss10"/>
+      		<item type="vid" name ="trailer.avi" vidname="ss5"/>
+      		<item type="vid" name ="rsm.avi" vidname="ss8"/>
+		</videos>
+		<!---
+		<item type="readme" name = "readme.txt">Files sweet files. That's where I keep all my things.
+
+I like to place things in folders, it makes me feel clean. 
+
+I also like the silliness of writing notes to myself. Like anyone would read that, lol.
+		</item>-->
+	<!--</files>-->
+	<tests showInBarebones = "true">
+		<item type="app" name ="ingampop.exe" appclass="APPingamepopup"/>
+		<item type="app" name ="prompter.exe" appclass="APPprompter"/>
+		<item type="app" name ="guruchat.exe" appclass="APPguruchat"/>
+		<item type="app" name ="runqueue.exe" appclass="APPkill"/>
+		<item type="app" name ="restrict.exe" appclass="APPrestrict"/>
+		<item type="app" name ="flood.exe" appclass="APPpopupflood"/>
+		<item type="app" name ="game.exe" appclass="APPtextgame"/>
+ 		<item type="reboot" name="reboot.exe"/>
+		<item type="userlevel" name ="edittest.lvl" bundle="myeditortest" scene="TestEditorLevel"/>
+	</tests>
+</Data>

@@ -1,0 +1,149 @@
+<Data>
+  <Story>
+	<Level scene="SHMenu" name="Launch" intermission="true" />
+    <Level scene="CezaryAddictIntro_P" name="KICKSTRT.lvl" image="LevelMenuScreenshots/new-carintro">den,drugs,scum,stench,ruin,dealers,desperation,feelig off,what did they give me?,new stuff,new drug,new life,super hot </Level>
+    <Level scene="CezaryDarkAlley_P" name="ALLEY.lvl" image="LevelMenuScreenshots/new-bar">waiting,deal,suitcase,too late,money,dope,setup,where are they,new stuff,red,cash,guns,ready,he's not coming</Level>
+    <Level scene="madCorridor" name="CORRIDOR.lvl" image="LevelMenuScreenshots/new-bar">hostile,takeover,bodyguards,spy,corridor,office,friend,dead,what are they doing here,stop them,kicking in</Level>
+    <Level scene="CezarySurrenderOrDie_Van_P" name="DROP.LVL" image="LevelMenuScreenshots/new-bar">cops,police,control,barrels,hide,run,escape,fight,arrest,panic,gun,shoot out,resist an arrest,transport</Level>
+	<Level scene="LetelTest#54 subway station redoux" name="SUBWAY.lvl" image="LevelMenuScreenshots/new-subway">where am I,station,downtown,confusion,fear,stress,head throbbing,who are they,staring,following,paranoia,killer,murderer</Level>-->
+	<Level scene="_SEGWAYSTUB" addObject="EveryoneGetsSomethingDifferent" name="Talking1" intermission="true" launchstyle="instant"/>
+    <Level scene="bunnyJump" name="JUMP.LVL" image="LevelMenuScreenshots/new-bar">traitor,meeting,setup,gang war,deal,car,speeding,going to die,parking lot,ambush,waiting for me,fear,suprise,shock</Level>
+    <Level scene="barAlpha" name="SHOTS.lvl" image="LevelMenuScreenshots/new-bar">calm down,need a drink,blood,need a drink,they'll get me,need a drink,fear,terror,need a drink,paranoia,watching me,need a drink,bartender,observing,body aching,need a drink</Level>
+    <Level scene="LevelTest#77 HackerRoom" addObject="Origins1" name="DOG1.LVL" image="LevelMenuScreenshots/new-carintro">OBEY,training,dog,</Level>
+	<Level scene="CageFight" name="FIGHTCLB.LVL" image="LevelMenuScreenshots/new-subway">test,fight,bet,doping,cage,octagon,club,melee,close,blood,violence,sweat,</Level>
+<!--    <Level scene="CageFightMaster" name="CageMaster.lvl" image="LevelMenuScreenshots/new-subway">waiting for me,ambush,killer,innocent,police,pigs,surrender,urge,rage,fear,how did it come to this </Level>-->
+	<!---<Level scene="paperCut" name="Paper.lvl" image="LevelMenuScreenshots/new-subway">waiting for me,ambush,killer,innocent,police,pigs,surrender,urge,rage,fear,how did it come to this </Level>-->
+    <Level scene="CezaryDesperadosBar_P" name="DESPERADOS.LVL" image="LevelMenuScreenshots/new-carintro">vengance,contract,help,taking over,rage,fury,red stuff,deal,paid,blood</Level>
+    <Level scene="Cezary_oldboy_break_in_P" name="BREAK.LVL" image="LevelMenuScreenshots/new-carintro">lab,break in,destroy,shut down,job,pay,weird,feeling,strong,fight,control me,how</Level>
+    <Level scene="LevelTest#77 HackerRoom" addObject="Origins2" name="DOG2.LVL" image="LevelMenuScreenshots/new-carintro">good,dog,dance,treat</Level>
+    <Level scene="_SEGWAYSTUB" addObject="WhyAmIPlayingThis" name="Talking1" intermission="true" launchstyle="instant"/>
+    <Level scene="TirAlley" name="TIRALLEY.LVL" image="LevelMenuScreenshots/new-carintro">what,truck,escape,who,why,new contract?,money,just a chemist,moving,fast,rapid,they help,</Level>  
+    <Level scene="hallOfFame" name="SERV.LVL" image="LevelMenuScreenshots/new-carintro">hacker,system,break,intervention,agent,attack,security,thieves,technology,documentation,assault,punishment</Level>
+    <Level scene="_SEGWAYSTUB" addObject="AreWeSupposedToGoOn" name="Talking1" intermission="true" launchstyle="instant"/>
+    <Level scene="CezaryTraitorHospital_P" name="HOSPITAL.LVL" image="LevelMenuScreenshots/new-carintro">captured,escape,want,blood,reverse,engineer,clinic,private,run,kill me,drug,veins,high,fight</Level>
+    <Level scene="CezaryDonutAlley" name="DONUT.LVL" image="LevelMenuScreenshots/new-carintro">fake,substance,stop,operation,competition,speed,so high,ambush,red mist,support,killing,undefeated</Level>
+   	<Level scene="madElevator" name="ELEVATOR.LVL" image="LevelMenuScreenshots/new-subway">negotiations,broken,new deal,competition,tension,assassination,protect,guard me,pills,crytals,red</Level>
+    <Level scene="LevelTest#77 HackerRoom" addObject="Origins3" name="DOG3.LVL" image="LevelMenuScreenshots/new-carintro">walk,dog,last,warning,leave</Level>
+    <Level scene="_SEGWAYSTUB" addObject="JustStop" name="Talking4" intermission="true" launchstyle="instant"/>
+    <Level scene="Cezary_oldboy_corridor_P" name="OLDBOY.LVL" image="LevelMenuScreenshots/new-carintro">contract,violation,end the deal,cancel,home,visit,terminate,traitor,business,corporate</Level>
+    <Level scene="_SEGWAYSTUB" addObject="MenuAfterCorridor" name="EmptyMenu" intermission="true" launchstyle="instant"/>
+    <Level scene="Cezary_dog_ballroom_P" name="BALLROOM.LVL" image="LevelMenuScreenshots/new-carintro">drop,down,slash,example,fear,terror,kill,contract,terminate,traitor,business,boss,</Level>
+    <Level scene="_SEGWAYSTUB" addObject="MenuAfterBallroom" name="EmptyMenu" intermission="true" launchstyle="instant"/>
+    <Level scene="CezaryTraitorElevator_P" name="MEETING.LVL" image="LevelMenuScreenshots/new-carintro">meeting,interrupt,traitors,assassinate,revenge,set example,destroy,crash,</Level>
+    <Level scene="LevelTest#77 HackerRoom" addObject="HackerRoom" name="HACKER.LVL" image="LevelMenuScreenshots/new-carintro">ENOUGH</Level>  
+    <Level scene="_SEGWAYSTUB" addObject="YourHeadOk" name="Talking5" intermission="true" launchstyle="instant"/>
+    <Level scene="_SEGWAYSTUB" addObject="WeHaveToGoBack" name="Talking6" intermission="true" launchstyle="instant"/>
+    <Level scene="CezaryAssetTest" name="HACKER.LVL" image="LevelMenuScreenshots/new-carintro">test,1987</Level>  
+    <Level scene="_SEGWAYSTUB" addObject="WrongPlace" name="Talking6" intermission="true" launchstyle="instant"/>
+    <Level scene="movingWalls11(valley of pillars)" name="PILLARS.LVL" image="LevelMenuScreenshots/new-carintro">test,1985</Level>  
+    <Level scene="movingWalls12(forest of froggers)_2" name="FOREST.LVL" image="LevelMenuScreenshots/new-carintro">test,1988</Level>  
+    <Level scene="movingWalls13(cyber hills)" name="HILLS.LVL" image="LevelMenuScreenshots/new-carintro">test,1990</Level>  
+    <Level scene="CezaryTombHotswitch" name="TOMB.LVL" image="LevelMenuScreenshots/new-carintro">test,1990</Level>  
+    <Level scene="_SEGWAYSTUB" addObject="WeAreBack" name="Talking6" intermission="true" launchstyle="instant"/>
+    <Level scene="CezaryIndiana" name="INDY.LVL" image="LevelMenuScreenshots/new-carintro">test,1990</Level>  
+    <Level scene="gasStation" name="GAS.LVL" image="LevelMenuScreenshots/new-carintro">test,1990</Level>  
+    <Level scene="CezaryFactory" name="FACTORY.LVL" image="LevelMenuScreenshots/new-carintro">test,1990</Level>  
+    <Level scene="CezarySuckerPunch" name="GAS.LVL" image="LevelMenuScreenshots/new-carintro">test,1990</Level>  
+    <Level scene="SatelliteTower" name="HELICOPTER.LVL" image="LevelMenuScreenshots/new-carintro">test,1990</Level>  
+    <Level scene="CezarySuperHighway" name="HIGHWAY.LVL" image="LevelMenuScreenshots/new-carintro">test,1990</Level>  
+    <Level scene="NoLastWords" name="BLOCK.LVL" image="LevelMenuScreenshots/new-carintro">test,1990</Level>  
+    <Level scene="_SEGWAYSTUB" addObject="HotswitchReady" name="Talking6" intermission="true" launchstyle="instant"/>
+    <Level scene="CezaryHotswitchCorridor" name="HOT.LVL" image="LevelMenuScreenshots/new-carintro">test,1990</Level>  
+  </Story>
+  <Endless>
+    <Level scene="LevelTest#59 LabEndless2" name="TEST#18.lvl" image="LevelMenuScreenshots/new-lab-endless">no escape, no end, no survivors</Level>
+    <Level scene="wareHouse3" name="WareHouse.lvl" image="LevelMenuScreenshots/new-lab-endless">no escape, no end, no survivors</Level>
+  </Endless>
+  <Mods>
+    //Unlock modifiers by
+    //scoring kills in Endless
+    //levels.
+    //
+    //You can combine mods and
+    //create your own game
+    //variants. Some make the
+    //game easier, some
+    //harder.
+    //
+    //Find your own balance.
+    //w
+
+    <!--- <Mod id = "1" longName="80s vision" name="80vision.mod" boolName="EightisVision" killsRequired="0"> * 80s Vision</Mod>
+    <Mod id = "2" longName="red vision" name="redvision.mod" boolName="RedVision" killsRequired="0"> * RedVision</Mod>
+    <Mod id = "3" longName="hotline vision" name="hotline.mod" boolName="HotlineVision" killsRequired="0"> * Hotline</Mod>-->
+    <Mod id = "8" longName="Free Lookaround" name="freelook.mod" boolName="FreeLookaround" killsRequired="0"> * looking around doesn't cost you precious time | * combine it with other mods! | * looks silly on replays</Mod>
+    <Mod id = "7"  longName="Minimal Timescale Higher" name="fasttime.mod" boolName="MinimalTimeScaleHighr" killsRequired="10"> * time flows faster even when you don't move | * more reflex based gameplay style</Mod>
+    <Mod id = "20" longName="Only One Bullet" name="onebull.mod" boolName="OnlyOneBullet" killsRequired="25"> * each gun you pick up has ONLY ONE BULLET| * make it count.</Mod>
+    <Mod id = "4" longName="No Weapon Pickup" name="nopickup.mod" boolName="NoWeaponPickup" killsRequired="50"> * you can't pickup any weapon | * no guns AND no throwables | * that leaves you with... | * what? ||*...takedowns and jumping on enemies!</Mod>
+    <Mod id = "5" longName="No Gun Pickup" name="noguns.mod" boolName="NoGunPickup" killsRequired="100"> * no gun pickup | * you still can get and throw items! | * try combining it with other mods!</Mod>    
+    <Mod id = "8111" longName="Killing Takedown" name="kilpunch.mod" boolName="KillingTakedown" killsRequired="150"> * punch on close distance kills enemy in one hit | * just like in September 2013 prototype!</Mod>
+    <Mod id = "10" longName="Killing Throws" name="kilthrow.mod" boolName="KillingThrows" killsRequired="200"> * powerful throw kills instantly| * throwing anything kills! | * throwing guns too!</Mod>
+    <Mod id = "12" longName="No Shooting" name="noshoot.mod" boolName="NoShooting" killsRequired="300"> * no shooting | * find other ways to eliminate your foes</Mod>
+    <Mod id = "14" longName="Short Enemy Stun" name="shrtstun.mod" boolName="ShortEnemyStun" killsRequired="400"> * enemy stun is shorter | * harder to distract them</Mod>
+    <Mod id = "9001" longName ="DOGEMOD" name="doge.mod" boolName="Doge" killsRequired="500" > * such SUPER | * very hot | * dog like! </Mod>
+    <Mod id = "8888" longName ="BIGHEAD" name="bighead.mod" boolName="BigHead" killsRequired="0" > * bigger heads | * easier headshots</Mod>
+    <Mod id = "8889" longName ="CHIBI" name="chibi.mod" boolName="Chibi" killsRequired="1000" > * bigger heads | * easier headshots? | * so chibi! </Mod>
+    <Mod id = "9009" longName="Prototype Vision" name="visproto.mod" boolName="PrototypeVision" killsRequired="1500"> * Play the game in the PROTOTYPE VISION</Mod>
+    
+    <!---
+    <readme>//I set up some modifiers for our version of this system. It works, but it works as a hack. Some mods won't be accesible because of memory violation problems. It comes down to your total kill count in the simulation. With more terminations you get more modifiers.</readme>
+    <Mod id = "1337" name="KatanaOnly" boolName="KatanaOnly" killsRequired="10" >^^^^^^^katana as your only^^^^^^^^^^^traditional samurai wea^^^^^^%fitted for modern usage^^^^^^^^^^no throwing^^^^^^^no guns^^^^^just^^^^cutting bullets^^^%^^^^^^^^a true challenge%%%^</Mod>
+    <Mod id = "1337" name="KatanaOnly" boolName="KatanaOnly" killsRequired="10" >* no guns just a sword| * traditional samurai weapon fitted for modern age| * no throwing| * no guns| * just skill| * ████ ██████ ████| * hard as hell|| * try cutting bullets!||</Mod>
+    <Mod id = "1338" name="NoTakedowns" boolName="NoTakedowns" killsRequired="10">^^^^^^^^^^^^^^^^^^^^^^renders you^^^^^helpless on close distance^^^^%^^^^^^^^^^^^^^^ fight using^^^^^^^^%^^^^^^ black crystal tools^^^^^^^guns naturally^^^^%environment advantage^^^^^^d^^^^^^^^^^^^^^^^^^^^^^^^^^^ </Mod>
+  	<Mod id = "1" name="FastEnmyBullets" boolName="FasterEnemyBullets" killsRequired="25">^^^^^activ^^^^this^modi^^^for^^^^^^^^^^^%simple but effectively changes%^^^^^^^^^^^^^hard challeng^^^^^^^^^^^^^^^standard dodging becomes a^^^^^^^^^%^^^^^ more spacial awa^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^.</Mod>
+	  <Mod id = "2" name="SlowerEnemy" boolName="SlowerEnemies" killsRequired="50">^^^^^^^^^^^^^^^^movement speed of enemies^^^^^^^^^^^%helpful in balancing^^^^all behaviour is slower^^^%%^^doesn not^^^^^^^^^%^^^affect time flow^^^^^^^^^^^^^^^</Mod>
+	  <Mod id = "3" name="FastEnemy" boolName="FasterEnemies" killsRequired="75">^^^^^^^^^^^^^^^^move^^^^^^^^%^^^^ speed^^^^^^^^^^^%%^^^^^^^^^^^^^all behaviour is fast^^^^^doesn not^^^^^^^^^%^^^time flow^^^^^^^^^^^^^^^^^^^</Mod>
+	  <Mod id = "4" name="NoWpnPickup" boolName="NoWeaponPickup" killsRequired="100">^^^^^^^%^^^^^^^goes well wi^^^%^^no takedowns^^^^^^^^^^^^^^^^^^^^^^very specific ty^^^^^^^^challenge^^^^^^^^^^^^^hardco^^^^^^^^^^^^^^^^</Mod>
+	  <Mod id = "5" name="NoGunPickup" boolName="NoGunPickup" killsRequired="150">^modi%%^^^^^^^^^^^simila to^^^^^no takedowns^^^^^^^^^%%^^^^^^^^^^^^^very specific ty^^^%%^^^^^challenge^^^^^^^^^^^^^hardco^^^^^^^^^^^^^^^^</Mod>
+	  <Mod id = "6" name="MinTimeZero" boolName="MinimalTimeScaleZero" killsRequired="200">^^^acti^^%%^^^this^^^^^^^^^time flow stops comple^^^^%%^^^^only avatar move^^^^^affect^^^^^^^^^%^^^^^^^simulation time^^^^^^^^^^^^^^^^^^^^^.</Mod>
+	  <Mod id = "7"  name="MiniTimeHigher" boolName="MinimalTimeScaleHighr" killsRequired="250">^^^acti^^^^^this^^%%^^^^^^^faster time ^^^^^^%^^^^^^ flow without ava^^^ movement ^^^^^^^^^^^%%^^^^^^^^^^^^^^^^^^^^^simpulates slo^^^^^ reflex^^^^^^^^^^^^^^^^^^^^^</Mod>	
+	  <Mod id = "8" name="FreeLook" boolName="FreeLookaround" killsRequired="300">^^^acti^^^^^this^^^^^^^^^looking around doesn't ^^^^^ time ^^^^^%^^^^^^^ ^^ movement ^^^^^^^^^^^^^%%^^^^^^^^^^^^^^^^^^^^^^^^ spacial awar^^^^^^^^^^^^^^^^^^^^^^^^</Mod>>w
+	  <Mod id = "8111" name="KillPunch" boolName="KillingTakedown" killsRequired="300">^^^acti^^^^^this^^^%%^^^^augment subject^^^^^^^^^^^^^^brutal attack ^^^^^^^^^^^^^^^^^^^^^^^^takes enemy down ^^^^^^^^^^^^^^^^^^^^ one close ^^^^^^^^^^^^ hit ^^^^^^^^^^^^^^neural imprint based ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</Mod>
+	  <Mod id = "9" name="SoftPunch" boolName="DoubleStunDoesntKill" killsRequired="400">^^^acti^^^^^this^^^%^^^^requires the controller^^^^^^%%^^^^^^^^^^^^^^^^^^^^more tool oriented^^^^^^^^%%^^^^^^^soft chan^^^^^^^^^^^^^^</Mod>
+	  <Mod id = "10" name="KillThrow" boolName="KillingThrows" killsRequired="500">^^^acti^^^^^this^^^^^^^ability to ^^^^^^^^^^^^^^^^^^^any object becomes^^^^deadly weap^^^^^^ ^^^^^^^^^^^^^^^^^%%^^^^^^^^^^^^^^^^^^^^^^^^powerfu^^^^^^^^^^^^^^</Mod>
+	  <Mod id = "11" name="MoreBullets" boolName="MoreBullets" killsRequired="600">^^acti^^^^^this^^^%^^^^ability to ^^^^^^^%^^^^^every gun has mo^^^^^^^^^^^^^^%^^^^^^^^^^^enemy simula^^^^^^^not affected^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</Mod>
+	  <Mod id = "12" name="NoShoot" boolName="NoShooting" killsRequired="700">^^acti^^%^^^this^^^^^%^^ability to ^^^^^^^^^^%%^^^^^^^^^^^^^^^^no shooting ability^^^^^^^%^^^^^^^^^^neurally disab^^^^^^^%^^^^^^^^^^^^^^^^^^^^^^^crippling imprint^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</Mod>
+	  <Mod id = "1222" name="FastMove" boolName="FasterMovement" killsRequired="800">^^augme%^^^^^is^^^^^^^abi^^^ ^%^^^ traverse combat space much^^^^^^^%^^^^^^^^^^^^^^^^^^faster^^^^^^^^^^^^^^^%^^^^^^^^^^^^^^^interesting combina^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^with katan^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</Mod>
+	  <Mod id = "13"  name="LongStun" boolName="LongEnemyStun" killsRequired="900">^%^^^^^^is^^^^%^^^abi^^^ ^^^^ enemy stunning gives more^^^^^ time ^^^^^^^^^^^^^^^^actio^^^^^^^^^^^^^^^^^^^^^^^%%^^^^^ ^^^^^^^^^^^^</Mod>
+	  <Mod id = "14" name="ShortStun" boolName="ShortEnemyStun" killsRequired="1000">^^^^%^^^is^^^^^^^abi^^^ ^^^^ enemy stunning is shorter^^^^^%%^^^^^^^^^^disabling for less time^^^^^^^^^^^%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^</Mod>
+	  <Mod id = "15" name="PlayPause" boolName="PlayablePause" killsRequired="2000">^^^^^^^is^^^^^^^abi^^^%^^^^ simulation breaking^^^^^^^^^^^^^%^^^^^slow motion all th^^^^^^^time ^^^^^^^^^^^^^^^^^^^^^^^^^^meditative ^^^^^^^^^^^^^^^^^^^^^experien^^^^^^^ murder simu^^^^^^^^^^^^^^^^^^^^^^</Mod>
+	  <Mod id = "16" name="WeaponNoBreak" boolName="WeaponsDontBreakThrow" killsRequired="3000">^^activa^^^^^is^^^^^^^abi^^^ ^^^^ thrown weap^^^^^^^^^^don't break on enem^^^^^^^^^^^^more opportini^^^^^^^^^^^^^^^^combi^^^^^^ ^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ boomer^^^^^^^^^^^^^^^^^^^^</Mod>
+  -->
+  </Mods>
+  <Replays>
+    <readme>
+your replays will be 
+accessible from this
+folder, but not yet.
+-soon-
+</readme>
+    <!--<button name="MYREPLAYS.URL" url="http://killstagram.com/u">//
+//press ENTER to view
+//your saved replays on
+//killstagram.com
+//</button>-->
+  </Replays>
+  <TimePuns>
+  	<pun>Tom Waits for no man</pun>
+  	<pun>Ain’t nobody got|time for that!</pun>
+  	<pun>Tick Tock Tick|Tock Tick Tock</pun>
+  	<pun>It's that time again</pun>
+  	<pun>Having time of my life</pun>
+  	<pun>Time's up!</pun>
+  	<pun>It's about time!</pun>
+  	<pun>When do clocks die?</pun>
+  	<pun>up to 24 hours|without winding!</pun>
+    <pun>What time is love?</pun>
+    <pun>You've been a good boy...</pun>
+    <pun>You have served me well</pun>
+    <pun>THE. DEAL. IS. OFF.</pun>
+    <pun>It’s not a timepiece|it’s a conversation piece</pun>
+    <pun>What makes you tick?</pun>
+    <pun>Watch this space closely   </pun>
+    <pun>Let's make this moment|last forever</pun>
+    <pun>Are you on time today?</pun>
+    <pun>Do you have a minute?</pun>
+    <pun>What would you do|with so much time?</pun>
+  </TimePuns>
+  
+</Data>

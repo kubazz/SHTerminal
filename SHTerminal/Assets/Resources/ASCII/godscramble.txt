@@ -1,0 +1,78 @@
+using UnityEngine;
+using System.Collections;
+using Assets.Scripts.Utilities;
+
+public class GodModePower : MonoBehaviour {
+
+	void Start () {
+		PlayerActions.CURRENT.Immortality = true;
+
+		SHGUI.current.TurnBackgroundOn();
+
+		TextManager.THIS.Clear ();
+		TextManager.ClearSubtitleQueue ();
+
+		APPscrollconsole c = new APPscrollconsole();
+
+		AsciiArtLineByLine (c, "godscramble", .0001f, 'w', false);
+		for (int i = 0; i < 25; ++i){
+			c.AddTextToQueue("", .001f);
+		}
+		SHGUI.current.AddViewToQueue(c);
+
+		DelayedInvokeMarshal.Instance.Enqueue(DelayedGodText, 2.3f);
+	}
+
+	protected void AsciiArtLineByLine(APPscrollconsole console, string artname, float lineDelay, char color, bool centered){
+		
+		string[] lines = SHGUI.current.GetASCIIartByName(artname).Split ('\n');
+		
+		int centerOffset = (int)(SHGUI.current.resolutionX / 2) - (int)(lines [0].Length / 2);
+		
+		for (int i = 0; i < lines.Length; ++i) {
+			if (centered)
+				console.AddTextToQueue(lines[i], lineDelay, color, centerOffset);
+			else
+				console.AddTextToQueue(lines[i], lineDelay, color);
+		}
+	}
+
+	void DelayedGodText(){
+		TextManager.THIS.Clear ();
+		TextManager.Display(new OverlayWord[]{new OverlayWord("GOD").SetDurationScale(1 * 2f)
+			.SetFont( TextOverlayFonts.RobotoBold)
+				.SetSizeScale(1f)
+		});
+
+		SHGUI.current.TurnBackgroundOff();
+	}
+	
+	void End(){
+		PlayerActions.CURRENT.Immortality = false;
+		GameObject.Destroy(this);
+	}
+	float counter = 0f;
+	void Update () {
+
+		/*
+		if (PejAiManager.CURRENT.GetEnemyCountWithSpawners() == 0 && !PlayerActions.CURRENT.IsDead()){
+			counter += Time.unscaledDeltaTime;
+		}
+		else{
+			counter -= Time.unscaledDeltaTime;
+		}
+
+		if (counter < 0) counter = 0;
+
+		if (counter > 2f){			
+			GameObject[] B = GameObject.FindGameObjectsWithTag("EnemyBullet");
+			foreach (GameObject b in B){
+				b.GetComponent<Bullet>().SliceInHalf(Random.insideUnitSphere);
+			}
+			
+			End ();
+		}
+		*/
+		
+	}
+}

@@ -1,0 +1,97 @@
+Press DEL to run Setup
+Press F8 for BBS POPUP
+PC2-5300 Dual Channel Interleaved
+Checking NVRAM..
+Initializing USB Controllers .. Done.
+2040MB OK
+USB Device(s): 1 Mouse
+Auto-Detecting Pri Slave...ATAPI CD-ROM
+Auto-Detecting 4th Master..IDE Hard Disk
+Pri Slave : TSSTcorp CDDVDW SH=S222A  SB01
+Ultra DMA Mode-4
+4th Master: MAXTOR STM3750330AS  MX15
+Ultra DMA Mode-5, S.M.A.R.T. Capable and Status
+Auto-detecting USB Mass Storage Devices ..
+00 USB mass storage devices found and configured.
+
+Intel CPU uCode loading error
+PressF1 to Resume
+
+
+
+Write to file (leave blank to abort):DF0:KS1_4.IFF
+vpmode = (640x256x2)     8000
+
+Mem: 869328 Chip:443312  04:13:53
+
+compiled by
+ppill@tlen.pl
+
+# preserving AMIGA's magic #
+
+
+LoadModule failed: Some devices are validating, reboot aborted...
+C:LoadModule failed returncode 10
+
+
+AMIGA ROM Operating System and Libraries
+
+
+EXT-3 fs: INFO: recovery required od readonly filesystem.
+EXT-3 fs: write access will be enabled during recovery
+
+transferring control to /sbin/init
+INIT: version 2.86 booting
+
+
+Device configuration finished.
+Reducing kern.maxvnodes 115903 -> 100000
+linprocfs registered
+procfs registered
+lapic: Divisor 2, Frequency 500000 hz
+Timecounter "TSC" frequency 3214324909 Hz quality -100
+Timecounters tick every 1.000 msec
+md0: Oreloaded image 262144000 bytes
+Linux ELF exec handler installed
+lo0: bpf attached
+ata1-slave: pio=PIO4 wdma=WDMA2 udma=UDMA100 cable=40 wire
+ata1: reiniting channel ..
+ata1: reset tp1 mask=03 ostat0=50 ostat1=00
+ata1: stat1=0x00 err=0x01 lsb=0x14 msb=0xeb
+ata1: reset tp2 stat-=50 stat1=00 devices=0x9<ATAPI_SLAVE,ATA_MASTER>
+ata1: reinit done ..
+xbd0: 20480MB <Virtual Block Device> at device/vbd/768 on xenbus0
+xbd0: attaching as ad0
+GEOM: new disk ad0
+
+
+AMI BIOS (C) 2007 American Megatrends, Inc.
+ASUS P5KPL ACPI BIOS Revision 0603
+CPU: Intel (R) Pentium (R0 Dual CPU E2180 @ 2.00GHz
+Speed : 2.51 GHz      Count : 2
+
+Press DEL to run Setup
+Press F9 for BBS POPUP
+DDR2-667 in Dual-Channel Interleaved Mode
+Initializing USB Controllers .. Done.
+3584MB OK
+
+
+(C) American Megatrends, Inc
+64-0603000000000001-001011111-022908-Bearlake-A0820000-Y2KC
+
+WARNING: Using legacy NIC wrapper on 00:0c:29:1a:66:99
+
+
+Polytron -- BirdyBIOS - V12.23b, a Laser Check (TM) Ally
+Copyright (C) 2009-2010, Polytron Systems Corporation, INC.
+
+PLYTRN PRTBLPRO2.0 Deluxe ACPI BIOS Rev 1008
+
+Main Processor : PLY Powertron(tm) 23Mhz
+Memory Testing : 640k OK
+
+Memory Frequency is at 16 Mhz, Quad Channel mode
+Primary Master : PLYTRN PL1000-23
+Primary Slave : Empty
+Secondary Master : PPLYTRN DSK-100 Floppy Di
