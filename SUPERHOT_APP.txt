@@ -1,0 +1,64 @@
+aDziedziczenie po SHGUIappbase
+
+64x24	=> 62x22
+
+konstruktr() : base("tytuł") {
+	text			= ekran;
+	APPLABEL.text	= tytuł;
+
+	//APPLABEL.PunchIn(float time); //0.0 <-> 1.0 // FadeIn
+
+
+	//Time.unscaledDeltaTime
+}
+
+public override void Update() {
+	SHGUI.current.PlaySound(SHGUIsound.ping);
+	//SHGUIsound.ping
+	//SHGUIsound.tick
+	//SHGUIsound.pong
+
+	//Wychodzenie: SHGUI.current.PopView();
+
+	/*	Nowe okienka (4 sekundy wyswietlonego tekstu):
+			SHGUItext view = new SHGUItext(string text, int X, int Y, char color);
+			SHGUItempview kill = new SHGUItempview(4f);
+			kill.killParent = true;
+			kill.AddSubView(view);
+			AddSubview(kill);
+
+		//new SHGUIframe(posX, posY, sizeX, sizeY, char color);
+		SHGUIframe fram = new SHGUIframe(posx - 1, posy - 1, posx + 20, posy + 1, char color);
+		//SHGUIrect to samo co w frame
+
+		view.Kill();  //ubija utworzone okienko
+	*/
+}
+
+public override void ReactToInputKeyboard(SHGUIinput key) {
+	base.ReactToInputKeyboard(key);
+
+	//left, up, down, right
+	//esc, enter, any
+	if (key == SHGUIinput.left) {	//Lewa strzałka
+		//Coś
+	}
+}
+
+public override void Redraw(int offx, int offy) {
+	//Pos
+	//od 1x1
+	//do 62x22
+	SHGUI.current.SetPixelFront(char symbol, int posx, int posy, char color);
+	SHGUI.current.SetPixelBack(char symbol, int posx, int posy, char color);
+	/*	Color:
+			r,g,b,w,
+			z = szary
+			0 = czarny
+	 */
+	
+}
+
+Wpis w strukturze folderów:
+	<item type="app" name="rafal.exe" appclass="APPklasa" />
+

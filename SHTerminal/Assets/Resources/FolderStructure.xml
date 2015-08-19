@@ -200,4 +200,8 @@ I also like the silliness of writing notes to myself. Like anyone would read tha
  		<item type="reboot" name="reboot.exe"/>
 		<item type="userlevel" name ="edittest.lvl" bundle="myeditortest" scene="TestEditorLevel"/>
 	</tests>
+	
+	<onionmilk showInBarebones = "true">
+		<item type="app" name ="logo.exe" appclass="APPOnionMilkLogo"/>
+	</onionmilk>
 </Data>
