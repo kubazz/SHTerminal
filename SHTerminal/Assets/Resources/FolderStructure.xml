@@ -1,4 +1,5 @@
 <Data>
+  <item type="app" name="shrl.exe" appclass="APPshrl"/>
   <item type="exploit" name="superhot.exe"/>
   <item type="last" name="supelast.exe" appclass="APPplaylast"/>
   <story>
@@ -207,10 +208,6 @@ I also like the silliness of writing notes to myself. Like anyone would read tha
 		<item type="app" name ="flappy.exe" appclass="APPFlappy"/>
 		<item type="app" name ="hotsle~1.exe" appclass="APPColorMaze"/>
 		<item type="app" name ="hotslot.exe" appclass="APPHotSlot"/>
-<<<<<<< HEAD
 		<item type="app" name ="onionman.exe" appclass="APPOnionMan"/>
-=======
-
->>>>>>> 3ed1e5a8a46881fa58b73e95a4e0ddf32ab306cc
 	</onionmilk>
 </Data>
