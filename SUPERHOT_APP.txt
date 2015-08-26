@@ -3,7 +3,6 @@ aDziedziczenie po SHGUIappbase
 64x24	=> 62x22
 
 konstruktr() : base("tytuł") {
-	text			= ekran;
 	APPLABEL.text	= tytuł;
 
 	//APPLABEL.PunchIn(float time); //0.0 <-> 1.0 // FadeIn

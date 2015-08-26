@@ -1,5 +1,5 @@
-using System.Collection;
 using UnityEngine;
+using System.Collections;
 
 public class test : SHGUIappbase {
 	public test()

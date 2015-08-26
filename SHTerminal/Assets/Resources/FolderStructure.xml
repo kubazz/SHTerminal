@@ -203,7 +203,14 @@ I also like the silliness of writing notes to myself. Like anyone would read tha
 	
 	<onionmilk showInBarebones = "true">
 		<item type="app" name ="logo.exe" appclass="APPOnionMilkLogo"/>
+		<item type="app" name ="hottrain.exe" appclass="APPFroger"/>
+		<item type="app" name ="flappy.exe" appclass="APPFlappy"/>
+		<item type="app" name ="hotsle~1.exe" appclass="APPColorMaze"/>
 		<item type="app" name ="hotslot.exe" appclass="APPHotSlot"/>
+<<<<<<< HEAD
 		<item type="app" name ="onionman.exe" appclass="APPOnionMan"/>
+=======
+
+>>>>>>> 3ed1e5a8a46881fa58b73e95a4e0ddf32ab306cc
 	</onionmilk>
 </Data>
