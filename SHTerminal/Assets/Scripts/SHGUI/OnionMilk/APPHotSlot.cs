@@ -183,7 +183,7 @@ public class APPHotSlot : SHGUIappbase {
 	
 	private int			currentBet		= 10;				//Obecny zakład
 	private int			currentMoney	= 100;				//Obecny stan pieniędzy
-	private float		baseRollSpeed	= 0.25f;//0.075f;			//Podstawowa prędkoś obracania slotów
+	private float		baseRollSpeed	= 0.075f;			//Podstawowa prędkoś obracania slotów
 	
 	private int			currentSlot		= 0;				//Obecnie zatrzymywany slot
 	private bool 		roll			= false;			//Czy w trakcie obracania slotami
@@ -466,6 +466,12 @@ public class APPHotSlot : SHGUIappbase {
 			string	tempMoney	= currentMoney.ToString();
 			if (tempMoney.Length > 9)
 				tempMoney	= "SUPER HOT";
+			else if (currentMoney == 404)
+				tempMoney	= "404NOTFOUND";
+			else if (currentMoney == 404)
+				tempMoney	= "6 6 6";
+			else if (currentMoney == 1337)
+				tempMoney	= "LEET";
 			//--
 
 			string	tempBet		= currentBet.ToString();
@@ -524,7 +530,6 @@ public class APPHotSlot : SHGUIappbase {
 				if (key == SHGUIinput.up)
 					currentBet	+= 10;
 				//--
-				//--
 				if (key == SHGUIinput.down)
 					currentBet	-= 10;
 				//--
@@ -542,7 +547,14 @@ public class APPHotSlot : SHGUIappbase {
 					currentBet	= currentMoney;
 				//--
 				if (currentBet < 10)
+					currentBet	= 1;
+				//--
+				
+				if (currentBet == 11)
 					currentBet	= 10;
+				//--
+				if (currentBet == 1001)
+					currentBet	= 1000;
 				//--
 			}
 

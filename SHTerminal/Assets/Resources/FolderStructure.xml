@@ -204,5 +204,6 @@ I also like the silliness of writing notes to myself. Like anyone would read tha
 	<onionmilk showInBarebones = "true">
 		<item type="app" name ="logo.exe" appclass="APPOnionMilkLogo"/>
 		<item type="app" name ="hotslot.exe" appclass="APPHotSlot"/>
+		<item type="app" name ="onionman.exe" appclass="APPOnionMan"/>
 	</onionmilk>
 </Data>
