@@ -540,7 +540,7 @@ public class APPshrl: SHGUIappbase
 			return;
 
 		if (pendingTicks > 0) {
-			tickTimer = 0;
+			//tickTimer = 0;
 			return;
 		}
 		
