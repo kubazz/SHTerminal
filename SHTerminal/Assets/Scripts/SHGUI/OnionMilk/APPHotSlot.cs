@@ -466,12 +466,18 @@ public class APPHotSlot : SHGUIappbase {
 			string	tempMoney	= currentMoney.ToString();
 			if (tempMoney.Length > 9)
 				tempMoney	= "SUPER HOT";
+			else if (currentMoney == 404)
+				tempMoney	= "404NOTFOUND";
+			else if (currentMoney == 404)
+				tempMoney	= "6 6 6";
+			else if (currentMoney == 1337)
+				tempMoney	= "LEET";
 			//--
 
 			string	tempBet		= currentBet.ToString();
 
 			for(int x = 0; x < 9; ++x)
-				SHGUI.current.SetPixelBack('█', 11 + x, 19, 'w');
+				SHGUI.current.SetPixelBack('█', 11 + x, 19, 'z');
 			//--
 			for(int x = 0; x < 9; ++x)
 				SHGUI.current.SetPixelBack('█', 11 + x, 20, 'z');
@@ -480,7 +486,7 @@ public class APPHotSlot : SHGUIappbase {
 				SHGUI.current.SetPixelFront(tempMoney[x], 20 - tempMoney.Length + x, 19, 'r');
 			//--
 			for(int x = 0; x < tempBet.Length; ++x)
-				SHGUI.current.SetPixelFront(tempBet[x], 20 - tempBet.Length + x, 20, 'w');
+				SHGUI.current.SetPixelFront(tempBet[x], 20 - tempBet.Length + x, 20, '0');
 			//--
 			
 			//Komunikat sterowania
@@ -524,7 +530,6 @@ public class APPHotSlot : SHGUIappbase {
 				if (key == SHGUIinput.up)
 					currentBet	+= 10;
 				//--
-				//--
 				if (key == SHGUIinput.down)
 					currentBet	-= 10;
 				//--
@@ -542,7 +547,14 @@ public class APPHotSlot : SHGUIappbase {
 					currentBet	= currentMoney;
 				//--
 				if (currentBet < 10)
+					currentBet	= 1;
+				//--
+				
+				if (currentBet == 11)
 					currentBet	= 10;
+				//--
+				if (currentBet == 1001)
+					currentBet	= 1000;
 				//--
 			}
 
