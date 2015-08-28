@@ -183,7 +183,7 @@ public class APPHotSlot : SHGUIappbase {
 	
 	private int			currentBet		= 10;				//Obecny zakład
 	private int			currentMoney	= 100;				//Obecny stan pieniędzy
-	private float		baseRollSpeed	= 0.25f;//0.075f;			//Podstawowa prędkoś obracania slotów
+	private float		baseRollSpeed	= 0.075f;			//Podstawowa prędkoś obracania slotów
 	
 	private int			currentSlot		= 0;				//Obecnie zatrzymywany slot
 	private bool 		roll			= false;			//Czy w trakcie obracania slotami

@@ -28,7 +28,7 @@ public class APPFlappy : SHGUIappbase {
 	float	wallTimer = 0.1f;
 
 	bool	jump = false;
-	int		jumpLvl = 5;
+	int		jumpLvl = 4;
 
 	bool	lose = true;
 	bool	begin = true;
@@ -74,12 +74,12 @@ public class APPFlappy : SHGUIappbase {
 			{
 				if(collapseTimer <= 0f)
 				{
-					collapseTimer = 0.05f;
+					collapseTimer = 0.07f;
 					--posY;
 					--jumpLvl;
 					if(jumpLvl <= 0)
 					{
-						jumpLvl = 5;
+						jumpLvl = 4;
 						jump = false;
 					}
 				}
@@ -106,7 +106,7 @@ public class APPFlappy : SHGUIappbase {
 
 					if(wall[i].posX == 5) //sprawdzenie czy trafił w ptaka :)
 					{
-						if(posY > wall[i].border || posY < (wall[i].border + 6))
+						if(posY > wall[i].border || posY < (wall[i].border + 5))
 						{
 							++score;
 							//SHGUI.current.PlaySound(SHGUIsound.ping);
@@ -119,7 +119,7 @@ public class APPFlappy : SHGUIappbase {
 			{
 				if(wall[i].posX == 5) //sprawdzenie czy trafił w ptaka :)
 				{
-					if(posY <= wall[i].border || posY >= (wall[i].border + 6))
+					if(posY <= wall[i].border || posY >= (wall[i].border + 5))
 					{
 						lose = true;
 						collapseTimer = 1f;
@@ -150,7 +150,7 @@ public class APPFlappy : SHGUIappbase {
 			{
 				if(wall[i].posX < 63) SHGUI.current.SetPixelFront(wallChar, wall[i].posX, j, 'w');
 			}
-			for(int j = 21; j >= wall[i].border + 6; --j)
+			for(int j = 21; j >= wall[i].border + 5; --j)
 			{
 				if(wall[i].posX < 63) SHGUI.current.SetPixelFront(wallChar, wall[i].posX, j, 'w');
 			}
