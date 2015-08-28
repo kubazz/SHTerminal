@@ -477,7 +477,7 @@ public class APPHotSlot : SHGUIappbase {
 			string	tempBet		= currentBet.ToString();
 
 			for(int x = 0; x < 9; ++x)
-				SHGUI.current.SetPixelBack('█', 11 + x, 19, 'w');
+				SHGUI.current.SetPixelBack('█', 11 + x, 19, 'z');
 			//--
 			for(int x = 0; x < 9; ++x)
 				SHGUI.current.SetPixelBack('█', 11 + x, 20, 'z');
@@ -486,7 +486,7 @@ public class APPHotSlot : SHGUIappbase {
 				SHGUI.current.SetPixelFront(tempMoney[x], 20 - tempMoney.Length + x, 19, 'r');
 			//--
 			for(int x = 0; x < tempBet.Length; ++x)
-				SHGUI.current.SetPixelFront(tempBet[x], 20 - tempBet.Length + x, 20, 'w');
+				SHGUI.current.SetPixelFront(tempBet[x], 20 - tempBet.Length + x, 20, '0');
 			//--
 			
 			//Komunikat sterowania
