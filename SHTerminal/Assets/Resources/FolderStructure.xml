@@ -204,6 +204,7 @@ I also like the silliness of writing notes to myself. Like anyone would read tha
 	
 	<onionmilk showInBarebones = "true">
 		<item type="app" name ="logo.exe" appclass="APPOnionMilkLogo"/>
+		<item type="app" name ="rogue.exe" appclass="APPRogue"/>
 		<item type="app" name ="hottrain.exe" appclass="APPFroger"/>
 		<item type="app" name ="flappy.exe" appclass="APPFlappy"/>
 		<item type="app" name ="hotsle~1.exe" appclass="APPColorMaze"/>
@@ -212,5 +213,6 @@ I also like the silliness of writing notes to myself. Like anyone would read tha
 		<item type="app" name ="space.exe" appclass="APPSpaceInv"/>
 		<item type="app" name ="revrun.exe" appclass="APPRunner"/>
 		<item type="app" name ="onionman.exe" appclass="APPOnionMan"/>
+		<item type="app" name ="2048.exe" appclass="APP2048"/>
 	</onionmilk>
 </Data>
