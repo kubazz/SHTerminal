@@ -1,4 +1,5 @@
 <Data>
+  <item type="app" name="square.exe" appclass="APPsquare"/>
   <item type="app" name="shrl.exe" appclass="APPshrl"/>
   <item type="exploit" name="superhot.exe"/>
   <item type="last" name="supelast.exe" appclass="APPplaylast"/>
@@ -62,6 +63,7 @@ Feel free to use this to share your impression of the current beta build or if y
 
     superhotgame.com/feedback
   </item>
+  	<item type="app" name="vr.exe" appclass="APPvr" showInBarebones = "true"/>
     <item type="app" name="quit.exe" appclass="APPquit" showInBarebones = "true"/>
     <item type="app" name="credits.exe" appclass="APPcredits" showInBarebones = "false"/>
     <item type="separator" name=""/>

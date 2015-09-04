@@ -849,15 +849,41 @@ public class SHGUI : MonoBehaviour {
 	}
 
 	private string GetColorFromChar(char c){
-		string colString = "#000000";
+		string colString = "#000000ff";
 		//if (c == 'r') colString = "#aa0303";
-		if (c == 'r') colString = "#ff0000";
-		else if (c == 'g') colString = "#00ff00";
-		else if (c == 'w') colString = "#ffffff";
-		else if (c == 'b') colString = "#0000ff";
-		else if (c == 'z') colString = "#888888";
-		else if (c == '0') colString = "#000000";
-
+		if (c == 'r')
+			colString = "#ff0000ff";
+		else if (c == 'g')
+			colString = "#00ff00ff";
+		else if (c == 'w')
+			colString = "#ffffffff";
+		else if (c == 'b')
+			colString = "#0000ffff";
+		else if (c == 'z')
+			colString = "#888888ff";
+		else if (c == '0')
+			colString = "#000000ff";
+		else if (c == '1')
+			colString = "#222222ff";
+		else if (c == '2')
+			colString = "#444444ff";
+		else if (c == '3')
+			colString = "#66666600";
+		else if (c == '4')
+			colString = "#888888ff";
+		else if (c == '5')
+			colString = "#aaaaaaff";
+		else if (c == '6')
+			colString = "#ccccccff";
+		else if (c == '7')
+			colString = "#eeeeeeff";
+		else if (c == '8')
+			colString = "#ffffffff";
+		else if (c == '9')
+			colString = "#ffffffff";
+		else if (c == 't')
+			colString = "#ffffff00";
+		
 		return colString;
 	}
 }
