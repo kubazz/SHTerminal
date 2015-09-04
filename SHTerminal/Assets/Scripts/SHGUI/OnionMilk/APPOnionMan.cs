@@ -24,8 +24,8 @@ public class APPOnionMan : SHGUIappbase {
 "║°█°°°°█°°°█°█°°°°°█°█°°█°°°°°°°°°°°°°°█°°█°█°°°█°°°°°°°°°█°█║",
 "║°°°██°°°█°█°°°█°█°█°██°██°█°██████°█°██°██°█°█°█°█████°█°█°█║",
 "║°████°███°█████°█°█°█°°°°°█°°°██°°°█°°°°°█°°°█°█°°°°°°°█°█°█║",
-"║°°█°°°█°█°█°°°█°█°█°█°███████°██°███████°█°███°█°█°███°█°█°█║",
-"║█°°°█°°°█°°°█°°°█°°°█°°°°°°°°°°°°°°°°°°°°█°°°°°█°█°███°█°°°█║",
+"║°°°°°°█°█°█°°°█°█°█°█°███████°██°███████°█°███°█°█°███°█°█°█║",
+"║█████°°°█°°°█°°°█°°°█°°°°°°°°°°°°°°°°°°°°█°°°°°█°█°███°█°°°█║",
 "╚════Points:      ═══════════════════════════════════════════╝"
 	};
 	private char[,]	map				= new char[62, 22];
@@ -65,6 +65,7 @@ public class APPOnionMan : SHGUIappbase {
 
 		//Inne
 	private int		points			= 0;
+	private int		addPoints		= 0;
 	private bool	lose			= false;
 
 	//Public
@@ -98,6 +99,10 @@ public class APPOnionMan : SHGUIappbase {
 		if (lose == true)
 			restart();
 		//--
+		if (points == 666) {
+			restart();
+			addPoints	+= 666;
+		}
 	}
 
 	public override void Redraw(int offx, int offy) {
@@ -106,9 +111,9 @@ public class APPOnionMan : SHGUIappbase {
 		for(int y = 0; y < mapOrg.Length; ++y)
 			for(int x = 0; x < mapOrg[y].Length; ++x)
 				if (map[x, y] == coin)
-					SHGUI.current.SetPixelBack(map[x, y], 1 + x, 1 + y, 'z');
+					SHGUI.current.SetPixelBack(map[x, y], 1 + x, 1 + y, 'w');
 				else
-					SHGUI.current.SetPixelFront(map[x, y], 1 + x, 1 + y, 'w');
+					SHGUI.current.SetPixelFront(map[x, y], 1 + x, 1 + y, 'z');
 				//--
 			//--
 		//--
@@ -118,7 +123,7 @@ public class APPOnionMan : SHGUIappbase {
 			SHGUI.current.SetPixelFront(enemy, enemiesPos[(i * 2) + 0], enemiesPos[(i * 2) + 1], 'r');
 		//--
 		
-		string	tempPoints	= points.ToString();
+		string	tempPoints	= (addPoints + points).ToString();
 		for(int i = 0; i < tempPoints.Length; ++i)
 			SHGUI.current.SetPixelFront(tempPoints[i], 19 - tempPoints.Length + i, 22, 'w');
 		//--

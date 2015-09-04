@@ -3,7 +3,8 @@ using System.Collections;
 
 public class APPFroger : SHGUIappbase {
 
-	private enum CellState : byte {
+	private enum CellState : byte
+	{
 		Empty = 0,
 		Train = 1,
 	}
@@ -24,13 +25,16 @@ public class APPFroger : SHGUIappbase {
 
 	float trainTimer = 0.2f;
 
+	bool moveTrain = false;
 
 	public APPFroger()
-	: base("hot_train-v1.3-by-onionmilk") {
+	: base("hot_train-v1.3-by-onionmilk")
+	{
 		NextLevel();
 	}
 	
-	public override void Update() {
+	public override void Update() 
+	{
 		base.Update();
 
 		if(lvl >= 1000) //zmiana nazwy apki zależna od lewelu
@@ -47,11 +51,13 @@ public class APPFroger : SHGUIappbase {
 		}
 
 		//poruszanie pociągami
-		trainTimer -= Time.unscaledDeltaTime;
-		if(trainTimer <= 0f)
+		//trainTimer -= Time.unscaledDeltaTime;
+		//if(trainTimer <= 0f)
+		//{
+		//	trainTimer = 0.2f;
+		if(moveTrain)
 		{
-			trainTimer = 0.2f;
-
+			moveTrain = false;
 
 			for(int j = 0; j < 18; ++j)
 			{	
@@ -82,7 +88,6 @@ public class APPFroger : SHGUIappbase {
 			}
 
 		}
-
 		if(map[posX, posY] == CellState.Train) //powrót na start po dotchnięciu pociągu
 		{
 			posX = 16;
@@ -91,7 +96,8 @@ public class APPFroger : SHGUIappbase {
 
 	}
 	
-	public override void Redraw(int offx, int offy) {
+	public override void Redraw(int offx, int offy)
+	{
 		base.Redraw(offx, offy);
 
 		for(int i = 0; i < 18; ++i) SHGUI.current.SetPixelFront(border, 17, i + 2, 'w'); //ściana I
@@ -113,9 +119,11 @@ public class APPFroger : SHGUIappbase {
 
 	}
 	
-	public override void ReactToInputKeyboard(SHGUIinput key) {
+	public override void ReactToInputKeyboard(SHGUIinput key)
+	{
 		//sterowanie
-		if (key == SHGUIinput.up) {
+		if (key == SHGUIinput.up)
+		{
 
 			if(posY > 1) --posY;
 			else
@@ -123,21 +131,27 @@ public class APPFroger : SHGUIappbase {
 				posY = 0;
 				if(lvl < 1000) NextLevel();
 			}
-		}
-		if (key == SHGUIinput.down) {
-			if(posY < 17) ++posY;
-		}
-		if (key == SHGUIinput.right) {
-			if(posX < 31) ++posX;
-		}
-		if (key == SHGUIinput.left) {
-			if(posX > 0) --posX;
-		}
 
+			moveTrain = true;
+		}
+		if (key == SHGUIinput.down)
+		{
+			if(posY < 17) ++posY;
+			moveTrain = true;
+		}
+		if (key == SHGUIinput.right)
+		{
+			if(posX < 31) ++posX;
+			moveTrain = true;
+		}
+		if (key == SHGUIinput.left)
+		{
+			if(posX > 0) --posX;
+			moveTrain = true;
+		}
 		
-		if (key == SHGUIinput.esc)
-			SHGUI.current.PopView();
-		//--
+		if (key == SHGUIinput.esc) SHGUI.current.PopView();
+
 	}
 
 	private void NextLevel()

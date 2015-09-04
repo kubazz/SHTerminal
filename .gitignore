@@ -46,3 +46,7 @@ SHTerminal/Screenshots/replays/
 UnityVS/
 /Library
 *.sln
+SHTerminal/Assets/Scripts/SHGUI/OnionMilk/HotCraft.meta
+SHTerminal/Assets/Scripts/SHGUI/OnionMilk/HotCraft/HotCraftGenerator.cs
+SHTerminal/Assets/Scripts/SHGUI/OnionMilk/HotCraft/HotCraftGenerator.cs.meta
+SHTerminal/Assets/Scripts/SHGUI/OnionMilk/Rogue - Org.meta
