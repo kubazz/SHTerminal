@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class APPRogue : SHGUIappbase {
 	//Private
@@ -14,6 +15,9 @@ public class APPRogue : SHGUIappbase {
 
 		//Gracz
 	RoguePlayer		player			= null;	//Obiekt gracza
+
+		//Potwory
+	public	RogueMonsters	monsters;
 
 	bool updateLogic	= true;
 
@@ -32,6 +36,8 @@ public class APPRogue : SHGUIappbase {
 
 		player			= new RoguePlayer(world.map);
 		player.position	= generator.getSpawn();
+
+		monsters		= new RogueMonsters(world.map, player.position);
 	}
 
 	public override void Update() {
@@ -104,11 +110,22 @@ public class APPRogue : SHGUIappbase {
 			}
 		}
 
+		for(int m = 0; m < monsters.monsterList.Count; ++m) //wyświetlanie potworów
+		{
+			if((monsters.monsterList[m].posX - displayOffset[0] + x) < 62 && (monsters.monsterList[m].posX - displayOffset[0] + x) > 0)
+			{
+				if((monsters.monsterList[m].posY - displayOffset[1] + y) < 22 && (monsters.monsterList[m].posY - displayOffset[1] + y) > 0)
+				{
+					SHGUI.current.SetPixelFront(monsters.monsterList[m].symbol, monsters.monsterList[m].posX - displayOffset[0] + x + 1, monsters.monsterList[m].posY - displayOffset[1] + y + 1, monsters.monsterList[m].color);
+				}
+			}
+		}
+
+
 		//Wyświetlanie gracza
 		if (mapView == false)
 			SHGUI.current.SetPixelFront('@', 31, 11, 'w');
 		//--
-		
 
 		//Pasek statusu
 		char[,]	statusMap	= status.screenMap();
@@ -138,17 +155,41 @@ public class APPRogue : SHGUIappbase {
 		) {	//Czy się próbowano ruszyć
 			bool 	moved	= false;
 			if (key == SHGUIinput.up)
+			{
 				moved	= player.moveBy(0, -1);
-			//--
+				monsters.UpdatePosPlayer(player.position[0], player.position[1]);
+				for(int m = 0; m < monsters.monsterList.Count; ++m) //ruch potworów
+				{
+					monsters.monsterList[m].Move();
+				}
+			}
 			if (key == SHGUIinput.down)
+			{
 				moved	= player.moveBy(0, +1);
-			//--
+				monsters.UpdatePosPlayer(player.position[0], player.position[1]);
+				for(int m = 0; m < monsters.monsterList.Count; ++m) //ruch potworów
+				{
+					monsters.monsterList[m].Move();
+				}
+			}
 			if (key == SHGUIinput.left)
+			{
 				moved	= player.moveBy(-1, 0);
-			//--
+				monsters.UpdatePosPlayer(player.position[0], player.position[1]);
+				for(int m = 0; m < monsters.monsterList.Count; ++m) //ruch potworów
+				{
+					monsters.monsterList[m].Move();
+				}
+			}
 			if (key == SHGUIinput.right)
+			{
 				moved	= player.moveBy(+1, 0);
-			//--
+				monsters.UpdatePosPlayer(player.position[0], player.position[1]);
+				for(int m = 0; m < monsters.monsterList.Count; ++m) //ruch potworów
+				{
+					monsters.monsterList[m].Move();
+				}
+			}
 			if (moved) {
 				updateLogic	= true;
 			} else {
@@ -168,6 +209,8 @@ public class APPRogue : SHGUIappbase {
 
 			player			= new RoguePlayer(world.map);
 			player.position	= generator.getSpawn();
+
+			monsters		= new RogueMonsters(world.map, player.position);
 		}
 		
 
