@@ -2,6 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public class RogueMapParameters {
+	public int[]	size			= new int[2] {10, 10};
+
+	public float	roomFrequency	= 0.1f;
+	public int		roomMaxSize		= 3;
+	public int		chestMaxAmount	= 3;
+
+}
+
+public class RogueMap {
+	public int[,]				map			= null;
+	public List<RogueItemData>	itemList	= new List<RogueItemData>();
+}
+
 public class RogueGenerator {
 	//Private
 	private	int[,]		miniMap		= null;
@@ -16,9 +30,9 @@ public class RogueGenerator {
 	public int[,]		miniRoomMap	= null;
 	private List<int[]>	roomDoor	= null;
 
-	private	int[,]		map			= null;
+	private RogueMap	world		= null;
 	/*	ID elemtów Mapy
-			<= -1000:	Itemy w krzyni
+			<= -1000:	Itemy w skrzyni
 			-1:			Wolna przestrzeń (której nie da się odwiedzić)
 			0:			Wolna przestrzeń
 			1:			Kamienna Ściana (blok: █)
@@ -30,52 +44,45 @@ public class RogueGenerator {
 			>= 1000:	Itemy
 	*/
 
-	private float	frequency	= 0.1f;
-	private int		maxRoomSize	= 3;
+	private RogueMapParameters	currentMapParameters	= null;
 
 	//Public
-	public RogueGenerator(float newFrequency, int newMaxRoomSize) {
-		frequency	=	newFrequency;
-		maxRoomSize	=	1 + newMaxRoomSize;
+	public RogueGenerator() {
+
 	}
 
-	public void generate(int sizeX, int sizeY) {
-		miniMap		= new int[sizeX, sizeY];
-		miniRoomMap	= new int[sizeX, sizeY];
-		roomDoor	= new List<int[]>();
-		map			= new int[sizeX * 5, sizeY * 5];
-		clear(sizeX, sizeY);
+	public void generate(RogueMapParameters mapParameters) {
+		currentMapParameters	= mapParameters;
+		miniMap					= new int[mapParameters.size[0], mapParameters.size[1]];
+		miniRoomMap				= new int[mapParameters.size[0], mapParameters.size[1]];
+		roomDoor				= new List<int[]>();
+		world					= new RogueMap();
+		world.map				= new int[mapParameters.size[0] * 5, mapParameters.size[1] * 5];
 
-		do {
-			for(int y = 1; y < sizeY; ++y)
-				for(int x = 1; x < sizeX; ++x)
-					if (Random.value < frequency) {
-						roomDoor.Add(new int[2] {x, y});
-						putRoom(roomDoor.Count, x, y, Mathf.FloorToInt(Random.value * maxRoomSize));
-					}
-				//--
-			//--
-			if (mapIsEmpty() == false)
-				break;
-			//--
-		} while(true);
-		
+		clear();
+
+		createRooms();
 		connectRooms();
+
 		translate();
+
+		//generateChests();
 	}
 
-	void clear(int sizeX, int sizeY, int fromX = 0, int fromY = 0) {
-		for(int x = fromX; x < sizeX; ++x)
-			for(int y = fromY; y < sizeY; ++y)
+	void clear() {
+		for(int x = 0; x < currentMapParameters.size[0]; ++x)
+			for(int y = 0; y < currentMapParameters.size[1]; ++y)
 				miniMap[x, y]	= 0;
 			//--
 		//--
 		
-		for(int x = (fromX * 5); x < (sizeX * 5); ++x)
-			for(int y = (fromY * 5); y < (sizeY * 5); ++y)
-				map[x, y]	= -1;
+		for(int x = 0; x < (currentMapParameters.size[0] * 5); ++x)
+			for(int y = 0; y < (currentMapParameters.size[1] * 5); ++y)
+				world.map[x, y]	= -1;
 			//--
 		//--
+		
+		world.itemList.Clear();
 	}
 
 	bool mapIsEmpty() {
@@ -91,6 +98,22 @@ public class RogueGenerator {
 			}
 		//--
 		return true;
+	}
+
+	void createRooms() {
+		do {
+			for(int y = 1; y < miniMap.GetLength(1); ++y)
+				for(int x = 1; x < miniMap.GetLength(0); ++x)
+					if (Random.value < currentMapParameters.roomFrequency) {
+						roomDoor.Add(new int[2] {x, y});
+						putRoom(roomDoor.Count, x, y, Mathf.FloorToInt(Random.value * currentMapParameters.roomMaxSize));
+					}
+				//--
+			//--
+			if (mapIsEmpty() == false)
+				break;
+			//--
+		} while(true);
 	}
 
 	void putRoom(int roomID, int x, int y, int size) {
@@ -152,9 +175,9 @@ public class RogueGenerator {
 	}
 
 	void translate() {
-		for(int y = 0; y < map.GetLength(1); ++y)
-			for(int x = 0; x < map.GetLength(0); ++x)
-				map[x, y]	= -1;
+		for(int y = 0; y < world.map.GetLength(1); ++y)
+			for(int x = 0; x < world.map.GetLength(0); ++x)
+				world.map[x, y]	= -1;
 			//--
 		//--
 
@@ -166,9 +189,9 @@ public class RogueGenerator {
 						for(int _y = 0; _y < 5; ++_y)
 							for(int _x = 0; _x < 5; ++_x)
 								if (_y == 0 || _y == 4 || _x == 0 || _x == 4)
-									map[(x * 5) + _x, (y * 5) + _y]	= 1;
+									world.map[(x * 5) + _x, (y * 5) + _y]	= 1;
 								else
-									map[(x * 5) + _x, (y * 5) + _y]	= 0;
+									world.map[(x * 5) + _x, (y * 5) + _y]	= 0;
 								//--
 							//--
 						//--
@@ -205,10 +228,10 @@ public class RogueGenerator {
 						//Środek drogi
 						for(int _y = 1; _y < 4; ++_y)
 							for(int _x = 1; _x < 4; ++_x)
-								map[(x * 5) + _x, (y * 5) + _y]	= 1;
+								world.map[(x * 5) + _x, (y * 5) + _y]	= 1;
 							//--
 						//--
-						map[(x * 5) + 2, (y * 5) + 2]	= 0;
+						world.map[(x * 5) + 2, (y * 5) + 2]	= 0;
 
 						//Odłam w górę
 						int	what = 0;
@@ -221,8 +244,8 @@ public class RogueGenerator {
 								else
 									what	= 2;
 								//--
-								map[(x * 5) + _x, (y * 5) + 0]	= what;
-								map[(x * 5) + _x, (y * 5) + 1]	= what;
+								world.map[(x * 5) + _x, (y * 5) + 0]	= what;
+								world.map[(x * 5) + _x, (y * 5) + 1]	= what;
 							}
 						}
 						if ((around&4) == 4) {
@@ -234,8 +257,8 @@ public class RogueGenerator {
 								else
 									what	= 2;
 								//--
-								map[(x * 5) + _x, (y * 5) + 3]	= what;
-								map[(x * 5) + _x, (y * 5) + 4]	= what;
+								world.map[(x * 5) + _x, (y * 5) + 3]	= what;
+								world.map[(x * 5) + _x, (y * 5) + 4]	= what;
 							}
 						}
 						if ((around&2) == 2) {
@@ -247,8 +270,8 @@ public class RogueGenerator {
 								else
 									what	= 5;
 								//--
-								map[(x * 5) + 3, (y * 5) + _y]	= what;
-								map[(x * 5) + 4, (y * 5) + _y]	= what;
+								world.map[(x * 5) + 3, (y * 5) + _y]	= what;
+								world.map[(x * 5) + 4, (y * 5) + _y]	= what;
 							}
 						}
 						if ((around&8) == 8) {
@@ -260,17 +283,17 @@ public class RogueGenerator {
 								else
 									what	= 5;
 								//--
-								map[(x * 5) + 0, (y * 5) + _y]	= what;
-								map[(x * 5) + 1, (y * 5) + _y]	= what;
+								world.map[(x * 5) + 0, (y * 5) + _y]	= what;
+								world.map[(x * 5) + 1, (y * 5) + _y]	= what;
 							}
 						}
 
 						//Środek drogi (poprawka)
-						map[(x * 5) + 1, (y * 5) + 1]	= 1;
-						map[(x * 5) + 1, (y * 5) + 3]	= 1;
-						map[(x * 5) + 3, (y * 5) + 3]	= 1;
-						map[(x * 5) + 3, (y * 5) + 1]	= 1;
-						map[(x * 5) + 2, (y * 5) + 2]	= 0;
+						world.map[(x * 5) + 1, (y * 5) + 1]	= 1;
+						world.map[(x * 5) + 1, (y * 5) + 3]	= 1;
+						world.map[(x * 5) + 3, (y * 5) + 3]	= 1;
+						world.map[(x * 5) + 3, (y * 5) + 1]	= 1;
+						world.map[(x * 5) + 2, (y * 5) + 2]	= 0;
 
 						break;
 					}
@@ -290,7 +313,7 @@ public class RogueGenerator {
 						if (miniMap[x + 1, y] == 1)
 							for(int _x = 4; _x < 6; ++_x)
 								for(int _y = 1; _y < 4; ++_y)
-									map[(x * 5) + _x, (y * 5) + _y]	= 0;
+									world.map[(x * 5) + _x, (y * 5) + _y]	= 0;
 								//--
 							//--
 						//--
@@ -299,7 +322,7 @@ public class RogueGenerator {
 						if (miniMap[x, y + 1] == 1)
 							for(int _y = 4; _y < 6; ++_y)
 								for(int _x = 1; _x < 4; ++_x)
-									map[(x * 5) + _x, (y * 5) + _y]	= 0;
+									world.map[(x * 5) + _x, (y * 5) + _y]	= 0;
 								//--
 							//--
 						//--
@@ -307,19 +330,19 @@ public class RogueGenerator {
 				}
 			//--
 		//--
-		for(int y = 0; y < (map.GetLength(1) - 1); ++y)
-			for(int x = 0; x < (map.GetLength(0) - 1); ++x) {
-				if (map[x, y] == 1
-				&&	map[x + 1, y] == 1
-				&&	map[x + 1, y + 1] == 1
-				&&	map[x, y + 1] == 1
+		for(int y = 0; y < (world.map.GetLength(1) - 1); ++y)
+			for(int x = 0; x < (world.map.GetLength(0) - 1); ++x) {
+				if (world.map[x, y] == 1
+				&&	world.map[x + 1, y] == 1
+				&&	world.map[x + 1, y + 1] == 1
+				&&	world.map[x, y + 1] == 1
 				&&	(x%5 != 0 && x%5 != 4)
 				&&	(y%5 != 0 && y%5 != 4)
 				) {
-					map[x, y]			= 0;
-					map[x + 1, y]		= 0;
-					map[x + 1, y + 1]	= 0;
-					map[x, y + 1]		= 0;
+					world.map[x, y]			= 0;
+					world.map[x + 1, y]		= 0;
+					world.map[x + 1, y + 1]	= 0;
+					world.map[x, y + 1]		= 0;
 				}
 			}
 		//--
@@ -328,26 +351,70 @@ public class RogueGenerator {
 			for(int x = 0; x < miniMap.GetLength(0); ++x) {
 				if ((x - 1) > 0)
 					if (miniMap[x, y] == 1 && miniMap[x - 1, y] == 3)
-						map[(x * 5), (y * 5) + 2]	= 6;
+						world.map[(x * 5), (y * 5) + 2]	= 6;
 					//--
 				//--
 				if ((x + 1) < miniMap.GetLength(0))
 					if (miniMap[x, y] == 1 && miniMap[x + 1, y] == 3)
-						map[(x * 5) + 4, (y * 5) + 2]	= 6;
+						world.map[(x * 5) + 4, (y * 5) + 2]	= 6;
 					//--
 				//--
 				if ((y - 1) > 0)
 					if (miniMap[x, y] == 1 && miniMap[x, y - 1] == 3)
-						map[(x * 5) + 2, (y * 5)]	= 6;
+						world.map[(x * 5) + 2, (y * 5)]	= 6;
 					//--
 				//--
 				if ((y + 1) < miniMap.GetLength(1))
 					if (miniMap[x, y] == 1 && miniMap[x, y + 1] == 3)
-						map[(x * 5) + 2, (y * 5) + 4]	= 6;
+						world.map[(x * 5) + 2, (y * 5) + 4]	= 6;
 					//--
 				//--
 			}
 		//--
+	}
+
+	void generateChests() {
+		int[]	randomPos	= new int[2];
+		int		tempItemID	= 0;
+
+		for(int i = 0; i < currentMapParameters.chestMaxAmount; ++i) {
+			do {
+				randomPos[0]	= Random.Range(0, currentMapParameters.size[0] * 5);
+				randomPos[1]	= Random.Range(0, currentMapParameters.size[1] * 5);
+			} while(world.map[randomPos[0], randomPos[1]] != 0);
+
+			world.itemList.Add(
+				generateItem(0)
+			);
+			tempItemID	= world.itemList.Count - 1;
+
+			putChest(
+				randomPos[0],
+				randomPos[1],
+				tempItemID
+			);
+		}
+	}
+
+	bool putChest(int x, int y, int itemID) {
+		if (world.map[x, y] != 0)
+			return false;
+		//--
+		
+		world.map[x, y]	= -itemID - 1000;
+		return true;
+	}
+
+	RogueItemData generateItem(int gameLevel) {
+		RogueItemData	item	= new RogueItemData();
+
+		item.name	= "UnknownItem";
+		item.symbol	= '?';
+		item.type	= RogueItemType.Other;
+		item.value	= 0;
+		item.cost	= 0;
+
+		return item;
 	}
 
 	public int[] getSpawn() {
@@ -356,7 +423,7 @@ public class RogueGenerator {
 			((roomDoor[0])[1] * 5) + 2
 		};
 	}
-	public int[,] getMap() {
-		return map;
+	public RogueMap getMap() {
+		return world;
 	}
 }

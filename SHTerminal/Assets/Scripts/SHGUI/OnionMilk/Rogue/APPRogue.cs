@@ -5,16 +5,15 @@ public class APPRogue : SHGUIappbase {
 	//Private
 		//Mapa
 	RogueGenerator	generator		= null;	//Obiekt generatora
-	int[,]			map				= null;	//Mapa
+	RogueMap		world			= null;	//Mapa
 
 		//Wyświetlanie
 	bool			mapView			= false;	//Tryb podglądu mapy
 	int[]			displayOffset	= new int[2] {0, 0};	//Offset wyświetlania mapy
-	//RogueStatusBar	status			= null;	//Pasek informacyjny w grze
+	RogueStatusBar	status			= new RogueStatusBar();	//Pasek informacyjny w grze
 
 		//Gracz
 	RoguePlayer		player			= null;	//Obiekt gracza
-
 
 	bool updateLogic	= true;
 
@@ -22,26 +21,16 @@ public class APPRogue : SHGUIappbase {
 	public APPRogue()
 		:	base("roguelike-v23.0.0.23-by-onionmilk")
 	{
-		generator	= new RogueGenerator(0.3f, 5);
-		generator.generate(12, 4);
-		//generator.generate(20, 20);
-		map			= generator.getMap();
-		/*
-		map	= new int[10, 10] {
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-			{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-		};
-		*/
+		generator							= new RogueGenerator();
+		RogueMapParameters	mapParameters	= new RogueMapParameters();
+		mapParameters.size					= new int[2] {20, 20};
+		mapParameters.roomFrequency			= 0.2f;
+		mapParameters.roomMaxSize			= 3;
+		mapParameters.chestMaxAmount		= 5;
+		generator.generate(mapParameters);
+		world								= generator.getMap();
 
-		player			= new RoguePlayer(map);
+		player			= new RoguePlayer(world.map);
 		player.position	= generator.getSpawn();
 	}
 
@@ -66,14 +55,14 @@ public class APPRogue : SHGUIappbase {
 		for(int y = 0; y < 22; ++y) {
 			for(int x = 0; x < 62; ++x) {
 				//Wyświetlanie eteru (obszar poza mapą)
-				if ((displayOffset[0] + x) >= map.GetLength(0) || (displayOffset[0] + x) < 0
-				||	(displayOffset[1] + y) >= map.GetLength(1) || (displayOffset[1] + y) < 0
+				if ((displayOffset[0] + x) >= world.map.GetLength(0) || (displayOffset[0] + x) < 0
+				||	(displayOffset[1] + y) >= world.map.GetLength(1) || (displayOffset[1] + y) < 0
 				) {
 					SHGUI.current.SetPixelBack('░', 1 + x, 1 + y, 'z');
 					continue;
 				}
 				//Wyświetlanie właściwych bloków
-				switch(map[displayOffset[0] + x, displayOffset[1] + y]) {
+				switch(world.map[displayOffset[0] + x, displayOffset[1] + y]) {
 					case(0): {
 						SHGUI.current.SetPixelBack(' ', 1 + x, 1 + y, 'z');
 						break;
@@ -119,6 +108,16 @@ public class APPRogue : SHGUIappbase {
 		if (mapView == false)
 			SHGUI.current.SetPixelFront('@', 31, 11, 'w');
 		//--
+		
+
+		//Pasek statusu
+		char[,]	statusMap	= status.screenMap();
+		for(int y = 0; y < statusMap.GetLength(1); ++y)
+			for(int x = 0; x < statusMap.GetLength(0); ++x) {
+				SHGUI.current.SetPixelBack('█', 1 + x, 23 + y - statusMap.GetLength(1), '0');
+				SHGUI.current.SetPixelFront(statusMap[x, y], 1 + x, 23 + y - statusMap.GetLength(1), 'w');
+			}
+		//--
 	}
 
 	public override void ReactToInputKeyboard(SHGUIinput key) {
@@ -153,14 +152,22 @@ public class APPRogue : SHGUIappbase {
 			if (moved) {
 				updateLogic	= true;
 			} else {
-				//status.message	= "Cannot move there!";
+				status.setMessage("Cannot move there!");
 			}
 		}
 		
 		
 		if (key == SHGUIinput.enter) {
-			generator.generate(12, 4);
-			map			= generator.getMap();
+			RogueMapParameters	mapParameters	= new RogueMapParameters();
+			mapParameters.size				= new int[2] {20, 20};
+			mapParameters.roomFrequency		= 0.3f;
+			mapParameters.roomMaxSize		= 5;
+			mapParameters.chestMaxAmount	= 5;
+			generator.generate(mapParameters);
+			world			= generator.getMap();
+
+			player			= new RoguePlayer(world.map);
+			player.position	= generator.getSpawn();
 		}
 		
 
