@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using System.Text;
+using System;
 
 public class SHGUIprompter : SHGUItext
 {
@@ -27,8 +28,7 @@ public class SHGUIprompter : SHGUItext
 
 	public float initDelay = 0.3f;
 
-	public delegate void ConsoleCallback();
-	public ConsoleCallback thisConsoleCallback;
+	public Action thisConsoleCallback;
 
 	public float noInteractionTimer = 0;
 	
@@ -112,11 +112,11 @@ public class SHGUIprompter : SHGUItext
 		output.Length = 0;
 		output.Capacity = 0;
 	}
-
+	
 	void UpdateConsole(bool force = false) {
 		currentCharDelay -= Time.unscaledDeltaTime;
 		
-		if ((((!manualUpdate && currentCharDelay < 0) || (manualUpdate && charBuffer > 0)) && !IsFinished())||(force)) {
+		if ((((!manualUpdate && currentCharDelay < 0) || (manualUpdate && charBuffer > 0 && currentCharDelay < 0)) && !IsFinished())) {
 			waitMulti = 1f;
 			
 			if (currentChar < input.Length) {
@@ -161,7 +161,7 @@ public class SHGUIprompter : SHGUItext
 
 					if (parsedChar == ' ') {
 						if (!ignoreDefaultPunctuationWaits)
-							waitMulti *= 3f;
+							waitMulti *= 4f;
 					}
 					else if (parsedChar == '.' || parsedChar == '!' || parsedChar == '?'){
 						if (!ignoreDefaultPunctuationWaits)
@@ -198,6 +198,10 @@ public class SHGUIprompter : SHGUItext
 			
 			currentCharDelay = baseCharDelay;
 			currentCharDelay *= waitMulti * waitMultiPersistent;
+			if (manualUpdate) {
+				currentCharDelay = baseCharDelay;
+				//Debug.Log("yadayada: " + currentCharDelay);
+			}
 		}
 
 		text = output.ToString();
@@ -250,8 +254,9 @@ public class SHGUIprompter : SHGUItext
 
 	public void SwitchToManualInputMode(){
 		charBuffer = 0;
-		baseCharDelay = -1;
-		baseSpeed = 2;
+		baseCharDelay = .016f;
+		baseSpeed = 1;
+		//baseSpeed = 2;
 		drawCarriage = true;
 
 		manualUpdate = true;
@@ -321,7 +326,7 @@ public class SHGUIprompter : SHGUItext
 	private void ReactionTyping(bool slow = false){
 		if (charBuffer < 60){
 			if (!slow)
-				charBuffer += 4;
+				charBuffer += 2;
 			else
 				charBuffer += 1;
 
