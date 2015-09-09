@@ -9,8 +9,8 @@ HCKR:i'm too old for this^W5
 #lHCKR
 !THEY DON'T SERVE US WELL
 rockr:awwwrite, kick the noobs, only worthy will stay
-kazz: /em high-fives rockr
-kazz: oops
+kazz:/em high-fives rockr
+kazz:oops
 #T:kazz high-fives rockr
 
 
@@ -93,9 +93,7 @@ k0l0:SPAM
 k0l0:SPAM
 #kk0l0
 
-
-
-
+--------------------------------------
 
 #jk0l0
 
@@ -114,7 +112,7 @@ k0l0:you're not much into this whole 'fun' thing, are you, MOD? You heard about 
 MOD:no
 #kk0l0
 
-
+--------------------------------------
 
 
 #jk0l0
@@ -231,7 +229,7 @@ justaskin:password is f1del10
 
 
 
-MOD: ^M3I'M SENDING YOU THE FILES RIGHT NOW.
+MOD:^M3I'M SENDING YOU THE FILES RIGHT NOW.
 
 kazz:lol, MOD is doing the voice.
 #T:rockr slaps kazz
@@ -334,4 +332,71 @@ MOD:and you joined just to say that?
 ulrich:yes.
 
 
-#kulrich
+#lulrich
+
+
+------------------------------------------
+kazz:remember mixxer?
+
+rockr:he hanged out here, played so much, but now he just left
+!MOD, HANDLE THIS. MIXXER IS WITH US NOW. GENERATE A COVER STORY.
+kazz:yeah, he didn't even seem bored with the game. he was excited as ever.
+
+rockr:and the next day ^O^W3 HE'S GONE
+kazz:HE'S GONE
+
+
+rockr:coincidence?
+kazz:I ^OTHINK NOT!
+MOD:I THINK YES, actually. I spoke with him recently. Had some family issues and got cut from the network
+kazz:a fate worse than death. 
+rockr:it seems strange, though. he didn't find a way? this guy was a maniac!
+MOD:i don't want to gossip, please respect the guy.
+rockr:of course, sorry.
+
+
+kazz:no network...
+
+
+
+kazz:[']
+
+
+
+----------------------------------------------
+
+rockr:i found this page www.superhotgame.com, you guys know anything about it?
+kazz:checking!
+
+
+
+
+MOD:lol, they made a clone. how silly. I'll notify my supplier.
+
+
+-------------------------------------------------
+
+#jtest
+#jtesttest
+#jtesttesttest
+#jtesttesttesttest
+#jtesttesttesttesttest
+#jtesttesttesttesttesttest
+
+MOD:duhhh...
+
+#ktesttesttesttesttesttest
+#ktesttesttesttesttest
+#ktesttesttesttest
+#ktesttesttest
+#ktesttest
+#ktest
+
+
+kazz:what a nice pyramid shape he created, though.
+
+
+
+
+
+
