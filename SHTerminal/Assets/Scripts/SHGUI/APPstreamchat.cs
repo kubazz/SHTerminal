@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Xml.Linq;
+using System.Linq;
 
 
 public class APPstreamchat: SHGUIview
@@ -56,6 +57,39 @@ public class APPstreamchat: SHGUIview
 	void LoadForumContent(){
 		TextAsset forumDataText = Resources.Load<TextAsset>("GroupChannelContent");
 		forumStrings = forumDataText.text.Split('\n');
+
+		List<List<string>> L = new List<List<string>> ();
+		List<string> I = new List<string> ();
+		for (int i = 0; i < forumStrings.Length; ++i) {
+			if (!string.IsNullOrEmpty(forumStrings[i]) && (forumStrings[i][0] == '-')){
+				L.Add(I);
+				I = new List<string>();
+			}
+			else{
+				I.Add(forumStrings[i]);
+			}
+		}
+		if (I.Count > 0) {
+			L.Add(I);
+		}
+		Random rng = new Random();
+		
+		List<List<string>> shuffL = L.OrderBy (a => Random.value).ToList();
+
+		forumStrings = new string[forumStrings.Length];
+		int counter = 0;
+		for (int i = 0; i < shuffL.Count; ++i) {
+			for (int j = 0; j < shuffL[i].Count; ++j){
+				forumStrings[counter] = shuffL[i][j];
+				counter++;
+			}
+		}
+
+		/*
+		for (int i = 0; i < forumStrings.Length; ++i) {
+			Debug.Log(forumStrings[i]);
+		}
+		*/
 	}
 
 	float nonInteractionDelay = 2f;
