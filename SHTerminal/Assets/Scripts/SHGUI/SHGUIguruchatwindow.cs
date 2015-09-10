@@ -43,6 +43,11 @@ public class SHGUIguruchatwindow: SHGUIview
 		return this;
 	}
 
+	public SHGUIguruchatwindow SetCallback(Action a){
+		textElement.thisConsoleCallback = a;
+		return this;
+	}
+
 	public SHGUIguruchatwindow SetContent(string text){
 		message = text;
 		textElement.SetInput (text, true);
@@ -103,7 +108,7 @@ public class SHGUIguruchatwindow: SHGUIview
 		background.remove = true;
 		background.hidden = true;
 		float oldfade2 = background.fade;
-		background = AddSubViewBottom (new SHGUIrect (0, 0, width, height)) as SHGUIrect;
+		background = AddSubViewBottom (new SHGUIrect (-1, 0, width, height)) as SHGUIrect;
 		background.PunchIn(oldfade2);	
 	}
 

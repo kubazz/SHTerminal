@@ -27,6 +27,7 @@ public class APPscrollconsole: SHGUIview
 {
 	public int lines = 0;
 	public int maxlines = 22;
+	public int desiredFrameWidth = 35;
 	public int frameOffset = 0;
 	private int chatMargin = 3;
 
@@ -38,9 +39,9 @@ public class APPscrollconsole: SHGUIview
 
 	private SHGUItext instructions;	
 	private SHGUItext chatQuitInstructions;		
-	SHGUIview appname;
-	SHGUIview clock;
-	SHGUIview frame;
+	public SHGUIview appname;
+	public SHGUIview clock;
+	public SHGUIview frame;
 
 	private float noPropmterInteractionTime = 0;
 	private int instructionsAnchorX;
@@ -54,6 +55,12 @@ public class APPscrollconsole: SHGUIview
 	public List<String> customSkipMessages;
 	public float customSkipTimeout = 1f;
 	private bool skipping = false;
+
+	public bool killOnEmptyQueue = true;
+	public bool showFadeForChatMessages = false;
+	public string leaveChatLocalizedString = "LEAVE_CHAT_INPUT";
+	public Action defaultConsoleCallback = null;
+	public bool dontDisplaySender = true;
 
 	public APPscrollconsole (){
 		//AddSubView (new SHGUIframe (0, 0, SHGUI.current.resolutionX - 1, SHGUI.current.resolutionY - 1, 'z'));
@@ -147,6 +154,12 @@ public class APPscrollconsole: SHGUIview
 		messages.Add(m.view);
 		AddSubViewBottom(m.view);
 		m.view.overrideFadeInSpeed = .75f;
+
+		if (showFadeForChatMessages) {
+			m.view.ForceFadeRecursive(0f);
+			m.view.overrideFadeInSpeed = .45f;
+		}
+
 		m.view.y = lines;
 	    m.view.fade = m.baseFade;
 		delay = m.delay;
@@ -266,7 +279,8 @@ public class APPscrollconsole: SHGUIview
 	}
 
 	private scrollmessage AddChatMessage(string sender, string message, bool leftright, bool interactive, bool poor, bool overrideLast = false){
-		sender = "";
+		if (dontDisplaySender) 
+			sender = "";
 
 		SHGUIguruchatwindow chat;
 		chat = new SHGUIguruchatwindow ();
@@ -276,7 +290,7 @@ public class APPscrollconsole: SHGUIview
 		if (poor)
 			chat.poorMode = true;
 		
-		chat.SetWidth (35);
+		chat.SetWidth (desiredFrameWidth);
 		chat.SetContent (message);
 		chat.SetLabel (sender);
 
@@ -289,6 +303,12 @@ public class APPscrollconsole: SHGUIview
 		var msg = new scrollmessage (chat, h, 0, false, 0);
 		msg.overrideLast = overrideLast;
 		queue.Add(msg);
+
+		if (defaultConsoleCallback != null) {
+			chat.SetCallback(defaultConsoleCallback);
+		}
+		//chat.ForceFadeRecursive (1f);
+		
 
 		return msg;
 	}
@@ -325,7 +345,7 @@ public class APPscrollconsole: SHGUIview
 		v.x = frameOffset + (int)(SHGUI.current.resolutionX / 2) - (int)(v.GetLineLength () / 2) - 1;
 		AddMessageToQueue (new SHGUIview(), 1, 0f, false);
 		AddMessageToQueue (v, 1, 0f, false);
-		AddMessageToQueue (new SHGUIview(), 1, 3f, false);
+		AddMessageToQueue (new SHGUIview(), 1, 1.75f, false);
 		
 	}
 
@@ -337,7 +357,7 @@ public class APPscrollconsole: SHGUIview
 		v.x = frameOffset + (int)(SHGUI.current.resolutionX / 2) - (int)(v.GetLineLength () / 2) - 1;
 		AddMessageToQueue (new SHGUIview(), 1, 0f, false);
 		AddMessageToQueue (v, 1, 0f, false);
-		AddMessageToQueue (new SHGUIview(), 1, 3f, false);
+		AddMessageToQueue (new SHGUIview(), 1, 1.75f, false);
 		
 	}
 
@@ -360,7 +380,7 @@ public class APPscrollconsole: SHGUIview
 
 		lines +=offy;
 	}
-
+	
 	public override void Update(){
 		base.Update();
 		
@@ -375,7 +395,7 @@ public class APPscrollconsole: SHGUIview
 
 		if (customSkipTimeout < 0) {
 			if (skippable) {
-				SetChatQuitInstructions (LocalizationManager.Instance.GetLocalized("LEAVE_CHAT_INPUT"));
+				SetChatQuitInstructions (LocalizationManager.Instance.GetLocalized(leaveChatLocalizedString));
 			} else {
 				SetChatQuitInstructions ("");
 			}
@@ -411,12 +431,6 @@ public class APPscrollconsole: SHGUIview
 			}
 			else if (messages[messages.Count - 1] as SHGUIguruchatwindow != null){
 				SHGUIguruchatwindow g = messages[messages.Count - 1] as SHGUIguruchatwindow;
-				
-				g.x = chatMargin;
-				if (!g.leftright) {
-					g.x = SHGUI.current.resolutionX - chatMargin - g.width;
-				}
-
 				if (g.finished == true)
 					DisplayNextMessage();
 			}
@@ -425,6 +439,18 @@ public class APPscrollconsole: SHGUIview
 			UpdateInstructions("");
 			if (delay < 0)
 				DisplayNextMessage();
+		}
+
+		for (int i = 0; i < messages.Count; ++i) {
+			SHGUIguruchatwindow g = messages[i] as SHGUIguruchatwindow;
+
+			if (g != null){
+				g.x = chatMargin;
+				if (!g.leftright) {
+					g.x = SHGUI.current.resolutionX - chatMargin - g.width;
+				}
+			}
+
 		}
 
 	}
@@ -481,14 +507,18 @@ public class APPscrollconsole: SHGUIview
 		}
 	}
 
-	protected void DisplayNextMessage(){
+	public bool isEmptyAndFinished = false;
+	public void DisplayNextMessage(){
 		if (queue.Count > 0){
 			DisplayScrollMessage(queue[0]);
 			
 			queue.RemoveAt(0);
+			isEmptyAndFinished = false;
 		}
 		else{
-			Kill ();
+			if (killOnEmptyQueue)
+				Kill ();
+			isEmptyAndFinished = true;
 		}
 	}
 
