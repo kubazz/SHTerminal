@@ -22,6 +22,10 @@ public class APP2048 : SHGUIappbase {
 	string		scoreString		= "Score: ";
 	int			score			= 0;
 
+	bool[]		lockDirection	= new bool[4]; //oznaczenie który z kierunków jest zablokowany
+	int			allLockCount	= 0; // ilosć zablokowanych kierunków jeżeli jest rónwa 4 przegrywasz
+	int[]		rope			= new int[4];
+
 
 	public APP2048()
 	: base("2048-v1500.100.900-by-onionmilk") {
@@ -32,12 +36,25 @@ public class APP2048 : SHGUIappbase {
 
 		Rand2();
 		Rand2();
+
+		for(int i = 0; i < 4; ++i)
+		{
+			lockDirection[i] = false;
+			rope[i] = 0;
+		}
+
+		CheckMove();
 	}
 
 	public override void Update() {
 		base.Update();
 
+		//sprawdzenie warunku przegranej
+		for(int i = 0; i < 4; ++i) if(lockDirection[i]) ++allLockCount;
+		if(allLockCount == 4) lose = 1;
+		else allLockCount = 0;
 
+		//sprawdzenie warunku wygranej
 		for(int i = 0; i < 4; ++i) for(int j = 0; j < 4; ++j)
 		{
 			if(mapValue[i, j] == 2048) lose = 2;
@@ -158,9 +175,7 @@ public class APP2048 : SHGUIappbase {
 	}
 	void Move(int direct)
 	{
-		if(!checkMove(direct)) return;
-
-		if(direct == 0) //góra
+		if(direct == 0 && !lockDirection[0]) //góra
 		{
 			int tempPos = 0;
 
@@ -199,7 +214,7 @@ public class APP2048 : SHGUIappbase {
 			}
 			Rand2();
 		}
-		else if(direct == 1) //prawo
+		else if(direct == 1 && !lockDirection[1]) //prawo
 		{
 			int tempPos = 3;
 			
@@ -238,7 +253,7 @@ public class APP2048 : SHGUIappbase {
 			}
 			Rand2();
 		}
-		else if(direct == 2) //dół
+		else if(direct == 2 && !lockDirection[2]) //dół
 		{
 			int tempPos = 3;
 			
@@ -277,7 +292,7 @@ public class APP2048 : SHGUIappbase {
 			}
 			Rand2();
 		}
-		else if(direct == 3) //lewo
+		else if(direct == 3 && !lockDirection[3]) //lewo
 		{
 			int tempPos = 0;
 			
@@ -314,169 +329,117 @@ public class APP2048 : SHGUIappbase {
 					}
 				}
 			}
+			Rand2();
 		}
-		Rand2();
 
+		CheckMove();
 	}
 
-	bool checkMove(int direct)
+	void CheckMove() //sprawdzenie w które strony mozna się przemieścić
 	{
-		int FoundZero = 0; //ilość zer
-		int FirstZero = 4;
-		
-		int countLock = 0;
+		int countLock = 0; //ilość zablokowanych sznurów z danym kierunku
 
-		if(direct == 0)
-		{
-			for(int i = 0; i < 4; ++i)
-			{
-				for(int j = 0; j < 4; ++j)
-				{
-					if(mapValue[i, j] == 0) ++FoundZero;
-					if(mapValue[i, j] == 0 && FirstZero == 4) FirstZero = j; 
-				}
-				if(FoundZero == 4 - FirstZero)
-				{
-					if(FoundZero == 0 || FoundZero == 1)
-					{
-						++countLock;
-						break;
-					}
-					else if(FoundZero == 2 && mapValue[i, 0] != mapValue[i, 1])
-					{
-						++countLock;
-						break;
-					}
-					else if(FoundZero == 3 && mapValue[i, 0] != mapValue[i, 1] && mapValue[i, 1] != mapValue[i, 2])
-					{
-						++countLock;
-						break;
-					}
-					else if(FoundZero == 4 && mapValue[i, 0] != mapValue[i, 1] && mapValue[i, 1] != mapValue[i, 2] && mapValue[i, 2] != mapValue[i, 3])
-					{
-						++countLock;
-						break;
-					}
-
-					return true;
-				}
-				else return true;
-			}
-		}
-		else if(direct == 1)
+		for(int i = 0; i < 4; ++i)//ruch w górę
 		{
 			for(int j = 0; j < 4; ++j)
 			{
-				for(int i = 3; i >= 0; --i)
-				{
-					if(mapValue[i, j] == 0) ++FoundZero;
-					if(mapValue[i, j] == 0 && FirstZero == 4) FirstZero = j;
-				}
-				if(FoundZero == 4 - FirstZero)
-				{
-					if(FoundZero == 0 || FoundZero == 1)
-					{
-						++countLock;
-						break;
-					}
-					else if(FoundZero == 2 && mapValue[3, j] != mapValue[2, j])
-					{
-						++countLock;
-						break;
-					}
-					else if(FoundZero == 3 && mapValue[3, j] != mapValue[2, j] && mapValue[2, j] != mapValue[1, j])
-					{
-						++countLock;
-						break;
-					}
-					else if(FoundZero == 4 && mapValue[3, j] != mapValue[2, j] && mapValue[2, j] != mapValue[1, j] && mapValue[1, j] != mapValue[0, j])
-					{
-						++countLock;
-						break;
-					}
-					
-					return true;
-				}
-				else return true;
+				rope[j] = mapValue[i, j]; //przygotowanie fragmentu mapy do sprawdzenia
 			}
+			if(CalcLock(false)) ++countLock; //zliczanie ilości sznórów których nie da się przesunąć
 		}
-		else if(direct == 2)
-		{
-			for(int i = 0; i < 4; ++i)
-			{
-				for(int j = 3; j >= 0; --j)
-				{
-					if(mapValue[i, j] == 0) ++FoundZero;
-					if(mapValue[i, j] == 0 && FirstZero == 4) FirstZero = j; 
-				}
-				if(FoundZero == 4 - FirstZero)
-				{
-					if(FoundZero == 0 || FoundZero == 1)
-					{
-						++countLock;
-						break;
-					}
-					else if(FoundZero == 2 && mapValue[i, 3] != mapValue[i, 2])
-					{
-						++countLock;
-						break;
-					}
-					else if(FoundZero == 3 && mapValue[i, 3] != mapValue[i, 2] && mapValue[i, 2] != mapValue[i, 1])
-					{
-						++countLock;
-						break;
-					}
-					else if(FoundZero == 4 && mapValue[i, 3] != mapValue[i, 2] && mapValue[i, 2] != mapValue[i, 1] && mapValue[i, 1] != mapValue[i, 0])
-					{
-						++countLock;
-						break;
-					}
-					
-					return true;
-				}
-				else return true;
-			}
-		}
-		else if(direct == 3)
+		if(countLock >= 4) lockDirection[0] = true; //zablokowanie danego kierunku
+		else lockDirection[0] = false; //odblokowanie danego kierunku
+		countLock = 0; //zerownie ilości sznórów których nie da się przesunąć
+
+		for(int i = 0; i < 4; ++i)//ruch w prawo
 		{
 			for(int j = 0; j < 4; ++j)
 			{
-				for(int i = 0; i < 4; ++i)
-				{
-					if(mapValue[i, j] == 0) ++FoundZero;
-					if(mapValue[i, j] == 0 && FirstZero == 4) FirstZero = j; 
-				}
-				if(FoundZero == 4 - FirstZero)
-				{
-					if(FoundZero == 0 || FoundZero == 1)
-					{
-						++countLock;
-						break;
-					}
-					else if(FoundZero == 2 && mapValue[0, j] != mapValue[1, j])
-					{
-						++countLock;
-						break;
-					}
-					else if(FoundZero == 3 && mapValue[0, j] != mapValue[1, j] && mapValue[1, j] != mapValue[2, j])
-					{
-						++countLock;
-						break;
-					}
-					else if(FoundZero == 4 && mapValue[0, j] != mapValue[1, j] && mapValue[1, j] != mapValue[2, j] && mapValue[2, j] != mapValue[3, j])
-					{
-						++countLock;
-						break;
-					}
-					
-					return true;
-				}
-				else return true;
+				rope[j] = mapValue[j, i];
+			}
+			if(CalcLock(true)) ++countLock;
+		}
+		if(countLock >= 4) lockDirection[1] = true;
+		else lockDirection[1] = false;
+		countLock = 0;
+
+		for(int i = 0; i < 4; ++i)//ruch w dół
+		{
+			for(int j = 0; j < 4; ++j)
+			{
+				rope[j] = mapValue[i, j];
+			}
+			if(CalcLock(true)) ++countLock;
+		}
+		if(countLock >= 4) lockDirection[2] = true;
+		else lockDirection[2] = false;
+		countLock = 0;
+
+		for(int i = 0; i < 4; ++i)//ruch w lewo
+		{
+			for(int j = 0; j < 4; ++j)
+			{
+				rope[j] = mapValue[j, i];
+			}
+			if(CalcLock(false)) ++countLock;
+		}
+		if(countLock >= 4) lockDirection[3] = true;
+		else lockDirection[3] = false;
+		countLock = 0;
+	}
+	bool CalcLock(bool rev)
+	{
+		int FoundZero = 0; //ilość zer w sznurze
+		if(rev) //odwracanie sznura
+		{
+			int tempVal = rope[0];
+			rope[0] = rope[3];
+			rope[3] = tempVal;
+			tempVal = rope[1];
+			rope[1] = rope[2];
+			rope[2] = tempVal;
+		}
+		for(int i = 0; i < 4; ++i) if(rope[i] == 0) ++FoundZero;
+
+		if(FoundZero == 4) return true;
+		else if(FoundZero == 3)
+		{
+			if(rope[0] != 0) return true;
+		}
+		else if(FoundZero == 2)
+		{
+			if(rope[0] != 0)
+			{
+				if(rope[1] != 0 && rope[1] != rope[0]) return true;
 			}
 		}
-
-		if(countLock >= 4) return false;
-		return true;
+		else if(FoundZero == 1)
+		{
+			if(rope[0] != 0)
+			{
+				if(rope[1] != 0 && rope[1] != rope[0])
+				{
+					if(rope[2] != 0 && rope[2] != rope[1]) return true;
+				}
+			}
+		}
+		else if(FoundZero == 0)
+		{
+			if(rope[0] != 0)
+			{
+				if(rope[1] != 0 && rope[1] != rope[0])
+				{
+					if(rope[2] != 0 && rope[2] != rope[1])
+					{
+						if(rope[3] != 0 && rope[3] != rope[2])
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	void Rand2()
