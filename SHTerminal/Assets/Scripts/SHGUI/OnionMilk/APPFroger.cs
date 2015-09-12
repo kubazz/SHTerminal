@@ -30,6 +30,16 @@ public class APPFroger : SHGUIappbase {
 	string moveCountString = "0";
 	string gameTimeString = "0";
 
+	int lvlBest = 0; //najlepszy poziom
+	int deadCountBest = 0; //najmniejsza ilość śmierci
+	int moveCountBest = 0; //najmniejsza ilość ruchów
+	float gameTimeBest = 0f; //najlepszy czas
+
+	string lvlStringBest = "1";
+	string deadCountStringBest = "0";
+	string moveCountStringBest = "0";
+	string gameTimeStringBest = "0";
+
 	int harder = 0;
 
 	//float trainTimer = 0.2f;
@@ -134,11 +144,11 @@ public class APPFroger : SHGUIappbase {
 		SHGUI.current.SetPixelFront('L', 57, 4, 'w');
 		for(int u = 0; u < lvlString.Length; ++u) SHGUI.current.SetPixelFront(lvlString[u], 55 - (lvlString.Length / 2) + u, 5, 'w');
 		//TIME
-		SHGUI.current.SetPixelFront('T', 53, 8, 'w');
-		SHGUI.current.SetPixelFront('I', 54, 8, 'w');
-		SHGUI.current.SetPixelFront('M', 55, 8, 'w');
-		SHGUI.current.SetPixelFront('E', 56, 8, 'w');
-		for(int u = 0; u < gameTimeString.Length; ++u) SHGUI.current.SetPixelFront(gameTimeString[u], 55 - (gameTimeString.Length / 2) + u, 9, 'w');
+		SHGUI.current.SetPixelFront('T', 53, 16, 'w');
+		SHGUI.current.SetPixelFront('I', 54, 16, 'w');
+		SHGUI.current.SetPixelFront('M', 55, 16, 'w');
+		SHGUI.current.SetPixelFront('E', 56, 16, 'w');
+		for(int u = 0; u < gameTimeString.Length; ++u) SHGUI.current.SetPixelFront(gameTimeString[u], 55 - (gameTimeString.Length / 2) + u, 17, 'w');
 		//MOVE
 		SHGUI.current.SetPixelFront('M', 53, 12, 'w');
 		SHGUI.current.SetPixelFront('O', 54, 12, 'w');
@@ -146,11 +156,54 @@ public class APPFroger : SHGUIappbase {
 		SHGUI.current.SetPixelFront('E', 56, 12, 'w');
 		for(int u = 0; u < moveCountString.Length; ++u) SHGUI.current.SetPixelFront(moveCountString[u], 55 - (moveCountString.Length / 2) + u, 13, 'w');
 		//DEAD
-		SHGUI.current.SetPixelFront('D', 53, 16, 'w');
-		SHGUI.current.SetPixelFront('E', 54, 16, 'w');
-		SHGUI.current.SetPixelFront('A', 55, 16, 'w');
-		SHGUI.current.SetPixelFront('D', 56, 16, 'w');
-		for(int u = 0; u < deadCountString.Length; ++u) SHGUI.current.SetPixelFront(deadCountString[u], 55 - (deadCountString.Length / 2) + u, 17, 'w');
+		SHGUI.current.SetPixelFront('D', 53, 8, 'w');
+		SHGUI.current.SetPixelFront('E', 54, 8, 'w');
+		SHGUI.current.SetPixelFront('A', 55, 8, 'w');
+		SHGUI.current.SetPixelFront('D', 56, 8, 'w');
+		for(int u = 0; u < deadCountString.Length; ++u) SHGUI.current.SetPixelFront(deadCountString[u], 55 - (deadCountString.Length / 2) + u, 9, 'w');
+	
+
+		//Besty
+		lvlStringBest = lvlBest.ToString();
+		moveCountStringBest = moveCountBest.ToString();
+		gameTimeStringBest = gameTimeBest.ToString("F0");
+		deadCountStringBest = deadCountBest.ToString();
+
+		SHGUI.current.SetPixelFront('B', 2, 2, 'w');
+		SHGUI.current.SetPixelFront('E', 3, 2, 'w');
+		SHGUI.current.SetPixelFront('S', 4, 2, 'w');
+		SHGUI.current.SetPixelFront('T', 5, 2, 'w');
+		SHGUI.current.SetPixelFront('S', 7, 2, 'w');
+		SHGUI.current.SetPixelFront('C', 8, 2, 'w');
+		SHGUI.current.SetPixelFront('O', 9, 2, 'w');
+		SHGUI.current.SetPixelFront('R', 10, 2, 'w');
+		SHGUI.current.SetPixelFront('E', 11, 2, 'w');
+
+		//LEVEL
+		SHGUI.current.SetPixelFront('L', 4, 4, 'w');
+		SHGUI.current.SetPixelFront('E', 5, 4, 'w');
+		SHGUI.current.SetPixelFront('V', 6, 4, 'w');
+		SHGUI.current.SetPixelFront('E', 7, 4, 'w');
+		SHGUI.current.SetPixelFront('L', 8, 4, 'w');
+		for(int u = 0; u < lvlStringBest.Length; ++u) SHGUI.current.SetPixelFront(lvlStringBest[u], 6 - (lvlStringBest.Length / 2) + u, 5, 'w');
+		//TIME
+		SHGUI.current.SetPixelFront('T', 4, 16, 'w');
+		SHGUI.current.SetPixelFront('I', 5, 16, 'w');
+		SHGUI.current.SetPixelFront('M', 6, 16, 'w');
+		SHGUI.current.SetPixelFront('E', 7, 16, 'w');
+		for(int u = 0; u < gameTimeStringBest.Length; ++u) SHGUI.current.SetPixelFront(gameTimeStringBest[u], 6 - (gameTimeStringBest.Length / 2) + u, 17, 'w');
+		//MOVE
+		SHGUI.current.SetPixelFront('M', 4, 12, 'w');
+		SHGUI.current.SetPixelFront('O', 5, 12, 'w');
+		SHGUI.current.SetPixelFront('V', 6, 12, 'w');
+		SHGUI.current.SetPixelFront('E', 7, 12, 'w');
+		for(int u = 0; u < moveCountStringBest.Length; ++u) SHGUI.current.SetPixelFront(moveCountStringBest[u], 6 - (moveCountStringBest.Length / 2) + u, 13, 'w');
+		//DEAD
+		SHGUI.current.SetPixelFront('D', 4, 8, 'w');
+		SHGUI.current.SetPixelFront('E', 5, 8, 'w');
+		SHGUI.current.SetPixelFront('A', 6, 8, 'w');
+		SHGUI.current.SetPixelFront('D', 7, 8, 'w');
+		for(int u = 0; u < deadCountStringBest.Length; ++u) SHGUI.current.SetPixelFront(deadCountStringBest[u], 6 - (deadCountStringBest.Length / 2) + u, 9, 'w');
 	}
 	
 	public override void ReactToInputKeyboard(SHGUIinput key)
@@ -187,8 +240,45 @@ public class APPFroger : SHGUIappbase {
 			moveTrain = true;
 		}
 		
-		if (key == SHGUIinput.esc) SHGUI.current.PopView();
+		if (key == SHGUIinput.esc)
+		{
+			if(lvl > lvlBest) //zapisanie wyniku jeśli jest lepszy
+			{
+				SetBestScore();
+			}
+			else if(lvl == lvlBest)
+			{
+				if(deadCount < deadCountBest)
+				{
+					SetBestScore();
+				}
+				else if(deadCount == deadCountBest)
+				{
+					if(moveCount < moveCountBest)
+					{
+						SetBestScore();
+					}
+					else if(moveCount == moveCountBest)
+					{
+						if(gameTimeBest < gameTimeBest)
+						{
+							SetBestScore();
+						}
+					}
+				}
+			}
 
+			SHGUI.current.PopView();
+		}
+
+	}
+
+	void SetBestScore()
+	{
+		lvlBest = lvl;
+		deadCountBest = deadCount;
+		moveCountBest = moveCount;
+		gameTimeBest = gameTime;
 	}
 
 	private void NextLevel()
@@ -200,13 +290,15 @@ public class APPFroger : SHGUIappbase {
 		posY = 21;
 
 		//zwiększanie poziomu trudności
-		if(lvl > 55) harder = 9;
-		else if(lvl > 45) harder = 8;
-		else if(lvl > 36) harder = 7;
-		else if(lvl > 28) harder = 6;
-		else if(lvl > 21) harder = 5;
-		else if(lvl > 15) harder = 4;
-		else if(lvl > 10) harder = 3;
+		if(lvl > 33) harder = 11;
+		else if(lvl > 30) harder = 10;
+		else if(lvl > 27) harder = 9;
+		else if(lvl > 24) harder = 8;
+		else if(lvl > 21) harder = 7;
+		else if(lvl > 18) harder = 6;
+		else if(lvl > 15) harder = 5;
+		else if(lvl > 12) harder = 4;
+		else if(lvl > 9) harder = 3;
 		else if(lvl > 6) harder = 2;
 		else if(lvl > 3) harder = 1;
 
@@ -220,11 +312,13 @@ public class APPFroger : SHGUIappbase {
 		{
 			for(int j = 1; j < 21; ++j)
 			{
+				if(j == 20 && harder < 1) continue;
 				if(j == 17 && harder < 2) continue;
 				if(j == 11 && harder < 9) continue;
-				if(j == 5 && harder < 4) continue;
+				if(j == 7 && harder < 4) continue;
+				if(j == 5 && harder < 7) continue;
 
-				temp = Random.Range(1 + harder, 8 + harder);
+				temp = Random.Range(1 + harder, 7 + harder);
 
 				for(int i = 0; i < temp; ++i)
 				{
