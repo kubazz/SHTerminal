@@ -525,6 +525,7 @@ public class APPshrl: SHGUIview
 		}
 		SHSHquit = null;
 		this.SHSHtimer = 0;
+		pendingTicks = 0;
 
 		state = SHRLstate.Gameplay;
 		entities = new List<SHRLentity> ();
@@ -562,12 +563,14 @@ public class APPshrl: SHGUIview
 				pendingTicks--;
 			}
 
-			if (GetEnemyCount() <= 0){
+			if (GetEnemyCount() <= 0 && player.del != true){
 				state = SHRLstate.SHSH;
+				return;
 			}
 
 			if (player.del){
 				state = SHRLstate.Dead;
+				return;
 			}
 		} else if (state == SHRLstate.SHSH) {
 			overrideFadeInSpeed = .5f;
@@ -635,15 +638,17 @@ public class APPshrl: SHGUIview
 		if (fadingOut)
 			return;
 
-		if (pendingTicks > 0) {
-			//tickTimer = 0;
-			return;
-		}
+
 
 		if (key == SHGUIinput.esc)
 			Kill ();
 
 		if (state == SHRLstate.Gameplay) {
+			if (pendingTicks > 0) {
+				//tickTimer = 0;
+				return;
+			}
+
 			if (player.del) {
 				return;
 			}

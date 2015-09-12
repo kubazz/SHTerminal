@@ -26,10 +26,13 @@ public class APPshrlgame: SHGUIview
 
 		AddDownload ();
 		queue.Add (new APPshrlmenu ());
-		*/
 		AddIntermezzoIn ();
+*/
 		
 		queue.Add (new APPshrl("shrlTESTLEVEL"));
+		AddIntermezzoMid ();
+		queue.Add (new APPshrl("shrlTESTLEVEL"));
+		AddIntermezzoOut ();
 		queue.Add (new APPshrltalk ());
 
 		allowCursorDraw = false;
