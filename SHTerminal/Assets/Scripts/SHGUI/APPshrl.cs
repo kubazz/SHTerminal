@@ -24,7 +24,7 @@ public class SHRLentity{
 	public virtual void Update(int ticks){
 	}
 
-	public virtual void Draw(int offx, int offy){
+	public virtual void Draw(){
 	
 	}
 }
@@ -216,7 +216,7 @@ public class SHRLitem: SHRLentity{
 
 	float blinkTime;
 	bool show = true;
-	public override void Draw(int offx, int offy){
+	public override void Draw(){
 		if (flying) {
 			blinkTime -= Time.unscaledDeltaTime;
 			if (blinkTime < 0){
@@ -227,17 +227,17 @@ public class SHRLitem: SHRLentity{
 		}
 
 		if (!fading)
-			SHGUI.current.SetPixelFront (gfx, x + offx, y + offy, color);
+			app.DrawCharFaded (gfx, x, y, color, true);
 		
 		if (dirx != 0) {
 			for (int i = 1; i < traillenght; ++i) {
-				SHGUI.current.SetPixelFront ('-', x + offx - dirx * i, y + offy - diry * i, color);
+				app.DrawCharFaded ('-', x - dirx * i, y - diry * i, color, true);
 			}
 		}
 		
 		if (diry != 0) {
 			for (int i = 1; i < traillenght; ++i) {
-				SHGUI.current.SetPixelFront ('|', x + offx - dirx * i, y + offy - diry * i, color);
+				app.DrawCharFaded ('|', x - dirx * i, y - diry * i, color, true);
 			}
 		}
 		
@@ -373,7 +373,7 @@ public class SHRLenemy: SHRLentity{
 		return false;
 	}
 	
-	public override void Draw(int offx, int offy){
+	public override void Draw(){
 		SHRLitem b = app.GetKillingOrStunningItem (x, y);
 		if (b != null && b.ownerid != id) {
 			if (b.killsOnContact) Kill ();
@@ -384,9 +384,9 @@ public class SHRLenemy: SHRLentity{
 		if (item != null)
 			g = item.gfx2;
 		if (app.shooting && isPlayer) {
-			SHGUI.current.SetPixelFront (g, x + offx, y + offy, (Time.realtimeSinceStartup % .2f > .1f)?('r'):('w') );
+			app.DrawCharFaded (g, x, y, (Time.realtimeSinceStartup % .2f > .1f)?('r'):('w'), true);
 		} else {
-			SHGUI.current.SetPixelFront (g, x + offx, y + offy, color);
+			app.DrawCharFaded (g, x, y, color, true);
 		}
 
 		/*
@@ -462,8 +462,10 @@ public class SHRLparticle: SHRLentity{
 		this.colors = colors;
 	}
 
-	public override void Draw(int offx, int offy){
-		SHGUI.current.SetPixelFront(animation[index], x + offx, y + offy, colors[index]);
+	public override void Draw(){
+			
+		app.DrawCharFaded (animation[index], x, y, colors[index], true);
+		
 		timer -= Time.unscaledDeltaTime;
 
 		if (timer < 0) {
@@ -479,14 +481,18 @@ public class SHRLparticle: SHRLentity{
 
 }
 
-public class APPshrl: SHGUIappbase
+public class APPshrl: SHGUIview
 {
+	public enum SHRLstate {Gameplay, SHSH, Dead};
+
+	public SHRLstate state;
+
 	int[] level;
 	int levelWidth = 64;
 	int levelHeight = 24;
 
-	int camerax = 32;
-	int cameray = 3;
+	int camerax = 0;
+	int cameray = 0;
 
 	int id = 0;
 
@@ -498,28 +504,118 @@ public class APPshrl: SHGUIappbase
 	
 	public List<SHRLentity> entities;
 
+	public string LevelName;
 
-	public APPshrl (): base("SUPERHOT-roguelike-by-piotr")
+	public APPshrl (string levelName)
 	{
-		entities = new List<SHRLentity> ();
-		LoadLevel ("shrlTESTLEVEL");
+		SetLevel (levelName);
+	}
 
+	public APPshrl SetLevel(string levelName){
+		this.LevelName = levelName;
+		RestartLevel ();
+
+		return this;
+	}
+
+	void RestartLevel(){
+
+		if (SHSHquit != null) {
+			SHSHquit.Kill();
+		}
+		SHSHquit = null;
+		this.SHSHtimer = 0;
+
+		state = SHRLstate.Gameplay;
+		entities = new List<SHRLentity> ();
+		
+		LoadLevel ("shrlTESTLEVEL");
+		
+		overrideFadeInSpeed = .1f;
+		overrideFadeOutSpeed = .1f;
 	}
 
 	public int GetId(){
 		return id++;
 	}
 
+	private float SHSHtimer = 0;
+	private SHGUIview SHSHquit;
 	public override void Update(){
 		base.Update ();
 
-		RefreshEntities ();
+		if (fade < .99f) {
+			return;
+		}
 
-		tickTimer -= Time.unscaledDeltaTime;
-		if (tickTimer < 0 && pendingTicks > 0) {
-			tickTimer = .05f;
-			TickEntities(1);
-			pendingTicks--;
+		if (state == SHRLstate.Gameplay) {
+
+			overrideFadeInSpeed = 1f;
+			overrideFadeOutSpeed = 1f;
+
+			RefreshEntities ();
+
+			tickTimer -= Time.unscaledDeltaTime;
+			if (tickTimer < 0 && pendingTicks > 0) {
+				tickTimer = .05f;
+				TickEntities (1);
+				pendingTicks--;
+			}
+
+			if (GetEnemyCount() <= 0){
+				state = SHRLstate.SHSH;
+			}
+
+			if (player.del){
+				state = SHRLstate.Dead;
+			}
+		} else if (state == SHRLstate.SHSH) {
+			overrideFadeInSpeed = .5f;
+			overrideFadeOutSpeed = .5f;
+
+			for (int i = 0; i < 5; ++i){
+				string sh = (UnityEngine.Random.value > .5f)?("SUPER"):("HOT");
+				Popup(sh, UnityEngine.Random.Range(0, SHGUI.current.resolutionX), UnityEngine.Random.Range(0, SHGUI.current.resolutionY), false);
+			}	
+
+			SHSHtimer += Time.unscaledDeltaTime;
+
+			if (SHSHtimer > 1.5f && SHSHquit == null){
+
+				SHSHquit = new SHGUIblinkview(.5f);
+
+				string s = "HAND OVER THE CONTROL";
+
+				SHSHquit.AddSubView(new SHGUIframe(0, 0, s.Length + 2, 2, 'z'));
+				SHSHquit.AddSubView(new SHGUItext(s, 1, 1, 'r'));
+
+				SHSHquit.x = (int)(SHGUI.current.resolutionX / 2) - (int)(s.Length / 2);
+				SHSHquit.y = (int)(SHGUI.current.resolutionY / 2) - 2;
+
+				AddSubView(SHSHquit);
+			}
+
+		} else if (state == SHRLstate.Dead) {
+			overrideFadeInSpeed = .5f;
+			overrideFadeOutSpeed = .5f;
+			
+			SHSHtimer += Time.unscaledDeltaTime;
+			
+			if (SHSHtimer > 0.2f && SHSHquit == null){
+				
+				SHSHquit = new SHGUIblinkview(.5f);
+				
+				string s = "AGAIN";
+				
+				SHSHquit.AddSubView(new SHGUIframe(0, 0, s.Length + 2, 2, 'z'));
+				SHSHquit.AddSubView(new SHGUItext(s, 1, 1, 'r'));
+				
+				SHSHquit.x = (int)(SHGUI.current.resolutionX / 2) - (int)(s.Length / 2);
+				SHSHquit.y = (int)(SHGUI.current.resolutionY / 2) - 2;
+				
+				AddSubView(SHSHquit);
+			}
+			
 		}
 	}
 
@@ -543,77 +639,82 @@ public class APPshrl: SHGUIappbase
 			//tickTimer = 0;
 			return;
 		}
-		
+
 		if (key == SHGUIinput.esc)
-			SHGUI.current.PopView ();
+			Kill ();
 
-		if (player.del) {
-			return;
-		}
+		if (state == SHRLstate.Gameplay) {
+			if (player.del) {
+				return;
+			}
 
-		if (key == SHGUIinput.up) {
-			ClearPopups();
-			if (!shooting){
-				pendingTicks += 4;
-				player.Walk(0, -1);
+			if (key == SHGUIinput.up) {
+				ClearPopups ();
+				if (!shooting) {
+					pendingTicks += 4;
+					player.Walk (0, -1);
+				} else {
+					pendingTicks += 1;
+					InteractInDirection (0, -1);
+					shooting = false;
+				}
+			} else if (key == SHGUIinput.down) {
+				ClearPopups ();
+				if (!shooting) {
+					pendingTicks += 4;
+					player.Walk (0, 1);
+				} else {
+					pendingTicks += 1;
+					InteractInDirection (0, 1);
+					shooting = false;
+				}
+			} else if (key == SHGUIinput.left) {
+				ClearPopups ();
+				if (!shooting) {
+					pendingTicks += 4;
+					player.Walk (-1, 0);
+				} else {
+					pendingTicks += 1;
+					InteractInDirection (-1, 0);
+					shooting = false;
+				}
+			} else if (key == SHGUIinput.right) {
+				ClearPopups ();
+				if (!shooting) {
+					pendingTicks += 4;
+					player.Walk (1, 0);
+				} else {
+					pendingTicks += 1;
+					InteractInDirection (1, 0);
+					shooting = false;
+				}
 			}
-			else{
-				pendingTicks += 1;
-				InteractInDirection(0, -1);
-				shooting = false;
-			}
-		} else if (key == SHGUIinput.down) {
-			ClearPopups();
-			if (!shooting){
-				pendingTicks += 4;
-				player.Walk(0, 1);
-			}
-			else{
-				pendingTicks += 1;
-				InteractInDirection(0, 1);
-				shooting = false;
-			}
-		} else if (key == SHGUIinput.left) {
-			ClearPopups();
-			if (!shooting){
-				pendingTicks += 4;
-				player.Walk(-1, 0);
-			}
-			else{
-				pendingTicks += 1;
-				InteractInDirection(-1, 0);
-				shooting = false;
-			}
-		} else if (key == SHGUIinput.right) {
-			ClearPopups();
-			if (!shooting){
-				pendingTicks += 4;
-				player.Walk(1, 0);
-			}
-			else{
-				pendingTicks += 1;
-				InteractInDirection(1, 0);
-				shooting = false;
-			}
-		}
 
-		if (key == SHGUIinput.enter) {
-			ClearPopups();
-			shooting = !shooting;
+			if (key == SHGUIinput.enter) {
+				ClearPopups ();
+				shooting = !shooting;
 
-			if (shooting){
-				if (player.item == null)
-					Popup("pickup");
-				else{
-					if (player.item is SHRLgun && (player.item as SHRLgun).ammoCount >= 0){
-						Popup("shoot");
-					}
-					else{
-						Popup("throw");
+				if (shooting) {
+					if (player.item == null)
+						Popup ("pickup");
+					else {
+						if (player.item is SHRLgun && (player.item as SHRLgun).ammoCount >= 0) {
+							Popup ("shoot");
+						} else {
+							Popup ("throw");
 						
+						}
 					}
 				}
 			}
+		} else if (state == SHRLstate.SHSH) {
+			if (key == SHGUIinput.enter && SHSHtimer > .5f) {
+				Kill ();
+			}
+		} else if (state == SHRLstate.Dead) {
+			if (key == SHGUIinput.enter && SHSHtimer > .5f) {
+				RestartLevel();
+			}	
 		}
 			
 	}
@@ -664,11 +765,11 @@ public class APPshrl: SHGUIappbase
 		player.item = null;
 	}
     public override void ReactToInputMouse(int x, int y, bool clicked, SHGUIinput scroll){
-		if (fadingOut)
-			return;
+		//if (fadingOut)
+		//	return;
 		
-		if (clicked)
-			SHGUI.current.PopView ();
+		//if (clicked)
+		//	SHGUI.current.PopView ();
 	}
 
 	#region ENTITIES
@@ -738,11 +839,11 @@ public class APPshrl: SHGUIappbase
 
 	void DrawEntities(){
 		for (int i = 0; i < entities.Count; ++i) {
-			entities [i].Draw(camerax, cameray);
+			entities [i].Draw();
 		}
 
 		for (int i = 0; i < entities.Count; ++i) {
-			if (entities [i] is SHRLenemy) entities[i].Draw(camerax, cameray);
+			if (entities [i] is SHRLenemy) entities[i].Draw();
 		}
 	}
 
@@ -842,13 +943,29 @@ public class APPshrl: SHGUIappbase
 			for (int y = 0; y < levelHeight; ++y) {
 				int tile = GetTile(x, y);
 				if (tile == 1)
-					SHGUI.current.SetPixelBack('█', x + camerax, y + cameray, 'z');
+					DrawCharFaded('█', x, y, 'z', true);
 				else if (tile == 2)
-					SHGUI.current.SetPixelBack('░', x + camerax, y + cameray, 'z');
+					DrawCharFaded('░', x, y, 'z', true);
 				else if (tile == 3)
-					SHGUI.current.SetPixelBack('█', x + camerax, y + cameray, 'w');
+					DrawCharFaded('█', x, y, 'w', true);
 			}
 		}
+	}
+
+	string substituteChars = "▀▄ █ ▌ ░ ▒ ▓ ■▪                   ";
+	string substituteColors = "wwwwwwwwwwwwwwwwwwwzzzzzzzzzzzzrrrrrrrrrr";
+	
+	public void DrawCharFaded(char c, int x, int y, char col, bool front){
+		if (UnityEngine.Random.value > fade) {
+			c = substituteChars [UnityEngine.Random.Range (0, substituteChars.Length - 1)];
+			col = substituteColors [UnityEngine.Random.Range (0, substituteColors.Length - 1)];
+		}
+
+		if (front)
+			SHGUI.current.SetPixelFront(c, x + camerax, y + cameray, col);
+		else
+			SHGUI.current.SetPixelBack(c, x + camerax, y + cameray, col);
+	
 	}
 	#endregion
 
@@ -858,8 +975,8 @@ public class APPshrl: SHGUIappbase
 		Popup (msg, player.x, player.y);
 	}
 
-	public void Popup(string msg, int originx, int originy){
-		if (lastPopup != null) {
+	public void Popup(string msg, int originx, int originy, bool overrideLast = true){
+		if (lastPopup != null && overrideLast) {
 			lastPopup.Kill();
 		}
 
@@ -871,7 +988,7 @@ public class APPshrl: SHGUIappbase
 		pop.AddSubView (new SHGUIrect (X, Y, X + msg.Length - 1, Y, 'z', ' ', 2));
 		pop.AddSubView (text);
 
-		this.AddSubView (pop);
+		this.AddSubViewBottom (pop);
 
 		lastPopup = pop;
 	}
@@ -880,6 +997,16 @@ public class APPshrl: SHGUIappbase
 		if (lastPopup != null) {
 			lastPopup.Kill();
 		}
+	}
+
+	public int GetEnemyCount(){
+		int count = 0;
+		for (int i = 0; i < this.entities.Count; ++i) {
+			if (entities[i] is SHRLenemy)
+				count++;
+		}
+
+		return count - 1;
 	}
 }
 
