@@ -10,6 +10,9 @@ public class APPshrltalk: SHGUIview
 
 	public APPshrltalk()
 	{
+		x = (SHGUI.current.resolutionX / 2) - 16;
+		y = (SHGUI.current.resolutionY / 2) - 6;
+		
 		prompterQueue = new List<string> ();
 
 		AddOtherLine ("u hav 2 check out thiz gaem!?!");
@@ -22,11 +25,12 @@ public class APPshrltalk: SHGUIview
 		AddMyLine ("ok, I want try, what do?");
 		AddOtherLine ("i send files nao");
 		AddMyLine ("awsum");
-		AddOtherLine ("^W8");
+		AddOtherLine ("^W3");
 		
 		currentline = 1;
 
 		AddSubView (new SHGUIframe (0, 0, 32, 12, 'z'));
+		AddSubView (new SHGUItext ("fakechat", 2, 0, 'z'));
 		
 	}
 
@@ -96,9 +100,11 @@ public class APPshrltalk: SHGUIview
 			return;
 
 		base.ReactToInputKeyboard (key);
+		base.ReactToInputKeyboard (key);
+		base.ReactToInputKeyboard (key);
 		
 		if (key == SHGUIinput.esc)
-			SHGUI.current.PopView ();
+			Kill ();
 		
 		if (key == SHGUIinput.enter) {
 		}
@@ -106,13 +112,7 @@ public class APPshrltalk: SHGUIview
 	
 	public override void ReactToInputMouse(int x, int y, bool clicked, SHGUIinput scroll)
 	{	
-		if (fadingOut)
-			return;
 
-		base.ReactToInputMouse (x, y, clicked, scroll);
-		
-		if (clicked)
-			SHGUI.current.PopView ();
 	}
 }
 
