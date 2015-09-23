@@ -488,6 +488,32 @@ public class SHGUI : MonoBehaviour {
 		//DrawRectBack (x, y, x + text.Length, y + 1, 'g');
 	}
 
+	public void DrawTextSkipSpaces(string text, int x, int y, char col, float fade = 1, char backColor = ' '){
+		int xoff = x;
+		int yoff = 0;
+		text = StringScrambler.GetScrambledString (text, 1 - fade);
+		for (int i = 0; i < text.Length; ++i) {
+			if (text[i] == '\n' || (int)text[i] == 10){
+				xoff = x;
+				yoff++;
+			}
+			else{
+				if (Random.value < fade){
+					if (text[i] != ' '){
+						SetPixelFront(text[i], xoff, y + yoff, col);
+						if (backColor != ' '){
+							SetPixelBack('█', xoff, y + yoff, backColor);
+						}
+					}
+				}
+				xoff++;
+				
+			}
+		}
+		
+		//DrawRectBack (x, y, x + text.Length, y + 1, 'g');
+	}
+
 	public void DrawRectBack(int startx, int starty, int endx, int endy, char col, float fade = 1){
 
 		for (int x = startx; x < endx; ++x) {
