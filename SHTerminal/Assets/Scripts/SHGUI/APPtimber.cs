@@ -7,6 +7,7 @@ public class APPtimber: SHGUIappbase
 {
 
 	public List<SHGUIsprite> trees;
+	SHGUIsprite deadTree;
 	public SHGUIsprite dude;
 
 	bool left = true;
@@ -75,6 +76,19 @@ public class APPtimber: SHGUIappbase
 	}
 
 	void UpdateTrees(){
+		if (deadTree != null && !deadTree.remove) {
+			if (left){
+				deadTree.x++;
+			}
+			else{
+				deadTree.x--;
+			}
+
+			if (deadTree.remove){
+				deadTree = null;
+			}
+		}
+
 		if (trees.Count > 0) {
 			if (trees[0].y < 23 - 6){
 				for (int i = 0; i < trees.Count; ++i){
@@ -114,6 +128,8 @@ public class APPtimber: SHGUIappbase
 					AddTreeOnTop (true);
 				}
 				trees [0].Kill ();
+				trees[0].overrideFadeOutSpeed = .5f;
+				deadTree = trees[0];
 				if (trees[1].currentFrame == 1 && !left) okay = false; 
 				if (trees[1].currentFrame == 2 && left) okay = false;
 				if (!okay){

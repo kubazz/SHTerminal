@@ -505,8 +505,9 @@ public class SHGUI : MonoBehaviour {
 							SetPixelBack('█', xoff, y + yoff, backColor);
 						}
 					}
-					xoff++;
 				}
+				xoff++;
+				
 			}
 		}
 		
