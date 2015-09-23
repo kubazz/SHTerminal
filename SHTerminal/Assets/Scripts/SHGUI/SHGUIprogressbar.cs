@@ -36,17 +36,17 @@ public class SHGUIprogressbar: SHGUIview
 
 		base.Redraw(offx, offy);
 
-		if (fade < 0.999f)
-			return;
+		//if (fade < 0.999f)
+		//	return;
 
 
-		for (int i = 0; i <= length; ++ i){
+		for (int i = 0 + (int)(length * (1-fade)); i <= length * fade; ++ i){
 			SHGUI.current.SetPixelFront(style[3], 1+ x + offx + i, 1 + y + offy, style[2]);
 		}
 		
-		int p = (int)(currentProgress * length);
+		int p = (int)(currentProgress * length * fade);
 		bool maxed = (currentProgress >= 1f);
-		for (int i = 0; i <= p; ++ i){
+		for (int i = 0 + (int)(length * (1-fade)); i <= p; ++ i){
 			SHGUI.current.SetPixelFront(style[1], 1 + x + offx + i, 1 + y + offy, (maxed?'w':style[0]));
 
 			if (i == p){

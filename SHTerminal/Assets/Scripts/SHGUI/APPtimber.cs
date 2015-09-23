@@ -15,6 +15,9 @@ public class APPtimber: SHGUIappbase
 
 	float hitTime = 0;
 
+	int score = 0;
+	int lastdisplayedscore = -1;
+
 	public APPtimber (): base("tree-dude-tree-dude-dude-by-piotr")
 	{
 		//AddSubView (new SHGUIsprite ().AddFramesFromFile ("APPtimberdude", 6));
@@ -31,27 +34,34 @@ public class APPtimber: SHGUIappbase
 			AddTreeOnTop (false);
 			AddTreeOnTop (true);
 		}
+
+		timerBar = new SHGUIprogressbar (20, 3, 21, "", "");
+		timerBar.SetStyle ("w█w░z█");
+		AddSubView (timerBar);
 	}
 
 	public override void Update ()
 	{
 		base.Update ();
-
 		hitTime -= Time.unscaledDeltaTime;
 		dude.y = 23-6;
 		int margin = 14;
 		if (left) {
 			dude.x = 23 - margin;
-			if (hitTime > 0)
+			if (hitTime > 0){
 				dude.currentFrame = 1;
+				dude.y -= 1;
+			}
 			else
 				dude.currentFrame = 0;
 
 		} else {
 			dude.x = 23 + margin;
 			dude.currentFrame = 3;
-			if (hitTime > 0)
+			if (hitTime > 0){
+				dude.y -= 1;
 				dude.currentFrame = 3;
+			}
 			else
 				dude.currentFrame = 2;
 		}
@@ -60,6 +70,24 @@ public class APPtimber: SHGUIappbase
 			dude.currentFrame = 4;
 		}
 		UpdateTrees ();
+		DrawScore ();
+		DrawProgressBar ();
+
+		guiHidingTimer -= Time.unscaledDeltaTime;
+		if (guiHidingTimer < 0) {
+			guiHidingTimer = .0f;
+
+			int diff = desiredGuiHideOffset - guiHideOffset;
+			diff = Mathf.Clamp(diff, -1, 1);
+
+			guiHideOffset += diff;
+		}
+
+		if (!alive) {
+			desiredGuiHideOffset = 7;
+		} else {
+			desiredGuiHideOffset = 0;
+		}
 
 	}
 
@@ -67,8 +95,19 @@ public class APPtimber: SHGUIappbase
 	{
 		base.Redraw (offx, offy);
 
+		if (!alive) {
+			dude.currentFrame = 5;
+			dude.RedrawBlack(offx, offy);
+			dude.currentFrame = 4;
+		}
 		dude.Redraw (offx, offy);
-
+		if (timerBar != null) {
+			timerBar.Redraw(offx, offy);
+		}
+		if (smallScore != null) {
+			smallScore.Redraw(offx, offy);
+		}
+		
 		APPFRAME.Redraw (offx, offy);
 		APPINSTRUCTION.Redraw (offx, offy);
 		APPLABEL.Redraw (offx, offy);
@@ -79,9 +118,13 @@ public class APPtimber: SHGUIappbase
 		if (deadTree != null && !deadTree.remove) {
 			if (left){
 				deadTree.x++;
+				deadTree.x++;
+				
 			}
 			else{
 				deadTree.x--;
+				deadTree.x--;
+				
 			}
 
 			if (deadTree.remove){
@@ -135,6 +178,14 @@ public class APPtimber: SHGUIappbase
 				if (!okay){
 					alive = false;
 				}
+
+				if (okay){
+					score++;
+					if (left)
+						AddTextParticle("CHOP!", 36 - 6, 20 + UnityEngine.Random.Range(-2, 2), 'w');
+					else
+						AddTextParticle("CHOP!", 24 + 6, 20 + UnityEngine.Random.Range(-2, 2), 'w');
+				}
 			}
 			else{
 				alive = false;
@@ -142,9 +193,76 @@ public class APPtimber: SHGUIappbase
 		}
 	}
 
+	SHGUIview smallScore;
+	SHGUItext smallScoreContent;
+	SHGUIview bigScore;
+
+	float guiHidingTimer = 0;
+	int guiHideOffset = 50;
+	int desiredGuiHideOffset = 0;
+	
+	void DrawScore(){
+		if (smallScore != null) {
+			smallScore.y = 6 - guiHideOffset;
+		}
+
+		if (alive) {
+			if (score == lastdisplayedscore)
+				return;
+
+			if (smallScore != null){
+				smallScore.KillInstant();
+			}
+
+			smallScore = null;
+			smallScore = new SHGUIview();
+			smallScore.overrideFadeInSpeed = 4f;
+			string s = (score )+ "";
+			if (s.Length == 2){
+				s = s[0] + " " + s[1];
+			}
+			if (s.Length == 4){
+				s = s[0] + "" + s[1] + " " + s[2] + "" + s[3];
+			}
+			smallScoreContent = new SHGUItext(s, 0 - (int)(s.Length / 2), 0, 'w');
+			smallScore.x = 32;
+			smallScore.y = 6 - guiHideOffset;
+			smallScore.AddSubView(new SHGUIrect(-(int)(s.Length / 2) - 2, -1, (int)(s.Length / 2) + 2, 1, 'z'));
+			smallScore.AddSubView(new SHGUIframe(-(int)(s.Length / 2) - 2, -1, (int)(s.Length / 2) + 2, 1, 'z'));
+			
+			smallScore.AddSubView(smallScoreContent);
+
+			AddSubView(smallScore);
+
+			lastdisplayedscore = score;
+
+		
+		} else {
+		
+		}
+	
+	}
+
+	SHGUIprogressbar timerBar;
+
+	void DrawProgressBar(){
+		timerBar.y = 3 - guiHideOffset;
+		timerBar.currentProgress = .5f;
+	}
+
+	void AddTextParticle(string text, int x, int y, char color){
+		SHGUIview temp = new SHGUItempview (.1f);
+
+		temp.fade = 1f;
+		SHGUItext t = new SHGUItext (text, x, y, color);
+		temp.AddSubView (t);
+		t.fade = 1f;
+		AddSubView (temp);
+	}
+
 	void AddTreeOnTop(bool forceBlank){
 		SHGUIsprite s = new SHGUIsprite ().AddFramesFromFile ("APPtimbertrees", 6);
-		s.x = 12;
+		s.x = 11;
 		if (trees.Count > 0) {
 			s.y = trees [trees.Count - 1].y - 6;
 		} else {

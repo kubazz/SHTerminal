@@ -514,6 +514,29 @@ public class SHGUI : MonoBehaviour {
 		//DrawRectBack (x, y, x + text.Length, y + 1, 'g');
 	}
 
+	public void DrawBlack(string text, int x, int y){
+		int xoff = x;
+		int yoff = 0;
+		text = StringScrambler.GetScrambledString (text, 1 - 1);
+		for (int i = 0; i < text.Length; ++i) {
+			if (text[i] == '\n' || (int)text[i] == 10){
+				xoff = x;
+				yoff++;
+			}
+			else{
+				if (Random.value < 1){
+					if (text[i] != ' '){
+						SetPixelFront(' ', xoff, y + yoff, 'x');
+					}
+				}
+				xoff++;
+				
+			}
+		}
+		
+		//DrawRectBack (x, y, x + text.Length, y + 1, 'g');
+	}
+	
 	public void DrawRectBack(int startx, int starty, int endx, int endy, char col, float fade = 1){
 
 		for (int x = startx; x < endx; ++x) {

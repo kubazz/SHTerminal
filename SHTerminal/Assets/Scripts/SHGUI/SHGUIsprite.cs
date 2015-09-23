@@ -59,14 +59,8 @@ public class SHGUIsprite : SHGUIview {
 		base.Update ();
 	}
 
-	public void DrawDirect(int x, int y, char col, int frame, float fade){
-		this.x = x;
-		this.y = y;
-		this.color = col;
-		this.fade = fade;
-		currentFrame = frame;
-
-		Redraw (0, 0);
+	public void RedrawBlack(int offx, int offy){
+		SHGUI.current.DrawBlack (frames[currentFrame], x + offx, y + offy);
 	}
 
 	public override void Redraw(int offx, int offy){
