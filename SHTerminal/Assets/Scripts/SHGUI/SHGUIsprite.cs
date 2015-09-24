@@ -44,19 +44,49 @@ public class SHGUIsprite : SHGUIview {
 
 		return this;
 	}
+
+	public SHGUIsprite AddSpecyficFrameFromFile(string filename, int rowsPerFrame, int addFrame){
+		string art = SHGUI.current.GetASCIIartByName (filename);
+		
+		string[] rows = art.Split ('\n');
+		
+		int row = 0;
+		string str = "";
+		int count = 0;
+		for (int i = 0; i < rows.Length; ++i) {
+			str += rows[i] + "\n";
+			row++;
+			if (row > rowsPerFrame - 1){
+				row = 0;
+				if (addFrame == count) AddFrame(str);
+				str = "";
+
+				count++;
+			}
+		}
+		
+		return this;
+	}
 	
 	// Update is called once per frame
 	public override void Update () {
+		base.Update ();
+		
+		if (fade < .999f) {
+			return;
+		}
 		currentAnimationTimer += Time.unscaledDeltaTime;
 		if (currentAnimationTimer > animationSpeed && (animationSpeed > 0)) {
-			currentAnimationTimer = 0;
+			currentAnimationTimer -= animationSpeed;
 			currentFrame++;
 			if (currentFrame >= frames.Count) {
-				currentFrame = 0;
+				if (loops)
+					currentFrame = 0;
+				else
+					currentFrame = frames.Count - 1;
 			}
 		}
 
-		base.Update ();
 	}
 
 	public void RedrawBlack(int offx, int offy){

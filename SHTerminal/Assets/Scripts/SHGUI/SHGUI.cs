@@ -367,6 +367,12 @@ public class SHGUI : MonoBehaviour {
 		content = content.Replace('7', '█');
 		content = content.Replace('8', '█');
 		content = content.Replace('9', '█');
+
+		content = content.Replace('.', '█');
+		content = content.Replace(',', '█');
+		content = content.Replace(':', '█');
+		content = content.Replace(';', '█');
+		
 		
 		content = content.Replace('\'', '█');
 
@@ -488,12 +494,14 @@ public class SHGUI : MonoBehaviour {
 			}
 			else{
 				if (Random.value < fade){
-					SetPixelFront(text[i], xoff, y + yoff, col);
-					if (backColor != ' '){
-						SetPixelBack('█', xoff, y + yoff, backColor);
+					if (text[i] != ' '){
+						SetPixelFront(text[i], xoff, y + yoff, col);
+						if (backColor != ' '){
+							SetPixelBack('█', xoff, y + yoff, backColor);
+						}
 					}
-					xoff++;
 				}
+				xoff++;
 			}
 		}
 

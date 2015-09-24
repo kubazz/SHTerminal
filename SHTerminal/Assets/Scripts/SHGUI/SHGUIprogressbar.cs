@@ -9,6 +9,9 @@ public class SHGUIprogressbar: SHGUIview
 	public SHGUIview frame;
 	public SHGUIview rect;
 
+	public SHGUIview labelView;
+	public SHGUIview subtitleView;
+
 	public SHGUIprogressbar (int X, int Y, int Length, string label, string sub)
 	{
 		Init ();
@@ -16,9 +19,24 @@ public class SHGUIprogressbar: SHGUIview
 		y = Y;
 		rect = AddSubView(new SHGUIrect(0, 0, Length + 2, 2));
 		frame = AddSubView(new SHGUIframe(0, 0, Length + 2, 2, 'z'));
-		AddSubView(new SHGUItext(label, (int)((Length  + 2)/ 2 - label.Length / 2), 0, 'w'));
-		AddSubView(new SHGUItext(sub, (int)((Length  + 2)/ 2 - sub.Length / 2), 2, 'w'));
+		labelView = AddSubView(new SHGUItext(label, (int)((Length  + 2)/ 2 - label.Length / 2) + 1, 0, 'w'));
+		subtitleView = AddSubView(new SHGUItext(sub, (int)((Length  + 2)/ 2 - sub.Length / 2) + 1, 2, 'w'));
 		length = Length;
+	}
+
+	public SHGUIprogressbar SetBlinkingLabel(string label, float blinkTime){
+
+		if (labelView != null) {
+			labelView.KillInstant();
+		}
+
+		SHGUIview top = AddSubView (new SHGUIview ());
+		SHGUIview b = top.AddSubView (new SHGUIblinkview (blinkTime));
+		b.AddSubView(new SHGUItext(label, (int)((length  + 2)/ 2 - label.Length / 2) + 1, 0, 'w'));
+
+		labelView = top;
+
+		return this;
 	}
 
 	public SHGUIprogressbar SetStyle(string Style){
