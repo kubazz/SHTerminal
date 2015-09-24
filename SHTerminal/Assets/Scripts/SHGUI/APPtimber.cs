@@ -107,6 +107,9 @@ public class APPtimber: SHGUIappbase
 		if (smallScore != null) {
 			smallScore.Redraw(offx, offy);
 		}
+		if (bigScore != null) {
+			bigScore.Redraw(offx, offy);
+		}
 		
 		APPFRAME.Redraw (offx, offy);
 		APPINSTRUCTION.Redraw (offx, offy);
