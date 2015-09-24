@@ -61,7 +61,7 @@ public class APPtreedude: SHGUIappbase
 		AddSubView (tutorialView);
 
 		SHGUIblinkview b1 = new SHGUIblinkview (.75f).SetFlipped();
-		int tutorialy = 20;
+		int tutorialy = 15;
 		b1.AddSubView(new SHGUItext ("CHOP-LEFT-->", 13, tutorialy, 'w'));
 		tutorialView.AddSubView (b1);
 
@@ -141,11 +141,18 @@ public class APPtreedude: SHGUIappbase
 			guiHideOffset += diff;
 		}
 
+		if (lastFigletParticle != null && lastFigletParticle.remove)
+			lastFigletParticle = null;
+
 		if (!alive) {
 			desiredGuiHideOffset = 40;
 		} else {
-			desiredGuiHideOffset = 0;
+			if (lastFigletParticle == null)
+				desiredGuiHideOffset = 0;
+			else
+				desiredGuiHideOffset = 10;
 		}
+
 	}
 
 	void UpdateTutorial(){
@@ -317,7 +324,7 @@ public class APPtreedude: SHGUIappbase
 
 	string[] chopchopMessages = {"CHOP CHOP", "FASTER", "LEVEL UP", "SPEED UP", "TICK TOCK"};
 	void DisplayRandomChopChopMessage(){
-		AddFigletTextParticle(chopchopMessages[UnityEngine.Random.Range(0, chopchopMessages.Length)], 32, 2, 'w');
+		AddFigletTextParticle(chopchopMessages[UnityEngine.Random.Range(0, chopchopMessages.Length)], 32, 3, 'w');
 	}
 
 	SHGUIview smallScore;

@@ -36,7 +36,7 @@ public class APPtreedudeintro: SHGUIappbase
 		prompters.AddSubView (p1);
 
 		SHGUIprompter p2 = new SHGUIprompter (32 - 9, 15, 'w');
-		p2.SetInput ("^M2^W9AND HIS SONG IS^M1^W3.^W3.^W3.^W7");
+		p2.SetInput ("^M2^W9AND HIS SONG IS^M1^W2.^W2.^W2.^W7");
 		prompters.AddSubView (p2);
 
 

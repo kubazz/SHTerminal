@@ -52,11 +52,10 @@ public class SHGUIprogressbar: SHGUIview
 	
 	public override void Redraw(int offx, int offy){
 
+		if (hidden)
+			return;
+
 		base.Redraw(offx, offy);
-
-		//if (fade < 0.999f)
-		//	return;
-
 
 		for (int i = 0 + (int)(length * (1-fade)); i <= length * fade; ++ i){
 			SHGUI.current.SetPixelFront(style[3], 1+ x + offx + i, 1 + y + offy, style[2]);
