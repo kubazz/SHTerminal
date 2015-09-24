@@ -84,7 +84,7 @@ public class APPtimber: SHGUIappbase
 		}
 
 		if (!alive) {
-			desiredGuiHideOffset = 7;
+			desiredGuiHideOffset = 40;
 		} else {
 			desiredGuiHideOffset = 0;
 		}
@@ -198,7 +198,7 @@ public class APPtimber: SHGUIappbase
 	SHGUIview bigScore;
 
 	float guiHidingTimer = 0;
-	int guiHideOffset = 50;
+	int guiHideOffset = 7;
 	int desiredGuiHideOffset = 0;
 	
 	void DrawScore(){
@@ -235,9 +235,17 @@ public class APPtimber: SHGUIappbase
 			AddSubView(smallScore);
 
 			lastdisplayedscore = score;
-
-		
 		} else {
+			if (bigScore == null && guiHideOffset == 40){
+				bigScore = new SHGUIview();
+				AddSubView(bigScore);
+
+				//bigScore.AddSubView(new SHGUItext(SHGUI.current.GetASCIIartFromFont(score + ""), 10, 11, 'x'));
+				bigScore.AddSubView(new SHGUItext(SHGUI.current.GetASCIIartFromFont("YOU DEAD"), 10, 3, 'w'));
+				bigScore.AddSubView(new SHGUItext(SHGUI.current.GetASCIIartFromFont("SCORED:"), 10, 9, 'w'));
+				bigScore.AddSubView(new SHGUItext(SHGUI.current.GetASCIIartFromFont(score + ""), 10, 15, 'w'));
+				
+			}
 		
 		}
 	

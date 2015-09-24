@@ -356,6 +356,18 @@ public class SHGUI : MonoBehaviour {
 		content = content.Replace('z', '█');
 		content = content.Replace('x', '█');
 		content = content.Replace('y', '█');
+
+		content = content.Replace('0', '█');
+		content = content.Replace('1', '█');
+		content = content.Replace('2', '█');
+		content = content.Replace('3', '█');
+		content = content.Replace('4', '█');
+		content = content.Replace('5', '█');
+		content = content.Replace('6', '█');
+		content = content.Replace('7', '█');
+		content = content.Replace('8', '█');
+		content = content.Replace('9', '█');
+		
 		content = content.Replace('\'', '█');
 
 		return content;
