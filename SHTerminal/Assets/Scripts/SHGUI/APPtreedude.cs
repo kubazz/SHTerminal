@@ -33,7 +33,7 @@ public class APPtreedude: SHGUIappbase
 
 	public APPtreedude (): base("TREE-DUDE-TREE-DUDE-DUDE-by-piotr")
 	{
-		AddSubView (new SHGUItext (SHGUI.current.GetASCIIartByName ("APPtreedudeback"), 0, 0, 'z'));
+		//AddSubView (new SHGUItext (SHGUI.current.GetASCIIartByName ("APPtreedudeback"), 0, 0, 'z'));
 
 
 		timeToDie = timeToDieMax * .5f;
