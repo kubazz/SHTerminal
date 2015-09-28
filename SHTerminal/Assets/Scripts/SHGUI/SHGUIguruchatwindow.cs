@@ -96,6 +96,10 @@ public class SHGUIguruchatwindow: SHGUIview
 		return p.CountLines() + 2;
 	}
 
+	public SHGUIprompter GetPrompter(){
+		return textElement;
+	}
+
 	private void RefreshFrames(){
 		frameElement.remove = true;
 		frameElement.hidden = true;

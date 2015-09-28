@@ -94,7 +94,7 @@ public class APPtreedudeintro: SHGUIappbase
 		TreeDudeSequence (s, "TT|| D|0| TT|| D| D|");
 		TreeDudeSequence (s, "TT|| D|2| TT|| D| D|");
 		
-		s.animationSpeed = .3f;
+		s.animationSpeed = .25f;
 		
 		s.loops = true;
 		

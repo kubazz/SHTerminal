@@ -379,7 +379,7 @@ public class APPtreedude: SHGUIappbase
 				SHGUIsprite s1 = new SHGUIsprite();
 				s1.x = 10;
 				s1.y = 2;
-				s1.animationSpeed = 1.5f;
+				s1.animationSpeed = .75f;
 				s1.loops = true;
 				APPtreedudeintro.TreeDudeSequence(s1, "D%T%");
 				bigScore.AddSubView(s1);
@@ -388,7 +388,7 @@ public class APPtreedude: SHGUIappbase
 				s2.x = 35;
 				s2.y = 2;
 				s2.loops = true;
-				s2.animationSpeed = 1.5f;
+				s2.animationSpeed = .75f;
 				APPtreedudeintro.TreeDudeSequence(s2, "%DDD");
 				bigScore.AddSubView(s2);
 				

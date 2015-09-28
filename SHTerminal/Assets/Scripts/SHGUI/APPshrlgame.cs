@@ -16,7 +16,7 @@ public class APPshrlgame: SHGUIview
 		//AddIntermezzoMid ();
 		//AddIntermezzoOut ();
 
-		/*
+
 		AddIntro ();
 		queue.Add (new APPshrltalk ());
 
@@ -27,7 +27,6 @@ public class APPshrlgame: SHGUIview
 		AddDownload ();
 		queue.Add (new APPshrlmenu ());
 		AddIntermezzoIn ();
-*/
 		
 		queue.Add (new APPshrl("shrlTESTLEVEL"));
 		AddIntermezzoMid ();
