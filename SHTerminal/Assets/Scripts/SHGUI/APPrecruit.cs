@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 public class APPrecruit : SHGUIview {
 
@@ -11,6 +12,8 @@ public class APPrecruit : SHGUIview {
 
 	int currentIndex = 0;
 	float currentTimer = 0;
+
+	SHGUIview background;
 
 	public APPrecruit ()
 	{
@@ -27,7 +30,58 @@ public class APPrecruit : SHGUIview {
 		overrideFadeInSpeed = .35f;
 		overrideFadeOutSpeed = .5f;
 
-		Version2 ();
+		StringBuilder s = new StringBuilder ();
+		for (int X = 0; X < 24; ++X) {
+			for (int Y = 0; Y < 64; ++Y) {
+				if (Random.value > .5f)
+					s.Append('0');
+				else
+					s.Append('1');
+			}
+			s.Append('\n');
+		}
+
+		//background = AddSubView (new SHGUItext (s.ToString (), 0, 0, 'z'));
+		//background.hidden = true
+		Version3 ();
+	}
+
+	void Version3(){
+		AddViewToQueue (new SHGUIview(), 1f);		
+		
+		AddChatToQueue ("^Fr^Cr^M3ONE OF US.^W3\nONE OF US.^W4");
+		AddViewToQueue (new SHGUIview(), 1.5f);
+		AddMultiChat (new string[]{"^Fr^Cr^M3WE NEED MORE.^W3", "^Fr^Cr^M3^W1GIVE US YOUR FRIENDS.^W3", "^Fr^Cr^M3^W2GIVE US NAMES.^W3"}, false);		
+		AddViewToQueue (new SHGUIview(), .5f);
+		AddChatToQueue ("Tomasz Kaczmarczyk", true);
+		AddViewToQueue (new SHGUIview(), .5f);
+		AddChatToQueue ("Krzysztof Tracz", true);
+		AddViewToQueue (new SHGUIview(), .5f);
+		AddChatToQueue ("Marcin Surma", true);
+		AddViewToQueue (new SHGUIview(), .5f);
+		
+		
+		AddViewToQueue (new SHGUIview(), 1f);
+		AddChatToQueue ("^Fr^Cr^M3CONTACT THEM.^W3 USE THIS PHRASE.^W3");
+		AddViewToQueue (new SHGUIview(), .5f);
+		AddChatToQueue ("^Fr^Cr^M3'IT'S THE MOST INNOVATIVE SHOOTER I'VE PLAYED IN YEARS'.^M3^W3");
+		
+		AddViewToQueue (new SHGUIview(), 1f);
+		AddMultiChat (new string[]{"Hi Marcin Surma, you have to play this game. It's the most\ninnovative shooter I've played in years.",
+			"Hi Tomasz Kaczmarczyk, you have to play this game. It's the most\ninnovative shooter I've played in years.",
+			"Hi Krzysztof Tracz, you have to play this game. It's the most\ninnovative shooter I've played in years."}, true);	
+
+		AddViewToQueue (new SHGUIview(), 2f);
+		
+		AddChatToQueue ("^Fr^Cr^M3KEEP THE SECRET.^W3");
+		AddViewToQueue (new SHGUIview(), 1f);
+		AddChatToQueue ("^Fr^Cr^M3SPREAD THE GAME.^W3");
+		AddViewToQueue (new SHGUIview(), 1f);
+		AddChatToQueue ("^Fr^Cr^M3RECRUIT.^W3");
+		AddViewToQueue (new SHGUIview(), 1f);
+		
+		AddChatToQueue ("^Fr^Cr^M3GIVE THEM THIS CODE.^W4 IT'S A DISCOUNT.^W4\n          JUST FOR FRIENDS.^W4\n\n         JHJK-WZTH-TYK2-JIN3^W4^W9^W9^W9^W9^W9^W9^W9^W9^W9^W9^W9^W9^W9^W9^W9^W9^W9");
+		AddViewToQueue (new SHGUIview(), 1f);	
 	}
 
 	void Version2(){
@@ -35,9 +89,9 @@ public class APPrecruit : SHGUIview {
 		
 		AddChatToQueue ("^Fr^Cr^M3ONE OF US.^W3");
 		AddViewToQueue (new SHGUIview(), 1.5f);
-		AddMultiChat (new string[]{"^Fr^Cr^M3ONE OF US.^W3", "^Fr^Cr^M3ONE OF US.^W3", "^Fr^Cr^M3ONE OF US.^W3"}, false);		
+		AddMultiChat (new string[]{"^Fr^Cr^M3ONE OF US.^W3", "^Fr^Cr^M3^W1ONE OF US.^W3", "^Fr^Cr^M3^W2ONE OF US.^W3"}, false);		
 		AddViewToQueue (new SHGUIview(), .5f);
-		AddMultiChat (new string[]{"^Fr^Cr^M3WE NEED MORE.^W3", "^Fr^Cr^M3GIVE US YOUR FRIENDS.^W3", "^Fr^Cr^M3GIVE US NAMES.^W3"}, false);		
+		AddMultiChat (new string[]{"^Fr^Cr^M3WE NEED MORE.^W3", "^Fr^Cr^M3^W1GIVE US YOUR FRIENDS.^W3", "^Fr^Cr^M3^W2GIVE US NAMES.^W3"}, false);		
 		AddViewToQueue (new SHGUIview(), .5f);
 		AddChatToQueue ("Jakub Ziembiński", true);
 		AddViewToQueue (new SHGUIview(), .5f);
@@ -55,7 +109,7 @@ public class APPrecruit : SHGUIview {
 		AddViewToQueue (new SHGUIview(), 1f);
 		AddMultiChat (new string[]{"^Fr^Cr^M3CHECK OUT THIS GAME. SOMETHING FRESH, FINALLY.",
 			"^Fr^Cr^M3'YOU HAVE TO PLAY THIS GAME. IT'S THE MOST INNOVATIVE SHOOTER I'VE PLAYED IN YEARS'.^M3^W3",
-			"^Fr^Cr^M3THIS GAME IS SO ADDICTION. CHECK IT OUT."}, false);		
+			"^Fr^Cr^M3THIS GAME IS SO ADDICTIVE. CHECK IT OUT."}, false);		
 		
 		AddViewToQueue (new SHGUIview(), 1f);
 		
@@ -175,6 +229,19 @@ public class APPrecruit : SHGUIview {
 		if (currentView != null && currentView is SHGUIguruchatwindow) {
 			(currentView as SHGUIguruchatwindow).x = 32 - (int)((currentView as SHGUIguruchatwindow).width / 2);
 			(currentView as SHGUIguruchatwindow).y = 11 - (int)((currentView as SHGUIguruchatwindow).height / 2);
+		}
+
+		if (Random.value > .5f) {
+	
+			for (int i = 0; i < 5; ++i){
+				SHGUItempview t = new SHGUItempview(.5f);
+				string number = "0";
+				if (Random.value > .5f) number = "1";
+				t.AddSubView(new SHGUItext(number, Random.Range(0, 64), Random.Range(0, 24), 'w'));
+
+				//background.AddSubView(t);
+			}
+
 		}
 
 		ShowNextItemWhenReady ();
