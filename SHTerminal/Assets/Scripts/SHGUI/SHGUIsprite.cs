@@ -78,6 +78,7 @@ public class SHGUIsprite : SHGUIview {
 		currentAnimationTimer += Time.unscaledDeltaTime;
 		if (currentAnimationTimer > animationSpeed && (animationSpeed > 0)) {
 			currentAnimationTimer -= animationSpeed;
+			currentAnimationTimer = 0;
 			currentFrame++;
 			if (currentFrame >= frames.Count) {
 				if (loops)
