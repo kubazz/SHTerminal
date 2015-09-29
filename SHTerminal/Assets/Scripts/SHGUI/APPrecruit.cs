@@ -42,14 +42,51 @@ public class APPrecruit : SHGUIview {
 		}
 
 		//background = AddSubView (new SHGUItext (s.ToString (), 0, 0, 'z'));
-		//background.hidden = true
+		background = AddSubView (new SHGUIview());
+		
 		Version3 ();
 	}
 
 	void Version3(){
 		AddViewToQueue (new SHGUIview(), 1f);		
 		
-		AddChatToQueue ("^Fr^Cr^M3ONE OF US.^W3\nONE OF US.^W4");
+		//AddChatToQueue ("^Fr^Cr^M3ONE OF US.^W3\nONE OF US.^W4");
+		AddChatToQueue ("^Fr^Cr^M3ONE OF US.^W4");
+		AddViewToQueue (new SHGUIview(), .5f);		
+
+		SHGUIview view = new SHGUIview ();
+
+		int marginx = 7;
+		int marginy = 5;
+		
+		for (int i = 0; i < 10; ++i) {
+			SHGUIguruchatwindow chat2 = new SHGUIguruchatwindow ();
+			chat2.overrideFadeInSpeed = 1f;
+			chat2.PunchIn(Random.Range(.5f, 1f));
+			chat2.SetContent ("^Fr^Cr^M3ONE OF US.");
+			chat2.desiredWidth = 25;
+			chat2.showInstructions = false;
+
+			Random.seed = 13274 + i;
+			chat2.x = Random.Range(0 + marginx, 64 - 11 - marginx) - 6;
+			chat2.y = Random.Range(1 + marginy, 24 - 3 - marginy);
+
+			view.AddSubView(chat2);
+		}
+
+		SHGUIguruchatwindow chat = new SHGUIguruchatwindow ();
+		chat.overrideFadeInSpeed = 1f;
+		chat.PunchIn(Random.Range(.5f, 1f));
+		chat.SetContent ("^Fr^Cr^M3ONE OF US.");
+		chat.desiredWidth = 25;
+		chat.showInstructions = false;
+
+		chat.x = 32 - 6;
+		chat.y = 10;
+		view.AddSubView(chat);
+			
+		AddViewToQueue (view, 3.5f);
+
 		AddViewToQueue (new SHGUIview(), 1.5f);
 		AddMultiChat (new string[]{"^Fr^Cr^M3WE NEED MORE.^W3", "^Fr^Cr^M3^W1GIVE US YOUR FRIENDS.^W3", "^Fr^Cr^M3^W2GIVE US NAMES.^W3"}, false);		
 		AddViewToQueue (new SHGUIview(), .5f);
@@ -75,7 +112,7 @@ public class APPrecruit : SHGUIview {
 		
 		AddChatToQueue ("^Fr^Cr^M3KEEP THE SECRET.^W3");
 		AddViewToQueue (new SHGUIview(), 1f);
-		AddChatToQueue ("^Fr^Cr^M3SPREAD THE GAME.^W3");
+		AddChatToQueue ("^Fr^Cr^M3SPREAD THE SYSTEM.^W3");
 		AddViewToQueue (new SHGUIview(), 1f);
 		AddChatToQueue ("^Fr^Cr^M3RECRUIT.^W3");
 		AddViewToQueue (new SHGUIview(), 1f);
@@ -231,18 +268,20 @@ public class APPrecruit : SHGUIview {
 			(currentView as SHGUIguruchatwindow).y = 11 - (int)((currentView as SHGUIguruchatwindow).height / 2);
 		}
 
-		if (Random.value > .5f) {
+		if (Random.value > .97f) {
 	
-			for (int i = 0; i < 5; ++i){
+			for (int i = 0; i < 1; ++i){
 				SHGUItempview t = new SHGUItempview(.5f);
 				string number = "0";
 				if (Random.value > .5f) number = "1";
 				t.AddSubView(new SHGUItext(number, Random.Range(0, 64), Random.Range(0, 24), 'w'));
 
-				//background.AddSubView(t);
+				background.AddSubView(t);
 			}
 
 		}
+
+		background.hidden = true;
 
 		ShowNextItemWhenReady ();
 	}

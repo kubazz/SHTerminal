@@ -28,6 +28,11 @@ public class SHGUIrect: SHGUIview
 
 
 	}
+
+	public SHGUIrect SetChar(char fillChar){
+		c = fillChar;
+		return this;
+	}
 	
 	public override void Redraw (int offx, int offy)
 	{

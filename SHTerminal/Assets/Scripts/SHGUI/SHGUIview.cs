@@ -219,7 +219,7 @@ public class SHGUIview
 		return false;
 	}
 
-	public SHGUIview SetColor(char c){
+	public virtual SHGUIview SetColor(char c){
 		color = c;
 		return this;
 	}
