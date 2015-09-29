@@ -27,7 +27,7 @@ public class APPmindcopy: SHGUIappbase
 	int cypherBrainViewSideY = 8 + 1;
 
 	int phase;
-	int skipToPhase = 5;
+	int skipToPhase = 0;
 
 	float speedMulti = 1f;
 
