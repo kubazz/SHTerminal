@@ -80,12 +80,18 @@ public class APPmindcopy: SHGUIappbase
 
 	float progress;
 	public override void Update(){
+		bool skipping = false;
 		if (phase < skipToPhase) {
+			skipping = true;
 			speedMulti = 100000000f;
 		} else {
-			speedMulti = 1f;
+			speedMulti = 2f;
 		}
 		time += Time.unscaledDeltaTime;
+
+		if (fade < .99f && !skipping) {
+			return;
+		}
 
 		memoryFrame.x = cypherBrainView.x;
 		memoryFrame.y = cypherBrainView.y;
@@ -154,7 +160,7 @@ public class APPmindcopy: SHGUIappbase
 
 	void UpdateCurrentPhase(){
 		if (phase == 0) {
-			progress += Mathf.Abs (Mathf.Cos (time)) * .0005f * speedMulti;
+			progress += Mathf.Abs (Mathf.Cos (time)) * .0025f * speedMulti;
 			
 			if (progress > 1.05f) {
 				SetupNewPhase (1);
