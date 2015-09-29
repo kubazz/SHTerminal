@@ -28,7 +28,7 @@ public class APPmindcopy: SHGUIappbase
 
 	int phase;
 
-	float speedMulti = 5f;
+	float speedMulti = 1f;
 
 	public APPmindcopy(): base("copy-by-SUPERHOT")
 	{
@@ -225,6 +225,7 @@ public class APPmindcopy: SHGUIappbase
 			}
 		}
 		else if (phase == 10) {
+			/*
 			progress += Time.unscaledDeltaTime * .05f * speedMulti;
 			float p = Mathf.Clamp01(progress);
 
@@ -235,6 +236,7 @@ public class APPmindcopy: SHGUIappbase
 			if (progress > 1f) {
 				SetupNewPhase (11);
 			}
+			*/
 		}
 	}
 
