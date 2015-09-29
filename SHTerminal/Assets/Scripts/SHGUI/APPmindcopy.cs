@@ -27,6 +27,7 @@ public class APPmindcopy: SHGUIappbase
 	int cypherBrainViewSideY = 8 + 1;
 
 	int phase;
+	int skipToPhase = 5;
 
 	float speedMulti = 1f;
 
@@ -79,6 +80,11 @@ public class APPmindcopy: SHGUIappbase
 
 	float progress;
 	public override void Update(){
+		if (phase < skipToPhase) {
+			speedMulti = 100000000f;
+		} else {
+			speedMulti = 1f;
+		}
 		time += Time.unscaledDeltaTime;
 
 		memoryFrame.x = cypherBrainView.x;
