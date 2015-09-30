@@ -33,6 +33,8 @@ public class APPmindcopy: SHGUIappbase
 
 	float speedMulti = 1f;
 
+	SHGUIview popup;
+
 	public APPmindcopy(): base("copy-by-SUPERHOT")
 	{
 		brain = SHGUI.current.GetASCIIartByName ("Brain");
@@ -87,7 +89,7 @@ public class APPmindcopy: SHGUIappbase
 			skipping = true;
 			speedMulti = 100000000f;
 		} else {
-			speedMulti = 2f;
+			speedMulti = 1f;
 		}
 		time += Time.unscaledDeltaTime;
 
@@ -97,138 +99,122 @@ public class APPmindcopy: SHGUIappbase
 
 		memoryFrame.x = cypherBrainView.x;
 		memoryFrame.y = cypherBrainView.y;
-		UpdateCurrentPhase ();
 
-
+		if (!IsTherePopup ()) {
+			UpdateCurrentPhase ();
+		}
 	}
 
 	void NextPhase(){
 		phase++;
 		progress = 0;
+		currentWaiter = 0;
+		progressThisFrame = 0;
+		popupShownThisPhase = false;
+	}
+
+	bool popupShownThisPhase = false;
+	float currentWaiter = 0;
+	bool Wait(float t){
+		if (phase < skipToPhase)
+			return true;
+
+		currentWaiter += Time.unscaledDeltaTime * speedMulti;
+		if (currentWaiter > t) {
+			return true;
+		}
+		return false;
+	}
+
+	float progressThisFrame = 0;
+	bool Progress(float t){
+		if (phase < skipToPhase) {
+			NextPhase();
+			return true;
+		}
+		
+		progressThisFrame += Time.unscaledDeltaTime * speedMulti;
+		progress = progressThisFrame / t;
+		if (progressThisFrame > t) {
+			NextPhase();
+			return true;
+		}
+		return false;
 	}
 
 	void UpdateCurrentPhase(){
-		if (phase == 0) {
-			progress += Mathf.Abs (Mathf.Cos (time)) * .0025f * speedMulti;
-			
-			if (progress > 1.05f) {
+		if (phase == 0) { //brain gets scanned in Redraw(...)
+			if (Progress (10f)) {
 				AddSubView (brainView);
-				NextPhase();
 			}
-		} else if (phase == 1) {
-			progress += Time.unscaledDeltaTime * 0.5f * speedMulti;
-
-			if (progress > 1f) {
-				AddSubView(memoryFrame);
+		} else if (phase == 1) { //memory is prepared
+			if (Progress (1f)) {
+				AddSubView (memoryFrame);
 				
 				memoryFrame.x = cypherBrainView.x;
 				memoryFrame.y = cypherBrainView.y;
-				
-				NextPhase();
 			}
-		} else if (phase == 2) {
-			progress += Time.unscaledDeltaTime * 0.5f * speedMulti;
-			
-			if (progress > 1f) {
-				memoryFrame.PunchIn(.8f);
-				NextPhase();
-			}
-		} else if (phase == 3) {
-			progress += Time.unscaledDeltaTime * 5f * speedMulti;
-			
-			if (progress > 1f) {
-				NextPhase();
-			}
-		} else if (phase == 4) {
-			progress += Time.unscaledDeltaTime * 0.2f * speedMulti;
-			float p = Mathf.Clamp01(progress);
-			
-			brainView.x = (int)Mathf.Lerp(brainViewSideX, brainViewCenterX, p);
-			cypherBrainView.x = (int)Mathf.Lerp(cypherBrainViewSideX, cypherBrainViewCenterX, p);
-			memoryFrame.x = cypherBrainView.x;			
-			
-			if (progress > 1f) {
-				NextPhase();
-			}
-		}
-		else if (phase == 5) {
-			progress += Time.unscaledDeltaTime * 0.05f * speedMulti;
-			
-			if (progress > 1.1f) {
-				cypherBrainView.text = SHGUI.current.GetASCIIartByName("CypherBrain01");
-				brainView.AddSubView(brainCover);
-				AddSubView(cypherBrainView);
-				NextPhase();
-			}
-		}
-		else if (phase == 6) {
-			progress += Time.unscaledDeltaTime * 0.75f * speedMulti;
+		} else if (phase == 2) { //brain and memory converge
+			if (!Wait (1.5f))
+				return;
+			ShowPopup (" Are you sure? ");
 
-			if (progress > 1.2f) {
-				NextPhase();
+			brainView.x = (int)Mathf.Lerp (brainViewSideX, brainViewCenterX, progress);
+			cypherBrainView.x = (int)Mathf.Lerp (cypherBrainViewSideX, cypherBrainViewCenterX, progress);
+			memoryFrame.x = cypherBrainView.x;			
+			if (Progress (2f)) {
+				brainView.x = (int)Mathf.Lerp (brainViewSideX, brainViewCenterX, 1);
+				cypherBrainView.x = (int)Mathf.Lerp (cypherBrainViewSideX, cypherBrainViewCenterX, 1);
+				memoryFrame.x = cypherBrainView.x;	
 			}
-		}
-		else if (phase == 7) {
-			progress += Time.unscaledDeltaTime * 0.2f * speedMulti;
-			float p = Mathf.Clamp01(progress);
-			
-			brainView.x = (int)Mathf.Lerp(brainViewCenterX, brainViewSideX, p);
-			cypherBrainView.x = (int)Mathf.Lerp(cypherBrainViewCenterX, cypherBrainViewSideX, p);
-			memoryFrame.x = cypherBrainView.x;
+		} else if (phase == 3) { //brain dump in Redraw(...)
+			if (!Wait (0.5f))
+				return;
+			ShowPopup (" You may experience slight discomfort. ");
+
+			if (Progress (20f)) {
+				cypherBrainView.text = SHGUI.current.GetASCIIartByName ("CypherBrain01");
+				brainView.AddSubView (brainCover);
+				AddSubView (cypherBrainView);
+			}
+		} else if (phase == 4) { // brain and memory diverge
+			if (!Wait (2f))
+				return;
+				
+			brainView.x = (int)Mathf.Lerp (brainViewCenterX, brainViewSideX, progress);
+			cypherBrainView.x = (int)Mathf.Lerp (cypherBrainViewCenterX, cypherBrainViewSideX, progress);
+			memoryFrame.x = cypherBrainView.x;	
 			brainCoverItself.SetChar (GetPulsatingChar ());
 			
-			if (progress > 1f) {
-				NextPhase();
+			if (Progress (2.5f)) {
+				brainView.x = (int)Mathf.Lerp (brainViewCenterX, brainViewSideX, 1);
+				cypherBrainView.x = (int)Mathf.Lerp (cypherBrainViewCenterX, cypherBrainViewSideX, 1);
+				memoryFrame.x = cypherBrainView.x;	
 			}
-		}
-		else if (phase == 8) {
-			progress += Time.unscaledDeltaTime * .15f * speedMulti;
+		} else if (phase == 5) { //connection persists
 			memoryFrameGlow.SetChar (GetPulsatingChar ());
 			brainCoverItself.SetChar (GetPulsatingChar ());
-			if (progress > 1f) {
-				NextPhase();
-			}
-		}
-		else if (phase == 9) {
-			progress += Time.unscaledDeltaTime * .6f * speedMulti;
+
+			Progress (2f);
+		} else if (phase == 6) { //connection blinks fast for a moment
 			memoryFrameGlow.SetChar (GetPulsatingChar (10f));
 			brainCoverItself.SetChar (GetPulsatingChar (10f));
-			if (progress > 1f) {
-				NextPhase();
-			}
-		}
-		else if (phase == 10) {
-			progress += Time.unscaledDeltaTime * .3f * speedMulti;
+
+			Progress (.5f);
+		} else if (phase == 7) { //connection disappears brain half-empty; brain dies
 			memoryFrameGlow.SetChar (' ');
 			brainCoverItself.SetChar (' ');
-			if (progress > 1f) {
-				NextPhase();
-			}
-		}
-		else if (phase == 11) {
-			progress += Time.unscaledDeltaTime * .3f * speedMulti;
-			if (progress > 1f) {
-				brainView.Kill();
+
+			if (Progress (2f)) {
+				brainView.Kill ();
 				brainView.overrideFadeOutSpeed = .3f;
-				NextPhase();
 			}
-		}
-		else if (phase == 12) {
-
-	
-			
-			/*
-			progress += Time.unscaledDeltaTime * .05f * speedMulti;
-			float p = Mathf.Clamp01(progress);
-
-			brainView.x = (int)Mathf.Lerp(brainViewSideX, brainViewCenterX, p);
-			cypherBrainView.x = (int)Mathf.Lerp(cypherBrainViewSideX, cypherBrainViewCenterX, p);
-			memoryFrame.x = cypherBrainView.x;	
-
-			if (progress > 1f) {
-				SetupNewPhase (11);
+		} else if (phase == 8) { //only copy exists
+			if (Progress (5)) {
+				Kill ();
 			}
-			*/
+		} else { // skip empty phases
+			Progress(-1f); 
 		}
 	}
 
@@ -238,25 +224,18 @@ public class APPmindcopy: SHGUIappbase
 	void DrawCurrentPhase(){
 		if (phase == 0) {
 			DrawTextProgress (brain, brainView.x, brainView.y, 'z', progress, 6);
-		} else if (phase == 5) {
+		} else if (phase == 3) {
 			DrawTextProgress (cypherBrain1, cypherBrainView.x, cypherBrainView.y, 'w', progress, 2);
 			DrawTextProgress (cypherBrain0, cypherBrainView.x, cypherBrainView.y, 'w', progress - 0.045f, 2);
-			
-		} else if (phase == 7) {
-
+		} else if (phase == 4) {
 			DrawCypherConnection ();
-			
-		} else if (phase == 8) {
-			//	memoryFrameGlow.hidden = false;
-
+		} else if (phase == 5) {
 			DrawCypherConnection ();
-		} else if (phase == 9) {
+		} else if (phase == 6) {
 			DrawCypherConnection (10f);
 		}
 		else if (phase == 10) {
 		}
-
-
 	}
 
 	char GetPulsatingChar(float multiplier = 1f){
@@ -270,8 +249,6 @@ public class APPmindcopy: SHGUIappbase
 			if (C == ' ' || C == ',' || C == '}' || C =='{' || C == ')' || C == '_' || C == '\'' || C == '`')
 				SHGUI.current.SetPixelFront(GetPulsatingChar(pulseMulti), X, Y, 'z');
 			if (C == '│'){
-				//SHGUI.current.SetPixelBack(GetPulsatingChar(), X, Y, 'w');
-				
 				SHGUI.current.SetPixelFront('▌', X, Y, 'w');
 			}
 		}
@@ -336,8 +313,11 @@ public class APPmindcopy: SHGUIappbase
 	public override void ReactToInputKeyboard(SHGUIinput key)
 	{
 		if (key == SHGUIinput.enter){
-			skipToPhase = phase + 1;
-
+			if (IsTherePopup()){
+				popup.Kill();
+			}else{
+				skipToPhase = phase + 1;
+			}
 		}
 
 
@@ -349,6 +329,34 @@ public class APPmindcopy: SHGUIappbase
 	{
 	    if (fadingOut)
 	        return;
+	}
+
+	bool IsTherePopup(){
+		return !(popup == null || popup.fadingOut || popup.remove);
+	}
+
+	void ShowPopup(string phrase){
+
+		return;
+
+		if (phase < skipToPhase)
+			return;
+		if (popupShownThisPhase)
+			return;
+
+		if (popup != null)
+			popup.Kill ();
+
+		popupShownThisPhase = true;
+
+		popup = new SHGUIview ();
+		popup.x = 32 - (int)(phrase.Length / 2);
+		popup.y = 11;
+		AddSubView (popup);
+
+		popup.AddSubView(new SHGUIrect(-1, -1, phrase.Length, 1));
+		popup.AddSubView(new SHGUIframe(-1, -1, phrase.Length, 1, 'r'));
+		popup.AddSubView (new SHGUItext (phrase, 0, 0, 'r'));
 	}
 }
 
