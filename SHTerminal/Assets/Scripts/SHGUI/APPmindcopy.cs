@@ -63,9 +63,8 @@ public class APPmindcopy: SHGUIappbase
 		
 		
 
-		phase = -1;
-
-		SetupNewPhase (0);
+		phase = 0;
+		progress = 0;
 
 		APPFRAME.hidden = true;
 		APPINSTRUCTION.hidden = true;
@@ -100,62 +99,9 @@ public class APPmindcopy: SHGUIappbase
 
 	}
 
-	void SetupNewPhase(int p){
-
-
-		if (phase != p) {
-			phase = p;
-
-			if (phase == 0){
-				progress = 0;
-				SetSubtitle("scanning...", 'z');
-			}
-			else if (phase == 1){
-				SetSubtitle("scanning complete!", 'w');
-				progress = 0;
-				
-			}
-			else if (phase == 2){
-				SetSubtitle("allocating memory...", 'z');
-				AddSubView(memoryFrame);
-
-				memoryFrame.x = cypherBrainView.x;
-				memoryFrame.y = cypherBrainView.y;
-				
-				progress = 0;
-				
-			}
-			else if (phase == 3){
-				//memoryFrameItself.SetColor('r');
-				memoryFrame.PunchIn(.7f);
-
-				progress = 0;
-			}
-			else if (phase == 4){
-				
-				progress = 0;
-			}
-			else if (phase == 5){
-				progress = 0;
-			}
-			else if (phase == 6){
-				brainView.AddSubView(brainCover);
-				AddSubView(cypherBrainView);
-				progress = 0;
-			}
-			else if (phase == 7){
-				progress = 0;
-			}
-			else if (phase == 8){
-				progress = 0;
-			}
-			else if (phase == 9){
-				progress = 0;
-			}
-			else if (phase == 10){
-				progress = 0;
-			}
-		}
+	void NextPhase(){
+		phase++;
+		progress = 0;
 	}
 
 	void UpdateCurrentPhase(){
@@ -163,27 +109,32 @@ public class APPmindcopy: SHGUIappbase
 			progress += Mathf.Abs (Mathf.Cos (time)) * .0025f * speedMulti;
 			
 			if (progress > 1.05f) {
-				SetupNewPhase (1);
 				AddSubView (brainView);
+				NextPhase();
 			}
 		} else if (phase == 1) {
 			progress += Time.unscaledDeltaTime * 0.5f * speedMulti;
 
 			if (progress > 1f) {
-				SetupNewPhase (2);
+				AddSubView(memoryFrame);
+				
+				memoryFrame.x = cypherBrainView.x;
+				memoryFrame.y = cypherBrainView.y;
+				
+				NextPhase();
 			}
 		} else if (phase == 2) {
 			progress += Time.unscaledDeltaTime * 0.5f * speedMulti;
 			
 			if (progress > 1f) {
 				memoryFrame.PunchIn(.8f);
-				SetupNewPhase (3);
+				NextPhase();
 			}
 		} else if (phase == 3) {
 			progress += Time.unscaledDeltaTime * 5f * speedMulti;
 			
 			if (progress > 1f) {
-				SetupNewPhase (4);
+				NextPhase();
 			}
 		} else if (phase == 4) {
 			progress += Time.unscaledDeltaTime * 0.2f * speedMulti;
@@ -194,21 +145,24 @@ public class APPmindcopy: SHGUIappbase
 			memoryFrame.x = cypherBrainView.x;			
 			
 			if (progress > 1f) {
-				SetupNewPhase (5);
+				NextPhase();
 			}
 		}
 		else if (phase == 5) {
 			progress += Time.unscaledDeltaTime * 0.05f * speedMulti;
 			
 			if (progress > 1f) {
-				SetupNewPhase (6);
+				cypherBrainView.text = SHGUI.current.GetASCIIartByName("CypherBrain01");
+				brainView.AddSubView(brainCover);
+				AddSubView(cypherBrainView);
+				NextPhase();
 			}
 		}
 		else if (phase == 6) {
 			progress += Time.unscaledDeltaTime * 0.75f * speedMulti;
 
 			if (progress > 1.2f) {
-				SetupNewPhase (7);
+				NextPhase();
 			}
 		}
 		else if (phase == 7) {
@@ -219,7 +173,7 @@ public class APPmindcopy: SHGUIappbase
 			cypherBrainView.x = (int)Mathf.Lerp(cypherBrainViewCenterX, cypherBrainViewSideX, p);
 			memoryFrame.x = cypherBrainView.x;	
 			if (progress > 1f) {
-				SetupNewPhase (8);
+				NextPhase();
 			}
 		}
 		else if (phase == 8) {
@@ -227,13 +181,13 @@ public class APPmindcopy: SHGUIappbase
 			if (progress > 1f) {
 				brainView.Kill();
 				brainCover.Kill();
-				SetupNewPhase (9);
+				NextPhase();
 			}
 		}
 		else if (phase == 9) {
 			progress += Time.unscaledDeltaTime * 1f * speedMulti;
 			if (progress > 1f) {
-				SetupNewPhase (10);
+				NextPhase();
 			}
 		}
 		else if (phase == 10) {
