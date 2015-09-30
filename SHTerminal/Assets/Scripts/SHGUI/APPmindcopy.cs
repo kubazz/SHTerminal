@@ -5,7 +5,9 @@ using UnityEngine;
 public class APPmindcopy: SHGUIappbase
 {
 	string brain;
-	string cypherBrain;
+	string cypherBrain1;
+	string cypherBrain0;
+	
 	SHGUItext brainView;
 	SHGUItext cypherBrainView;
 	SHGUIview memoryFrame;
@@ -34,14 +36,15 @@ public class APPmindcopy: SHGUIappbase
 	public APPmindcopy(): base("copy-by-SUPERHOT")
 	{
 		brain = SHGUI.current.GetASCIIartByName ("Brain");
-		cypherBrain = SHGUI.current.GetASCIIartByName ("CypherBrain");
+		cypherBrain1 = SHGUI.current.GetASCIIartByName ("CypherBrain1");
+		cypherBrain0 = SHGUI.current.GetASCIIartByName ("CypherBrain0");
 		
 		brainView = SHGUI.current.GetCenteredAsciiArt ("Brain");
 		brainView.x = brainViewSideX;
 		brainView.y = brainViewSideY;
 		//AddSubView (brainView);
 
-		cypherBrainView = SHGUI.current.GetCenteredAsciiArt ("CypherBrain");
+		cypherBrainView = SHGUI.current.GetCenteredAsciiArt ("CypherBrain01");
 
 		cypherBrainView.x = cypherBrainViewSideX;
 		cypherBrainView.y = cypherBrainViewSideY;
@@ -151,7 +154,7 @@ public class APPmindcopy: SHGUIappbase
 		else if (phase == 5) {
 			progress += Time.unscaledDeltaTime * 0.05f * speedMulti;
 			
-			if (progress > 1f) {
+			if (progress > 1.1f) {
 				cypherBrainView.text = SHGUI.current.GetASCIIartByName("CypherBrain01");
 				brainView.AddSubView(brainCover);
 				AddSubView(cypherBrainView);
@@ -211,9 +214,11 @@ public class APPmindcopy: SHGUIappbase
 
 	void DrawCurrentPhase(){
 		if (phase == 0) {
-			DrawTextProgress (brain, brainView.x, brainView.y, (progress > 1f) ? ('z') : ('z'), progress);
+			DrawTextProgress (brain, brainView.x, brainView.y, 'z', progress, 6);
 		} else if (phase == 5) {
-			DrawTextProgress (cypherBrain, cypherBrainView.x, cypherBrainView.y, (progress > 1f) ? ('w') : ('w'), progress);
+			DrawTextProgress (cypherBrain1, cypherBrainView.x, cypherBrainView.y, 'w', progress, 2);
+			DrawTextProgress (cypherBrain0, cypherBrainView.x, cypherBrainView.y, 'w', progress - 0.045f, 2);
+			
 		} else if (phase == 7) {
 
 			brainCoverItself.SetChar(GetPulsatingChar());
@@ -268,9 +273,13 @@ public class APPmindcopy: SHGUIappbase
 
 	}
 
-	void DrawTextProgress(string content, int X, int Y, char color, float progress){
+	void DrawTextProgress(string content, int X, int Y, char color, float progress, int progressEdgeLength = 6){
 
 		int intProgress = (int)(Mathf.Clamp01 (progress) * content.Length);
+
+		bool drawEdge = true;
+		if (progress > 1)
+			drawEdge = false;
 
 		int X1 = 0;
 		int Y1 = 0;
@@ -282,13 +291,15 @@ public class APPmindcopy: SHGUIappbase
 			else{
 				char zzz = content[i];
 				char ccc = color;
-				if (Mathf.Abs(i - intProgress) < 6f){
-					if (zzz != ' ' && Random.value < .5f){
+				if (Mathf.Abs(i - intProgress) < progressEdgeLength){
+					if (drawEdge && zzz != ' ' && Random.value < .5f){
 						zzz = StringScrambler.GetGlitchChar();
 						ccc = 'w';
 					}
 				}
-				SHGUI.current.SetPixelFront(zzz, X + X1, Y + Y1, ccc);
+
+				if (zzz != ' ')
+					SHGUI.current.SetPixelFront(zzz, X + X1, Y + Y1, ccc);
 				
 				X1++;
 
