@@ -15,6 +15,7 @@ public class APPmindcopy: SHGUIappbase
 	SHGUIview brainCover;
 	SHGUIrect brainCoverItself;
 	SHGUIrect memoryFrameGlow;
+	SHGUIoutflow outflowView;
 
 	SHGUItext subtitle;
 
@@ -75,8 +76,8 @@ public class APPmindcopy: SHGUIappbase
 		APPINSTRUCTION.hidden = true;
 		APPLABEL.hidden = true;
 
-		Debug.Log ("brainView: " + brainView.x + ", " + brainView.y);
-		Debug.Log ("cypherBrainView: " + cypherBrainView.x + ", " + cypherBrainView.y);
+		//Debug.Log ("brainView: " + brainView.x + ", " + brainView.y);
+		//Debug.Log ("cypherBrainView: " + cypherBrainView.x + ", " + cypherBrainView.y);
 		
 	}
 
@@ -84,6 +85,8 @@ public class APPmindcopy: SHGUIappbase
 
 	float progress;
 	public override void Update(){
+		base.Update ();
+
 		bool skipping = false;
 		if (phase < skipToPhase) {
 			skipping = true;
@@ -163,16 +166,17 @@ public class APPmindcopy: SHGUIappbase
 			cypherBrainView.x = (int)Mathf.Lerp (cypherBrainViewSideX, cypherBrainViewCenterX, progress);
 			memoryFrame.x = cypherBrainView.x;			
 			if (Progress (2f)) {
-				brainView.x = (int)Mathf.Lerp (brainViewSideX, brainViewCenterX, 1);
-				cypherBrainView.x = (int)Mathf.Lerp (cypherBrainViewSideX, cypherBrainViewCenterX, 1);
+				brainView.x = brainViewCenterX;
+				cypherBrainView.x = cypherBrainViewCenterX;
 				memoryFrame.x = cypherBrainView.x;	
+				SetSubtitle (" you may experience\n slight discomfort ", 'z');
 			}
 		} else if (phase == 3) { //brain dump in Redraw(...)
 			if (!Wait (0.5f))
 				return;
-			ShowPopup (" You may experience slight discomfort. ");
-
-			if (Progress (20f)) {
+			//ShowPopup (" You may experience slight discomfort. ");
+			if (Progress (15f)) {
+				SetSubtitle ("", 'w');
 				cypherBrainView.text = SHGUI.current.GetASCIIartByName ("CypherBrain01");
 				brainView.AddSubView (brainCover);
 				AddSubView (cypherBrainView);
@@ -187,8 +191,8 @@ public class APPmindcopy: SHGUIappbase
 			brainCoverItself.SetChar (GetPulsatingChar ());
 			
 			if (Progress (2.5f)) {
-				brainView.x = (int)Mathf.Lerp (brainViewCenterX, brainViewSideX, 1);
-				cypherBrainView.x = (int)Mathf.Lerp (cypherBrainViewCenterX, cypherBrainViewSideX, 1);
+				brainView.x = brainViewSideX;
+				cypherBrainView.x = cypherBrainViewSideX;
 				memoryFrame.x = cypherBrainView.x;	
 			}
 		} else if (phase == 5) { //connection persists
@@ -207,11 +211,66 @@ public class APPmindcopy: SHGUIappbase
 
 			if (Progress (2f)) {
 				brainView.Kill ();
-				brainView.overrideFadeOutSpeed = .3f;
+				brainView.overrideFadeOutSpeed = .75f;
 			}
-		} else if (phase == 8) { //only copy exists
-			if (Progress (5)) {
+		} else if (phase == 8) {
+			if (!Wait (2.5f))
+				return;
+			
+			cypherBrainView.x = (int)Mathf.Lerp (cypherBrainViewSideX, cypherBrainViewCenterX, progress);
+			memoryFrame.x = cypherBrainView.x;	
+			
+			if (Progress (2.5f)) {
+				cypherBrainView.x = cypherBrainViewCenterX;
+				memoryFrame.x = cypherBrainView.x;
+			}
+		} else if (phase == 9) {			
+			if (Progress (2f)) {
+				memoryFrame.SetColorRecursive('r');
+				outflowView = AddSubView(new SHGUIoutflow()) as SHGUIoutflow;
+			}
+		} else if (phase == 10) {
+			if (!Wait (.3f))
+				return;
+
+			outflowView.AddSeeds();
+
+			if (Progress (2f)) {
+				memoryFrame.AddSubView(new SHGUIrect(-1, 2, -1, 2));
+				outflowView.DestroyBarrier();
+			}
+		} else if (phase == 11) {
+			outflowView.DestroyBarrier();
+			if (cypherBrainView != null && !cypherBrainView.fadingOut){
+				cypherBrainView.Kill();
+			}
+			
+			if (Progress(1.2f)){
+				outflowView.AddLimit();
+			}
+		} else if (phase == 12) {
+			outflowView.AddLimit();//dla pewności
+			if (!Wait (1.5f))
+				return;
+
+			if (memoryFrame != null) 
+				memoryFrame.Kill ();
+
+			if (Progress(4.2f)){
+				outflowView.Kill();
 				Kill ();
+				SHGUI.current.AddViewOnTop(new APPrecruit());
+			}
+		}
+		else if (phase == 13) {
+			if (Progress (10f)){
+
+			}
+
+		}
+		else if (phase == 60) { //only copy exists
+			if (Progress (5)) {
+				//Kill ();
 			}
 		} else { // skip empty phases
 			Progress(-1f); 
@@ -221,7 +280,8 @@ public class APPmindcopy: SHGUIappbase
 
 	string scramble = "█▓▒░▒▓";
 
-	void DrawCurrentPhase(){
+	void DrawCurrentPhase(){		
+
 		if (phase == 0) {
 			DrawTextProgress (brain, brainView.x, brainView.y, 'z', progress, 6);
 		} else if (phase == 3) {
@@ -259,7 +319,22 @@ public class APPmindcopy: SHGUIappbase
 			subtitle.Kill();
 		}
 
-		//subtitle = AddSubView (new SHGUItext (content, 32 - (int)(content.Length / 2), 18, color)) as SHGUItext;
+		int currentLine = 0;
+		int longestLine = 0;
+		for (int i = 0; i < content.Length; ++i) {
+			if (currentLine > longestLine){
+				longestLine = currentLine;
+			}
+
+			if (content[i] == '\n'){
+				currentLine = 0;
+			}
+			else{
+				currentLine++;
+			}
+		}
+
+		subtitle = AddSubView (new SHGUItext (content, 32 - (int)(longestLine / 2), 19, color)) as SHGUItext;
 	}
 
 	public override void Redraw(int offx, int offy){
@@ -306,8 +381,6 @@ public class APPmindcopy: SHGUIappbase
 
 			}
 		}
-
-
 	}
 
 	public override void ReactToInputKeyboard(SHGUIinput key)
@@ -336,8 +409,6 @@ public class APPmindcopy: SHGUIappbase
 	}
 
 	void ShowPopup(string phrase){
-
-		return;
 
 		if (phase < skipToPhase)
 			return;
