@@ -181,7 +181,14 @@ public class piOsMenu : MonoBehaviour {
 						b.IsQuitButton = true;
 					}
 				}
-				else if (type == "exploit" && !dontShowExploit){
+                else if (type == "lua")
+                {
+                    name = name + "│--ITEM->";
+                    description = "app: " + name + " " + Random.Range(0, 3000);
+                    b = new SHGUIcommanderbutton(name, 'w', () => { SHGUI.current.LaunchLuaAppByScriptName(node.Attribute("luafile").Value.ToString()); }).SetListLink(l).SetData(description);
+                    l.AddButtonView(b);
+                }
+                else if (type == "exploit" && !dontShowExploit){
 					name = name + "│--ITEM->";
 					description = "app: " + name + " " + Random.Range(0, 3000);
 					b = new SHGUIcommanderbutton (name, 'w', ()=> SHGUI.current.LaunchAppByName("APPkill")).SetListLink(l).SetData(description);

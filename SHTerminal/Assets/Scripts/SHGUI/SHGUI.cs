@@ -257,7 +257,12 @@ public class SHGUI : MonoBehaviour {
 		}
 	}
 
-	public void ShowVideo(string videoname){
+    public void LaunchLuaAppByScriptName(string fileName)
+    {
+        AddViewOnTop(new APPlua(fileName));
+    }
+
+    public void ShowVideo(string videoname){
 		//AddViewOnTop (new APPvideo (videoname));
 	}
 

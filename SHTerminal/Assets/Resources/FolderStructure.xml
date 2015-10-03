@@ -1,6 +1,13 @@
 <Data>
+  <item type="lua" name="test.lua" luafile="luatest"/>
+  <item type="app" name="outflow.exe" appclass="APPoutflow"/>
+  <item type="app" name="copy.exe" appclass="APPmindcopy"/>
+  <item type="app" name="xcopy.exe" appclass="APPxcopy"/>
+  <item type="app" name="recruit.exe" appclass="APPrecruit"/>
+  <item type="app" name="treedude.exe" appclass="APPtreedudeintro"/>
+  <item type="app" name="hacking.exe" appclass="APPstreamchat"/>
   <item type="app" name="square.exe" appclass="APPsquare"/>
-  <item type="app" name="shrl.exe" appclass="APPshrl"/>
+  <item type="app" name="shrl.exe" appclass="APPshrlgame"/>
   <item type="exploit" name="superhot.exe"/>
   <item type="last" name="supelast.exe" appclass="APPplaylast"/>
   <story>
