@@ -59,6 +59,13 @@ public class SHGUIluasandbox
     {
         parent.Kill();
     }
+
+    public SHGUItext AddText(string text)
+    {
+        SHGUItext t = new SHGUItext(text, 10, 10, 'r');
+        parent.AddSubView(t);
+        return t;
+    }
 }
 
 

@@ -14,11 +14,18 @@ function Redraw()
 	--SHGUI:SetPixel()
 end
 
+a = null
+
 function Input(dirx, diry, enter)
 	x = x + dirx
 	y = y + diry
 
-	if enter == 1 then 
-		SHGUI:Kill()
+	if enter == 1 then
+		if a == null then
+			a = SHGUI:AddText("test tekst")
+		else
+			a:Kill()
+			a = null
+		end
 	end
 end
