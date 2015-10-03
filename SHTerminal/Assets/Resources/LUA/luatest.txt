@@ -1,0 +1,24 @@
+function Init()
+end
+
+function Update()
+	--SHGUI:Log(text)
+end
+
+x = 10
+y = 10
+char = "S"
+function Redraw()
+	--text = ""
+	SHGUI:SetPixel(char, x, y, "w")
+	--SHGUI:SetPixel()
+end
+
+function Input(dirx, diry, enter)
+	x = x + dirx
+	y = y + diry
+
+	if enter == 1 then 
+		SHGUI:Kill()
+	end
+end
