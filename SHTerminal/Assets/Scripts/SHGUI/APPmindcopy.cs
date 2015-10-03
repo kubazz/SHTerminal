@@ -329,7 +329,7 @@ public class APPmindcopy: SHGUIappbase
 	void DrawBrain(float prog, int subPhase, int subPhasesCount){
 		float baseProg = ((float)subPhase / (float)subPhasesCount);
 		float onePhaseProg = 1f / (float)subPhasesCount;
-		Debug.Log (prog +", " + baseProg + onePhaseProg * prog);
+		//Debug.Log (prog +", " + baseProg + onePhaseProg * prog);
 		DrawTextProgress (cypherBrain1, cypherBrainView.x, cypherBrainView.y, 'w', baseProg + onePhaseProg * prog, 2);
 		DrawTextProgress (cypherBrain0, cypherBrainView.x, cypherBrainView.y, 'w', baseProg + onePhaseProg * prog - 0.045f, 2);
 	}
