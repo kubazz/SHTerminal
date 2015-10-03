@@ -75,7 +75,8 @@ Feel free to use this to share your impression of the current beta build or if y
 				<item type="app" name ="sinus3.exe" appclass="APPsinus3"/>
 				<item type="app" name ="stars.exe" appclass="APPstars"/>
 				<item type="app" name ="mirrors.exe" appclass="APPmirrors"/>
-				<item type="app" name ="letters.exe" appclass="APPletters"/>				
+				<item type="app" name ="letters.exe" appclass="APPletters"/>
+        <item type="app" name ="fire.exe" appclass="APPfire"/>
 			</demos>
 			<cellular>
 				<item type="app" name ="life.exe" appclass="APPConway"/>
