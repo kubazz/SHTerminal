@@ -62,7 +62,7 @@ public class SHGUI : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		//Application.targetFrameRate = 60;
-
+	    //TextManager.DisplaySUPERHOTBatch();
 		current = this;
 
 		display = new char[resolutionX * resolutionY];
