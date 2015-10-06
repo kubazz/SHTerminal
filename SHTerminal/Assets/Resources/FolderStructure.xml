@@ -84,6 +84,7 @@ Feel free to use this to share your impression of the current beta build or if y
 				<item type="app" name ="mirrors.exe" appclass="APPmirrors"/>
 				<item type="app" name ="letters.exe" appclass="APPletters"/>
         <item type="app" name ="fire.exe" appclass="APPfire"/>
+        <item type="app" name ="rotozoom.exe" appclass="APProtozoomer"/>
 			</demos>
 			<cellular>
 				<item type="app" name ="life.exe" appclass="APPConway"/>
