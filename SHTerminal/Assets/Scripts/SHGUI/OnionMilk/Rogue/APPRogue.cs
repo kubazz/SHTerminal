@@ -44,6 +44,7 @@ public class APPRogue : SHGUIappbase {
 		base.Update();
 
 		if (updateLogic) {
+			//Logika tutaj
 			updateLogic	= false;
 		}
 	}
@@ -58,6 +59,7 @@ public class APPRogue : SHGUIappbase {
 			};
 		//--
 		
+		//Renderowanie obrazu gry
 		for(int y = 0; y < 22; ++y) {
 			for(int x = 0; x < 62; ++x) {
 				//Wyświetlanie eteru (obszar poza mapą)
@@ -110,6 +112,8 @@ public class APPRogue : SHGUIappbase {
 			}
 		}
 
+
+		//Wyświetlanie potworków
 		for(int m = 0; m < monsters.monsterList.Count; ++m) //wyświetlanie potworów
 		{
 			if((monsters.monsterList[m].posX - displayOffset[0] + x) < 62 && (monsters.monsterList[m].posX - displayOffset[0] + x) > 0)
@@ -157,43 +161,28 @@ public class APPRogue : SHGUIappbase {
 			if (key == SHGUIinput.up)
 			{
 				moved	= player.moveBy(0, -1);
-				monsters.UpdatePosPlayer(player.position[0], player.position[1]);
-				for(int m = 0; m < monsters.monsterList.Count; ++m) //ruch potworów
-				{
-					monsters.monsterList[m].Move();
-				}
 			}
 			if (key == SHGUIinput.down)
 			{
 				moved	= player.moveBy(0, +1);
-				monsters.UpdatePosPlayer(player.position[0], player.position[1]);
-				for(int m = 0; m < monsters.monsterList.Count; ++m) //ruch potworów
-				{
-					monsters.monsterList[m].Move();
-				}
 			}
 			if (key == SHGUIinput.left)
 			{
 				moved	= player.moveBy(-1, 0);
-				monsters.UpdatePosPlayer(player.position[0], player.position[1]);
-				for(int m = 0; m < monsters.monsterList.Count; ++m) //ruch potworów
-				{
-					monsters.monsterList[m].Move();
-				}
 			}
 			if (key == SHGUIinput.right)
 			{
 				moved	= player.moveBy(+1, 0);
-				monsters.UpdatePosPlayer(player.position[0], player.position[1]);
-				for(int m = 0; m < monsters.monsterList.Count; ++m) //ruch potworów
-				{
-					monsters.monsterList[m].Move();
-				}
 			}
 			if (moved) {
 				updateLogic	= true;
 			} else {
 				status.setMessage("Cannot move there!");
+			}
+			monsters.UpdatePosPlayer(player.position[0], player.position[1]);
+			for(int m = 0; m < monsters.monsterList.Count; ++m) //ruch potworów
+			{
+				monsters.monsterList[m].Move();
 			}
 		}
 		
