@@ -16,7 +16,7 @@
     <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
-    <UnityVersion>5.2.1p1</UnityVersion>
+    <UnityVersion>5.2.1f1</UnityVersion>
     <RootNamespace></RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -292,6 +292,7 @@
     <Compile Include="Assets\Scripts\SHGUI\APPreadme.cs" />
     <Compile Include="Assets\Scripts\SHGUI\APPrecruit.cs" />
     <Compile Include="Assets\Scripts\SHGUI\APPrestrict.cs" />
+    <Compile Include="Assets\Scripts\SHGUI\APProar.cs" />
     <Compile Include="Assets\Scripts\SHGUI\APProtolines.cs" />
     <Compile Include="Assets\Scripts\SHGUI\APProtozoomer.cs" />
     <Compile Include="Assets\Scripts\SHGUI\APPsandbox.cs" />
@@ -534,5 +535,5 @@
     <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_DepthOfField\SeparableBlur.shader" />
     <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\frag_ao.cginc" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2013\UnityVS.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
