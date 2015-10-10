@@ -3,13 +3,15 @@ using System.Collections;
 
 public class pipe
 {
-	public int posX;
-	public int border;
+	public	float	posX;
+	public	float	border;
+	public	bool	points;
 
-	public pipe(int pX, int bor)
+	public pipe(float pX, float bor)
 	{
 		posX = pX;
 		border = bor;
+		points = false;
 	}
 }
 
@@ -26,268 +28,426 @@ public class decoration
 }
 
 public class APPFlappy : SHGUIappbase {
-	
-	//62x22
+
+	//liczby
+	private string[]	Number0			= new string[] {
+		" ___ ",
+		"|   |",
+		"| | |",
+		"|   |",
+		" ¯¯¯ "
+	};
+	private string[]	Number1			= new string[] {
+		"  _  ",
+		" | | ",
+		" | | ",
+		" | | ",
+		"  ¯  "
+	};
+	private string[]	Number2			= new string[] {
+		" ___ ",
+		"|__ |",
+		"| __|",
+		"|   |",
+		" ¯¯¯ "
+	};
+	private string[]	Number3			= new string[] {
+		" ___ ",
+		"|__ |",
+		"|__ |",
+		"|   |",
+		" ¯¯¯ "
+	};
+	private string[]	Number4			= new string[] {
+		" _ _ ",
+		"| | |",
+		"|__ |",
+		"  | |",
+		"   ¯ "
+	};
+	private string[]	Number5			= new string[] {
+		" ___ ",
+		"| __|",
+		"|__ |",
+		"|   |",
+		" ¯¯¯ "
+	};
+	private string[]	Number6			= new string[] {
+		" ___ ",
+		"| __|",
+		"| . |",
+		"|   |",
+		" ¯¯¯ "
+	};
+	private string[]	Number7			= new string[] {
+		" ___ ",
+		"|__ |",
+		"  | |",
+		"  | |",
+		"   ¯ "
+	};
+	private string[]	Number8			= new string[] {
+		" ___ ",
+		"| . |",
+		"| , |",
+		"|   |",
+		" ¯¯¯ "
+	};
+	private string[]	Number9			= new string[] {
+		" ___ ",
+		"| . |",
+		"|__ |",
+		"|   |",
+		" ¯¯¯ "
+	};
+
+
+	private string[]	Title			= new string[] {
+	" ___ _ _ ___ ___ ___    ___ _ ___             ",
+	"| __| | | . |  _| , |  |   | |_  |___________ ",
+	"|__ | | | __|  _|   |  |  ¯| | . | . | . | | |",
+	"|   |   | | |   | | |  | |¯| |   | __| __|__ |",
+	" ¯¯¯ ¯¯¯ ¯   ¯¯¯ ¯ ¯    ¯   ¯ ¯¯¯| | | |  |  |",
+	"                                  ¯   ¯    ¯¯ "
+	};
+
+	private string[]	Best			= new string[] {
+		" ___ ___ ___ _   ",
+		"| , |  _| __| |  ",
+		"| , |  _|__ |  _|",
+		"|   |   |   |   |",
+		" ¯¯¯ ¯¯¯ ¯¯¯ ¯¯¯ "
+	};
+
 	//wygląd
-	char	ground = '░';
-	char	wallChar = '█';
-	char	bird = '»';
-	char	cloudChar = '░';
+	private string[]	LookBird			= new string[] {
+	" ___   ",
+	"/__o\\_ ",
+	"\\___/-'"
+	};
+
+	private string[]	LookPipe			= new string[] {
+		" ______ ",
+		"|      |",
+		"|______|"
+	};
+
+	private string[]	LookPipeUp			= new string[] {
+		"|¯¯¯¯¯¯|",
+		"|      |",
+		" ¯¯¯¯¯¯ "
+	};
+
+	private string[]	LookWall			= new string[] {
+		" |    | "
+	};
+
+	private string[]	LookWallOnGround	= new string[] {
+		" |____| "
+	};
+
+	private string[]	Ground				= new string[] {
+		"_",
+		"/",
+		"="
+	};
 
 	//mechanika
-	int		posY = 10;
+	private	float		Height				= 10f; //wysokość na której jest ptak
+	private float		LastHeight			= 10f; //wysokość jaką miał podczas wyskoku
+	private	float		UpJump				= 10f; //zmienna potrzeb ado wyliczenia traiektorii spadania
+	
+	private	float		Fall				= 10f; //hymm w sumie obecnie nic
+	private	float		FlyTime				= 0f; //czas wznoszenia się (jeśli jest na minusie leci do góry gdy jest >= 0 spada)
+	
+	private	float		HeightFactor		= 4f; //wartość wzlotu podczas skoku
 
-	float	collapseTimer = 0.1f;
-	float	wallTimer = 0.1f;
-	float	decorationTimer = 0.05f;
-
-	bool	jump = false;
-	int		jumpLvl = 5;
-
-	bool	lose = true;
-	bool	begin = true;
-	bool	air = false;
+	private	int			Score				= 0; //wynik w obecnej rozgrywce
+	private	int			BestScore			= 0; //najlepszy wynik
+	private	string		BestScoreString		= "";
+	private	string		ScoreString			= "";
 
 	//przeszkody
-	pipe[]	wall = new pipe[5];
-	decoration[] cloud = null;
+	private pipe[]		Wall				= new pipe[4]; //przeszkody
 
-	//informacje
-	int		score = 0;
-	string	scoreString = "0";
-	string	loseString = "You Lose";
 
-	int		bestScore = 0;
-	string	bestScoreString = "0";
-	string	bestString = "Best Score";
-	
+	//rozgrywka
+	private bool		PlayGame			= false; //czy gra jest odpalona
+	private	bool		Lose				= false; //czy przegraliśmy
 
-	public APPFlappy()
-	: base("super_flappy-v1.2.3-by-onionmilk") {
-		for(int i = 0; i < 5; ++i)
-		{
-			wall[i] = new pipe(63 + (17 * i), Random.Range(5, 13));
-		}
-		cloud = new decoration[Random.Range(8, 15)];
-		for(int i = 0; i < cloud.Length; ++i)
-		{
-			cloud[i] = new decoration(Random.Range(64, 125), Random.Range(4, 18));
-		}
+
+	public APPFlappy() : base("super_flappy-v1.2.3-by-onionmilk")
+	{
+		for(int i = 0; i < Wall.Length; ++i) Wall[i] = new pipe(70 + 30f * i, (float)Random.Range(11, 15)); //ustawianie rur
 	}
 	
-	public override void Update() {
+	public override void Update()
+	{
 		base.Update();
 
-		if(!lose)
+		if(PlayGame)
 		{
-			//postać
-			collapseTimer -= Time.unscaledDeltaTime;
-			if(!jump) //upadanie
+			for(int i = 0; i < Wall.Length; ++i)
 			{
-				if(collapseTimer <= 0f)
+				Wall[i].posX -= 5 * Time.unscaledDeltaTime;
+
+				if(Wall[i].posX < - 10)
 				{
-					if(!air)
-					{
-						collapseTimer = 0.1f;
-						++posY;
-					}
-					else
-					{
-						collapseTimer = 0.1f;
-						air = false;
-					}
-				}
-				if(posY == 22)
-				{
-					lose = true;
-					collapseTimer = 1f;
+					Wall[i].posX += 120;
+					Wall[i].border = Random.Range(11, 15);
+					Wall[i].points = false;
 				}
 			}
-			else //wznoszenie
+			FlyTime += 2 * Time.unscaledDeltaTime;
+
+			if(FlyTime > 0f) //wznoszenie
 			{
-				if(collapseTimer <= 0f)
-				{
-					collapseTimer = 0.07f;
-					--posY;
-					--jumpLvl;
-					if(jumpLvl <= 0)
-					{
-						jumpLvl = 5;
-						jump = false;
-						air = true;
-					}
-				}
-				if(posY == 1)
-				{
-					lose = true;
-					collapseTimer = 1f;
-				}
+				Height = CalcHeight();
 			}
-
-			//przeszkody
-			wallTimer -= Time.unscaledDeltaTime;
-			if(wallTimer <= 0f)
+			else //spadanie
 			{
-				wallTimer = 0.1f;
-				for(int i = 0; i < 5; ++i) //przesuwanie rur
-				{
-					--wall[i].posX;
-					if(wall[i].posX == -1)
-					{
-						wall[i].posX = 84;
-						wall[i].border = Random.Range(5, 13);
-					}
-
-					if(wall[i].posX == 4) //sprawdzenie czy ptak się zmieścił
-					{
-						if(posY > wall[i].border || posY < (wall[i].border + 6))
-						{
-							++score;
-							//SHGUI.current.PlaySound(SHGUIsound.ping);
-						}
-					}
-				}
+				Height = CalcHeight();
 			}
-
-			for(int i = 0; i < 5; ++i)
+		
+			//kolizja
+			for(int i = 0; i < Wall.Length; ++i)
 			{
-				if(wall[i].posX == 5 || wall[i].posX == 4) //sprawdzenie czy trafił w ptaka :)
+				if(Wall[i].posX > -2 && Wall[i].posX < 13) //jesli prak znajdzie się na szerokości platformy
 				{
-					if(posY <= wall[i].border || posY >= (wall[i].border + 6))
+					if(Height + 2 > Wall[i].border) //kolizja z dolnymi rurami
 					{
-						lose = true;
-						collapseTimer = 1f;
+						if(BestScore < Score) BestScore = Score;
+						PlayGame = false;
+						Lose = true;
+					}
+					if(Height < Wall[i].border - 7) //kolizja z górnymi rurami
+					{
+						if(BestScore < Score) BestScore = Score;
+						PlayGame = false;
+						Lose = true;
 					}
 				}
-			}
-		}
-		else //czas między przegraną a możliwością resetu (zabezpieczenie przed przypadkowym restartem)
-		{
-			collapseTimer -= Time.unscaledDeltaTime;
-		}
 
-		//poruszanie się chmurek
-		decorationTimer -= Time.unscaledDeltaTime;
-		if(decorationTimer <= 0f)
-		{
-			decorationTimer = 0.07f;
-			for(int i = 0; i < cloud.Length; ++i)
-			{
-				--cloud[i].posX;
-				if(cloud[i].posX <= -7)
+				if(Wall[i].posX < 6 && !Wall[i].points) //dodawanie punktu
 				{
-					cloud[i].posX = Random.Range(65, 125);
-					cloud[i].posY = Random.Range(4, 18);
+					Wall[i].points = true;
+					++Score;
 				}
+
+			}
+			if(Height < 1)
+			{
+				if(BestScore < Score) BestScore = Score;
+				PlayGame = false;
+				Lose = true;
+			}
+			if(Height > 18)
+			{
+				if(BestScore < Score) BestScore = Score;
+				PlayGame = false;
+				Lose = true;
 			}
 		}
 
 	}
 
-	public override void Redraw(int offx, int offy) {
+	public override void Redraw(int offx, int offy)
+	{
 		base.Redraw(offx, offy);
 
-		for(int i = 0; i < cloud.Length; ++i) //rysowanie chmurek
+		for(int i = 0; i < 62; ++i) //rysowanie ziemi
 		{
-			if(cloud[i].posX < 63 && cloud[i].posX > 0) SHGUI.current.SetPixelBack(cloudChar, cloud[i].posX, cloud[i].posY, 'z');
-			if(cloud[i].posX < 63 + 1 && cloud[i].posX > - 1) SHGUI.current.SetPixelBack(cloudChar, cloud[i].posX + 1, cloud[i].posY, 'z');
-			if(cloud[i].posX < 63 + 2 && cloud[i].posX > - 2) SHGUI.current.SetPixelBack(cloudChar, cloud[i].posX + 2, cloud[i].posY, 'z');
-			if(cloud[i].posX < 63 + 3 && cloud[i].posX > - 3) SHGUI.current.SetPixelBack(cloudChar, cloud[i].posX + 3, cloud[i].posY, 'z');
-			if(cloud[i].posX < 63 + 4 && cloud[i].posX > - 4) SHGUI.current.SetPixelBack(cloudChar, cloud[i].posX + 4, cloud[i].posY, 'z');
-			if(cloud[i].posX < 63 + 5 && cloud[i].posX > - 5) SHGUI.current.SetPixelBack(cloudChar, cloud[i].posX + 5, cloud[i].posY, 'z');
-			if(cloud[i].posX < 63 + 1 && cloud[i].posX > - 1) SHGUI.current.SetPixelBack(cloudChar, cloud[i].posX + 1, cloud[i].posY - 1, 'z');
-			if(cloud[i].posX < 63 + 2 && cloud[i].posX > - 2) SHGUI.current.SetPixelBack(cloudChar, cloud[i].posX + 2, cloud[i].posY - 1, 'z');
-			if(cloud[i].posX < 63 + 3 && cloud[i].posX > - 3) SHGUI.current.SetPixelBack(cloudChar, cloud[i].posX + 3, cloud[i].posY - 1, 'z');
+			SHGUI.current.SetPixelFront(Ground[0][0], i + 1, 20, 'z');
+			SHGUI.current.SetPixelFront(Ground[1][0], i + 1, 21, 'z');
+			SHGUI.current.SetPixelFront(Ground[2][0], i + 1, 22, 'z');
 		}
 
-		for(int i = 1; i <= 62; ++i) //rysowanie krawędzi
+		for(int k = 0; k < Wall.Length; ++k) //rysowanie ścian
 		{
-			SHGUI.current.SetPixelFront(ground, i, 22, 'w');
-			SHGUI.current.SetPixelFront(ground, i, 1, 'w');
-		}
-
-		for(int i = 0; i < 5; ++i) //rysowanie scian
-		{
-			for(int j = 2; j <= wall[i].border; ++j)
+			//dolna część
+			for(int i = 0; i < 3; ++i) //góra
 			{
-				if(wall[i].posX < 63 && wall[i].posX > 0) SHGUI.current.SetPixelBack(wallChar, wall[i].posX, j, 'w');
-				if(wall[i].posX < 63 - 1  && wall[i].posX > -1) SHGUI.current.SetPixelBack(wallChar, wall[i].posX+1, j, 'w');
-			}
-			for(int j = 21; j >= wall[i].border + 6; --j)
-			{
-				if(wall[i].posX < 63  && wall[i].posX > 0) SHGUI.current.SetPixelBack(wallChar, wall[i].posX, j, 'w');
-				if(wall[i].posX < 63 - 1  && wall[i].posX > -1) SHGUI.current.SetPixelBack(wallChar, wall[i].posX+1, j, 'w');
-			}
-		}
-
-		SHGUI.current.SetPixelFront(bird, 5, posY, 'w'); //rysowanie ptaka
-		if(!begin && lose) SHGUI.current.SetPixelBack(wallChar, 5, posY, 'r');
-
-
-		//rysowanie wyniku
-		if(!lose)
-		{
-			scoreString = score.ToString();
-			for(int i = 0; i < scoreString.Length; ++i)
-			{
-				SHGUI.current.SetPixelFront(scoreString[i], 32 - scoreString.Length/2 + i, 5, 'r');
-			}
-		}
-
-		//rysowanie napisów
-		if(lose)
-		{
-			if(begin) loseString = "Press To Start";
-			else
-			{
-				loseString = "Your Score";
-				for(int i = 0; i < scoreString.Length; ++i) //wypisanie wyniku
+				for(int j = 0; j < LookPipe[i].Length; ++j)
 				{
-					SHGUI.current.SetPixelFront(scoreString[i], 32 + i - scoreString.Length/2, 11, 'r');
-				}
-
-				for(int i = 0; i < bestString.Length; ++i) //napis Best Score
-				{
-					SHGUI.current.SetPixelFront(bestString[i], 32 + i - bestString.Length/2, 13, 'r');
-				}
-				bestScoreString = bestScore.ToString();
-				for(int i = 0; i < bestScoreString.Length; ++i) //wypisanie najlepszego wyniku
-				{
-					SHGUI.current.SetPixelFront(bestScoreString[i], 32 + i - bestScoreString.Length/2, 14, 'r');
+					if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
+					{
+						SHGUI.current.SetPixelFront(LookPipe[i][j], (int)Wall[k].posX + j, (int)Wall[k].border + i, 'z');
+					}
 				}
 			}
-
-			for(int i = 0; i < loseString.Length; ++i) //napis Press To Start lub Your Score
+			for(int m = (int)Wall[k].border + 3; m < 20; ++m) //rura
 			{
-				SHGUI.current.SetPixelFront(loseString[i], 32 + i - loseString.Length/2, 10, 'r');
+				for(int j = 0; j < LookWall[0].Length; ++j)
+				{
+					if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
+					{
+						SHGUI.current.SetPixelFront(LookWall[0][j], (int)Wall[k].posX + j, m, 'z');
+					}
+				}
+			}
+			for(int j = 0; j < LookWallOnGround[0].Length; ++j)//podłoże
+			{
+				if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
+				{
+					SHGUI.current.SetPixelFront(LookWallOnGround[0][j], (int)Wall[k].posX + j, 20, 'z');
+				}
+			}
+			//górna część
+			for(int i = 0; i < 3; ++i) //góra
+			{
+				for(int j = 0; j < LookPipeUp[i].Length; ++j)
+				{
+					if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
+					{
+						SHGUI.current.SetPixelFront(LookPipeUp[i][j], (int)Wall[k].posX + j, (int)Wall[k].border - 9 + i, 'z');
+					}
+				}
+			}
+			for(int m = (int)Wall[k].border - 10; m > 0; --m) //rura
+			{
+				for(int j = 0; j < LookWall[0].Length; ++j)
+				{
+					if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
+					{
+						SHGUI.current.SetPixelFront(LookWall[0][j], (int)Wall[k].posX + j, m, 'z');
+					}
+				}
+			}
+		}
+
+		for(int i = 0; i < 3; ++i) //rysowanie ptaka :)
+		{
+			for(int j = 0; j < LookBird[i].Length; ++j)
+			{
+				if((int)Height + i > 0)
+				{
+					SHGUI.current.SetPixelFront(LookBird[i][j], 6 + j, (int)Height + i, 'z');
+				}
+			}
+		}
+
+		//napis w menu
+		if(!PlayGame && !Lose)
+		{
+			for(int i = 0; i < 6; ++i) //rysowanie napisu w menu
+			{
+				for(int j = 0; j < Title[i].Length; ++j)
+				{
+					SHGUI.current.SetPixelFront(Title[i][j], 8 + j, 3 + i, 'w');
+				}
 			}
 
 		}
+		if(!PlayGame || Lose)
+		{
+			for(int i = 0; i < 5; ++i) //rysowanie napisu w best
+			{
+				for(int j = 0; j < Best[i].Length; ++j)
+				{
+					SHGUI.current.SetPixelFront(Best[i][j], 22 + j, 10 + i, 'w');
+				}
+			}
+
+			//rysowanie najlepszego wyniku w menu wyniku
+			BestScoreString = "" + BestScore;
+			int tempSize = 6 * BestScoreString.Length;
+			int	leftPadding	= (62 - 6 * BestScoreString.Length) / 2;
+
+			for(int k = 0; k < BestScoreString.Length; ++k) //zapisywanie najlepszego wyniku
+			{
+				for(int i = 0; i < 5; ++i)
+				{
+					for(int j = 0; j < 5; ++j) //rysowanie wyniku
+					{
+						if(BestScoreString[k] == '0') SHGUI.current.SetPixelFront(Number0[i][j], leftPadding + j + k * 6, 15 + i, 'w');
+						else if(BestScoreString[k] == '1') SHGUI.current.SetPixelFront(Number1[i][j], leftPadding + j + k * 6, 15 + i, 'w');
+						else if(BestScoreString[k] == '2') SHGUI.current.SetPixelFront(Number2[i][j], leftPadding + j + k * 6, 15 + i, 'w');
+						else if(BestScoreString[k] == '3') SHGUI.current.SetPixelFront(Number3[i][j], leftPadding + j + k * 6, 15 + i, 'w');
+						else if(BestScoreString[k] == '4') SHGUI.current.SetPixelFront(Number4[i][j], leftPadding + j + k * 6, 15 + i, 'w');
+						else if(BestScoreString[k] == '5') SHGUI.current.SetPixelFront(Number5[i][j], leftPadding + j + k * 6, 15 + i, 'w');
+						else if(BestScoreString[k] == '6') SHGUI.current.SetPixelFront(Number6[i][j], leftPadding + j + k * 6, 15 + i, 'w');
+						else if(BestScoreString[k] == '7') SHGUI.current.SetPixelFront(Number7[i][j], leftPadding + j + k * 6, 15 + i, 'w');
+						else if(BestScoreString[k] == '8') SHGUI.current.SetPixelFront(Number8[i][j], leftPadding + j + k * 6, 15 + i, 'w');
+						else if(BestScoreString[k] == '9') SHGUI.current.SetPixelFront(Number9[i][j], leftPadding + j + k * 6, 15 + i, 'w');
+					}
+				}
+			}
+		}
+
+		if(PlayGame || Lose) //rysowanie wyniku podczas rozgrywki
+		{
+
+			ScoreString = "" + Score;
+			int tempSize = 6 * ScoreString.Length;
+			int	leftPadding	= (62 - 6 * ScoreString.Length) / 2;
+			
+			for(int k = 0; k < ScoreString.Length; ++k) //zapisywanie najlepszego wyniku
+			{
+				for(int i = 0; i < 5; ++i)
+				{
+					for(int j = 0; j < 5; ++j) //rysowanie wyniku
+					{
+						if(ScoreString[k] == '0') SHGUI.current.SetPixelFront(Number0[i][j], leftPadding + j + k * 6, 1 + i, 'w');
+						else if(ScoreString[k] == '1') SHGUI.current.SetPixelFront(Number1[i][j], leftPadding + j + k * 6, 1 + i, 'w');
+						else if(ScoreString[k] == '2') SHGUI.current.SetPixelFront(Number2[i][j], leftPadding + j + k * 6, 1 + i, 'w');
+						else if(ScoreString[k] == '3') SHGUI.current.SetPixelFront(Number3[i][j], leftPadding + j + k * 6, 1 + i, 'w');
+						else if(ScoreString[k] == '4') SHGUI.current.SetPixelFront(Number4[i][j], leftPadding + j + k * 6, 1 + i, 'w');
+						else if(ScoreString[k] == '5') SHGUI.current.SetPixelFront(Number5[i][j], leftPadding + j + k * 6, 1 + i, 'w');
+						else if(ScoreString[k] == '6') SHGUI.current.SetPixelFront(Number6[i][j], leftPadding + j + k * 6, 1 + i, 'w');
+						else if(ScoreString[k] == '7') SHGUI.current.SetPixelFront(Number7[i][j], leftPadding + j + k * 6, 1 + i, 'w');
+						else if(ScoreString[k] == '8') SHGUI.current.SetPixelFront(Number8[i][j], leftPadding + j + k * 6, 1 + i, 'w');
+						else if(ScoreString[k] == '9') SHGUI.current.SetPixelFront(Number9[i][j], leftPadding + j + k * 6, 1 + i, 'w');
+					}
+				}
+			}
+		}
+
+
 	}
 
 	public override void ReactToInputKeyboard(SHGUIinput key) {
 		//sterowanie
-		if (key == SHGUIinput.up || key == SHGUIinput.enter) {
-
-			if(lose)
+		if (key == SHGUIinput.up || key == SHGUIinput.enter)
+		{
+			if(PlayGame)
 			{
-				begin = false;
-				if(collapseTimer <= 0f)
-				{
-					lose = false;
-					posY = 10;
-					score = 0;
-					for(int i = 0; i < 5; ++ i) wall[i] = new pipe(63 + (17 * i), Random.Range(5, 13));
-				}
+				//skakanie
+				LastHeight = Height;
+				Fall = Height - HeightFactor;
+				FlyTime = -Mathf.Sqrt(HeightFactor);
 			}
 			else
 			{
-				jump = true;
+				//Start/Reset Gry
+				for(int i = 0; i < Wall.Length; ++i) Wall[i] = new pipe(70 + 30f * i, (float)Random.Range(11, 15));
+				Height				= 10f;
+				LastHeight			= 10f;
+				UpJump				= 10f;
+				
+				Fall				= 10f;
+				FlyTime				= 0f;
+				Score				= 0;
+				PlayGame = true;
+				Lose = false;
 			}
+
 		}
 		
-		if (key == SHGUIinput.esc)
-			SHGUI.current.PopView();
-		//--
+		if (key == SHGUIinput.esc) SHGUI.current.PopView();
 	}
+
+	float CalcHeight() //wyliczanie wysokości ptaka (do małej poprawki)
+	{
+		float y;
+
+		y = Mathf.Pow(FlyTime, 2);
+
+		if(FlyTime < 0f)
+		{
+			UpJump = LastHeight - y;
+			return LastHeight - y; //podnoszenie
+		}
+		return UpJump + y; //opadanie
+	}
+
 }
