@@ -121,9 +121,14 @@ public class APPFlappy : SHGUIappbase {
 
 	//wygląd
 	private string[]	LookBird			= new string[] {
-	" ___   ",
-	"/__o\\_ ",
-	"\\___/-'"
+		" ___",
+		"/__o\\_",
+		"\\___/-'"
+	};
+	private string[]	DeadBird			= new string[] {
+		" ___",
+		"/__X\\_",
+		"\\___/-'"
 	};
 
 	private string[]	LookPipe			= new string[] {
@@ -155,12 +160,11 @@ public class APPFlappy : SHGUIappbase {
 	//mechanika
 	private	float		Height				= 10f; //wysokość na której jest ptak
 	private float		LastHeight			= 10f; //wysokość jaką miał podczas wyskoku
-	private	float		UpJump				= 10f; //zmienna potrzeb ado wyliczenia traiektorii spadania
 	
 	private	float		Fall				= 10f; //hymm w sumie obecnie nic
 	private	float		FlyTime				= 0f; //czas wznoszenia się (jeśli jest na minusie leci do góry gdy jest >= 0 spada)
 	
-	private	float		HeightFactor		= 4f; //wartość wzlotu podczas skoku
+	private	float		HeightFactor		= 5f; //wartość wzlotu podczas skoku
 
 	private	int			Score				= 0; //wynik w obecnej rozgrywce
 	private	int			BestScore			= 0; //najlepszy wynik
@@ -189,7 +193,7 @@ public class APPFlappy : SHGUIappbase {
 		{
 			for(int i = 0; i < Wall.Length; ++i)
 			{
-				Wall[i].posX -= 5 * Time.unscaledDeltaTime;
+				Wall[i].posX -= 12 * Time.unscaledDeltaTime;
 
 				if(Wall[i].posX < - 10)
 				{
@@ -198,23 +202,16 @@ public class APPFlappy : SHGUIappbase {
 					Wall[i].points = false;
 				}
 			}
-			FlyTime += 2 * Time.unscaledDeltaTime;
 
-			if(FlyTime > 0f) //wznoszenie
-			{
-				Height = CalcHeight();
-			}
-			else //spadanie
-			{
-				Height = CalcHeight();
-			}
+			FlyTime += 2.5f * Time.unscaledDeltaTime;
+			Height = LastHeight + CalcHeight(FlyTime);
 		
 			//kolizja
 			for(int i = 0; i < Wall.Length; ++i)
 			{
-				if(Wall[i].posX > -2 && Wall[i].posX < 13) //jesli prak znajdzie się na szerokości platformy
+				if(Wall[i].posX > -2 && Wall[i].posX < 12) //jesli prak znajdzie się na szerokości platformy
 				{
-					if(Height + 2 > Wall[i].border) //kolizja z dolnymi rurami
+					if(Height + 1 > Wall[i].border) //kolizja z dolnymi rurami
 					{
 						if(BestScore < Score) BestScore = Score;
 						PlayGame = false;
@@ -271,7 +268,7 @@ public class APPFlappy : SHGUIappbase {
 				{
 					if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
 					{
-						SHGUI.current.SetPixelFront(LookPipe[i][j], (int)Wall[k].posX + j, (int)Wall[k].border + i, 'z');
+						SHGUI.current.SetPixelBack(LookPipe[i][j], (int)Wall[k].posX + j, (int)Wall[k].border + i, 'z');
 					}
 				}
 			}
@@ -281,7 +278,7 @@ public class APPFlappy : SHGUIappbase {
 				{
 					if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
 					{
-						SHGUI.current.SetPixelFront(LookWall[0][j], (int)Wall[k].posX + j, m, 'z');
+						SHGUI.current.SetPixelBack(LookWall[0][j], (int)Wall[k].posX + j, m, 'z');
 					}
 				}
 			}
@@ -289,7 +286,7 @@ public class APPFlappy : SHGUIappbase {
 			{
 				if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
 				{
-					SHGUI.current.SetPixelFront(LookWallOnGround[0][j], (int)Wall[k].posX + j, 20, 'z');
+					SHGUI.current.SetPixelBack(LookWallOnGround[0][j], (int)Wall[k].posX + j, 20, 'z');
 				}
 			}
 			//górna część
@@ -299,7 +296,7 @@ public class APPFlappy : SHGUIappbase {
 				{
 					if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
 					{
-						SHGUI.current.SetPixelFront(LookPipeUp[i][j], (int)Wall[k].posX + j, (int)Wall[k].border - 9 + i, 'z');
+						SHGUI.current.SetPixelBack(LookPipeUp[i][j], (int)Wall[k].posX + j, (int)Wall[k].border - 9 + i, 'z');
 					}
 				}
 			}
@@ -309,7 +306,7 @@ public class APPFlappy : SHGUIappbase {
 				{
 					if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
 					{
-						SHGUI.current.SetPixelFront(LookWall[0][j], (int)Wall[k].posX + j, m, 'z');
+						SHGUI.current.SetPixelBack(LookWall[0][j], (int)Wall[k].posX + j, m, 'z');
 					}
 				}
 			}
@@ -321,7 +318,11 @@ public class APPFlappy : SHGUIappbase {
 			{
 				if((int)Height + i > 0)
 				{
-					SHGUI.current.SetPixelFront(LookBird[i][j], 6 + j, (int)Height + i, 'z');
+					if (Lose)
+						SHGUI.current.SetPixelFront(DeadBird[i][j], 6 + j, (int)Height + i, 'z');
+					else
+						SHGUI.current.SetPixelFront(LookBird[i][j], 6 + j, (int)Height + i, 'z');
+					//--
 				}
 			}
 		}
@@ -411,10 +412,8 @@ public class APPFlappy : SHGUIappbase {
 		{
 			if(PlayGame)
 			{
-				//skakanie
-				LastHeight = Height;
-				Fall = Height - HeightFactor;
-				FlyTime = -Mathf.Sqrt(HeightFactor);
+				LastHeight 	= Height;
+				FlyTime		= -Mathf.Sqrt(HeightFactor);
 			}
 			else
 			{
@@ -422,13 +421,12 @@ public class APPFlappy : SHGUIappbase {
 				for(int i = 0; i < Wall.Length; ++i) Wall[i] = new pipe(70 + 30f * i, (float)Random.Range(11, 15));
 				Height				= 10f;
 				LastHeight			= 10f;
-				UpJump				= 10f;
 				
 				Fall				= 10f;
 				FlyTime				= 0f;
 				Score				= 0;
-				PlayGame = true;
-				Lose = false;
+				PlayGame			= true;
+				Lose				= false;
 			}
 
 		}
@@ -436,18 +434,9 @@ public class APPFlappy : SHGUIappbase {
 		if (key == SHGUIinput.esc) SHGUI.current.PopView();
 	}
 
-	float CalcHeight() //wyliczanie wysokości ptaka (do małej poprawki)
-	{
-		float y;
-
-		y = Mathf.Pow(FlyTime, 2);
-
-		if(FlyTime < 0f)
-		{
-			UpJump = LastHeight - y;
-			return LastHeight - y; //podnoszenie
-		}
-		return UpJump + y; //opadanie
+	float CalcHeight(float x) //wyliczanie wysokości ptaka (do małej poprawki)
+	{	
+		return Mathf.Pow(x, 2) - HeightFactor;
 	}
 
 }
