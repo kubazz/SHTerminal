@@ -8,17 +8,15 @@ public class SupportMap
 	public	int		posY;
 	public	bool	visited;
 	public	int		father;
-	public	int		indexX;
-	public	int		indexY;
+	public	int		liveTime;
 	
-	public	SupportMap(int pX, int pY, int iX, int iY)
+	public	SupportMap(int pX, int pY)
 	{
 		posX = pX;
 		posY = pY;
-		indexX = iX;
-		indexY = iY;
 		visited = false;
 		father = 4;
+		liveTime = 0;
 	}
 }
 
@@ -64,7 +62,6 @@ public class RogueMonster {
 		posX = pX;
 		posY = pY;
 	}
-
 
 	public void Move()
 	{
@@ -161,145 +158,158 @@ public class RogueMonster {
 		}
 		else if(typeAI == 2 || typeAI == 3) //podchodzenie || podchodzenie z czekaniem
 		{
+			if(typeAI == 3)
+			{
+				if(moveState == 0) moveState = 1;
+				else
+				{
+					moveState = 0;
+					return;
+				}
+			}
+			//sprawdzenie czy gracz stoi zaraz obok
+			if(rogMonsters.posPlayer[0] == posX && rogMonsters.posPlayer[1] == posY - 1) //nad
+			{
+				HitPlayer();
+				return;
+			}
+			if(rogMonsters.posPlayer[0] == posX + 1 && rogMonsters.posPlayer[1] == posY) //po prawo
+			{
+				HitPlayer();
+				return;
+			}
+			if(rogMonsters.posPlayer[0] == posX && rogMonsters.posPlayer[1] == posY + 1) //pod
+			{
+				HitPlayer();
+				return;
+			}
+			if(rogMonsters.posPlayer[0] == posX - 1 && rogMonsters.posPlayer[1] == posY) //po lewo
+			{
+				HitPlayer();
+				return;
+			}
 			//sprawdzenie czy stór widzi(jest wystarczająco blisko) postać
 			if(Mathf.Sqrt(Mathf.Pow(rogMonsters.posPlayer[0] - posX, 2f) + Mathf.Pow(rogMonsters.posPlayer[1] - posY, 2f)) <= vision)
 			{
-				SupportMap[,] visitedMap = new SupportMap[vision * 2 + 1, vision * 2 + 1];
+				SupportMap[,] visitedMap = new SupportMap[rogMonsters.map.GetLength(0), rogMonsters.map.GetLength(1)];
 
-				//wypełnianie mapy odwiedzin odpowiednimi pozycjami
-				for(int i = 0; i < vision * 2 + 1; ++i)
-					for(int j = 0; j < vision * 2 + 1; ++j)
-						visitedMap[i, j] = new SupportMap(posX - vision + i, posY - vision + j, i, j); 
+				for(int i = 0; i < visitedMap.GetLength(0); ++i) //wypełnienie pozycji na pomocniczej mapie
+				{
+					for(int j = 0; j < visitedMap.GetLength(1); ++j)
+					{
+						visitedMap[i, j] = new SupportMap(i, j);
+					}
+				}
 
-
+				//dużucenie pierwszego elementu do listy
 				Queue<SupportMap> que = new Queue<SupportMap>();
-				que.Enqueue(visitedMap[vision + 1, vision + 1]);
+				que.Enqueue(visitedMap[posX, posY]);
 				que.Peek().visited = true;
 				que.Peek().father = 4;
+				que.Peek().liveTime = 0;
 
-				for(int m = 0;; ++m)
+				for(;;) //wyznaczanie trasy do gracza
 				{
-
-					if(m > 1000) return;
-
-					if(que.Peek().indexY > 0) //sprawdzenie czy nie wyjdzie za górną część tablicy
+					if(que.Peek().posX != 0) //lewa krawędź
 					{
-						if(rogMonsters.map[que.Peek().posX, que.Peek().posY - 1] == 0) //czy nie ma ściany
+						if(rogMonsters.map[que.Peek().posX - 1, que.Peek().posY] == 0) //sprawdzenie czy jest to zykłe podłoże a nie ściana czy coś
 						{
-							if(visitedMap[que.Peek().indexX, que.Peek().indexY - 1].visited == false)
+							if(visitedMap[que.Peek().posX - 1, que.Peek().posY].visited == false) //sprawdzenie czy nie został odwiedzony
 							{
-								que.Enqueue(visitedMap[que.Peek().indexX, que.Peek().indexY - 1]);
-								visitedMap[que.Peek().indexX, que.Peek().indexY - 1].visited = true;
-								visitedMap[que.Peek().indexX, que.Peek().indexY - 1].father = 2;
+								visitedMap[que.Peek().posX - 1, que.Peek().posY].visited = true; //zaznaczanie, że się odwiedziło daną pozycje
+								visitedMap[que.Peek().posX - 1, que.Peek().posY].liveTime = que.Peek().liveTime + 1; //zmiana czasu życia
+								visitedMap[que.Peek().posX - 1, que.Peek().posY].father = 1;
+								que.Enqueue(visitedMap[que.Peek().posX - 1, que.Peek().posY]);
 							}
 						}
 					}
-					if(que.Peek().indexX < vision * 2) //sprawdzenie czy nie wyjdzie za prawą część tablicy
+					if(que.Peek().posX < rogMonsters.map.GetLength(0)) //prawa krawędź
 					{
-						if(rogMonsters.map[que.Peek().posX + 1, que.Peek().posY] == 0) //czy nie ma ściany
+						if(rogMonsters.map[que.Peek().posX + 1, que.Peek().posY] == 0) //sprawdzenie czy jest to zykłe podłoże a nie ściana czy coś
 						{
-							if(visitedMap[que.Peek().indexX + 1, que.Peek().indexY].visited == false)
+							if(visitedMap[que.Peek().posX + 1, que.Peek().posY].visited == false) //sprawdzenie czy nie został odwiedzony
 							{
-								que.Enqueue(visitedMap[que.Peek().indexX + 1, que.Peek().indexY]);
-								visitedMap[que.Peek().indexX + 1, que.Peek().indexY].visited = true;
-								visitedMap[que.Peek().indexX + 1, que.Peek().indexY].father = 3;
+								visitedMap[que.Peek().posX + 1, que.Peek().posY].visited = true; //zaznaczanie, że się odwiedziło daną pozycje
+								visitedMap[que.Peek().posX + 1, que.Peek().posY].liveTime = que.Peek().liveTime + 1; //zmiana czasu życia
+								visitedMap[que.Peek().posX + 1, que.Peek().posY].father = 3;
+								que.Enqueue(visitedMap[que.Peek().posX + 1, que.Peek().posY]);
 							}
 						}
 					}
-					if(que.Peek().indexY < vision * 2) //sprawdzenie czy nie wyjdzie za dolną część tablicy
+					if(que.Peek().posY != 0) //górna krawędź
 					{
-						if(rogMonsters.map[que.Peek().posX, que.Peek().posY + 1] == 0) //czy nie ma ściany
+						if(rogMonsters.map[que.Peek().posX, que.Peek().posY - 1] == 0) //sprawdzenie czy jest to zykłe podłoże a nie ściana czy coś
 						{
-							if(visitedMap[que.Peek().indexX, que.Peek().indexY + 1].visited == false)
+
+							if(visitedMap[que.Peek().posX, que.Peek().posY - 1].visited == false) //sprawdzenie czy nie został odwiedzony
 							{
-								que.Enqueue(visitedMap[que.Peek().indexX, que.Peek().indexY + 1]);
-								visitedMap[que.Peek().indexX, que.Peek().indexY + 1].visited = true;
-								visitedMap[que.Peek().indexX, que.Peek().indexY + 1].father = 0;
+								visitedMap[que.Peek().posX, que.Peek().posY - 1].visited = true; //zaznaczanie, że się odwiedziło daną pozycje
+								visitedMap[que.Peek().posX, que.Peek().posY - 1].liveTime = que.Peek().liveTime + 1; //zmiana czasu życia
+								visitedMap[que.Peek().posX, que.Peek().posY - 1].father = 2;
+								que.Enqueue(visitedMap[que.Peek().posX, que.Peek().posY - 1]);
 							}
 						}
 					}
-					if(que.Peek().indexX > 0) //sprawdzenie czy nie wyjdzie za lewą część tablicy
+					if(que.Peek().posY < rogMonsters.map.GetLength(1)) //dolna krawędź
 					{
-						if(rogMonsters.map[que.Peek().posX - 1, que.Peek().posY] == 0) //czy nie ma ściany
+						if(rogMonsters.map[que.Peek().posX, que.Peek().posY + 1] == 0) //sprawdzenie czy jest to zykłe podłoże a nie ściana czy coś
 						{
-							if(visitedMap[que.Peek().indexX - 1, que.Peek().indexY].visited == false)
+							if(visitedMap[que.Peek().posX, que.Peek().posY + 1].visited == false) //sprawdzenie czy nie został odwiedzony
 							{
-								que.Enqueue(visitedMap[que.Peek().indexX - 1, que.Peek().indexY]);
-								visitedMap[que.Peek().indexX - 1, que.Peek().indexY].visited = true;
-								visitedMap[que.Peek().indexX - 1, que.Peek().indexY].father = 1;
+								visitedMap[que.Peek().posX, que.Peek().posY + 1].visited = true; //zaznaczanie, że się odwiedziło daną pozycje
+								visitedMap[que.Peek().posX, que.Peek().posY + 1].liveTime = que.Peek().liveTime + 1; //zmiana czasu życia
+								visitedMap[que.Peek().posX, que.Peek().posY + 1].father = 0;
+								que.Enqueue(visitedMap[que.Peek().posX, que.Peek().posY + 1]);
 							}
 						}
 					}
 
-					//kiedy znaleziono gracza w zasięgu wzroku
-					if(que.Peek().posX == rogMonsters.posPlayer[0] && que.Peek().posY == rogMonsters.posPlayer[1])
+					if(que.Peek().posX == rogMonsters.posPlayer[0] && que.Peek().posY == rogMonsters.posPlayer[1]) //gdy znajdziemy gracza
 					{
-						//ustawianie kierunku w który będzie się poruszał potwór
-						SupportMap actualStep = que.Peek();
-						int lastFather = que.Peek().father;
-
-						for(int k = 0;; ++k)
-						{
-							if(k > 500) return;
-
-							lastFather = actualStep.father;
-
-							if(actualStep.father == 0) //jeżeli jesteśmy nad graczem
-							{
-								if(rogMonsters.map[actualStep.posX, actualStep.posY + 1] == 0)
-									if(actualStep.indexY + 1 < vision * 2)
-										actualStep = visitedMap[actualStep.indexX, actualStep.indexY + 1];
-								else return;
-							}
-							else if(actualStep.father == 1) //jeżeli jesteśmy na lewo od gracza graczem
-							{
-								if(rogMonsters.map[actualStep.posX - 1, actualStep.posY] == 0)
-									if(actualStep.indexX - 1 > 0)
-										actualStep = visitedMap[actualStep.indexX - 1, actualStep.indexY];
-								else return;
-							}
-							else if(actualStep.father == 2) //jeżeli jesteśmy pod graczem
-							{
-								if(rogMonsters.map[actualStep.posX, actualStep.posY - 1] == 0)
-									if(actualStep.indexY - 1 > 0)
-										actualStep = visitedMap[actualStep.indexX, actualStep.indexY - 1];
-								else return;
-							}
-							else if(actualStep.father == 3) //jeżeli jesteśmy na prawo od gracza graczem
-							{
-								if(rogMonsters.map[actualStep.posX + 1, actualStep.posY] == 0)
-									if(actualStep.indexX + 1 < vision * 2)
-										actualStep = visitedMap[actualStep.indexX + 1, actualStep.indexY];
-								else return;
-							}
-							if(actualStep.father == 4)
-							{
-								if(lastFather == 0) //jeżeli jesteśmy nad graczem
-								{
-									if(rogMonsters.map[actualStep.posX, actualStep.posY + 1] == 0) ++posY;
-								}
-								else if(lastFather == 1) //jeżeli jesteśmy na lewo od gracza graczem
-								{
-									if(rogMonsters.map[actualStep.posX - 1, actualStep.posY] == 0) --posX;
-								}
-								else if(lastFather == 2) //jeżeli jesteśmy pod graczem
-								{
-									if(rogMonsters.map[actualStep.posX, actualStep.posY - 1] == 0) --posY;
-								}
-								else if(lastFather == 3) //jeżeli jesteśmy na prawo od gracza graczem
-								{
-									if(rogMonsters.map[actualStep.posX + 1, actualStep.posY] == 0) ++posX;
-								}
-								return;
-							}
-						}
+						targetPosX = rogMonsters.posPlayer[0];
+						targetPosY = rogMonsters.posPlayer[1];
 					}
+
+					if(que.Peek().liveTime > vision) break; //jeżeli doszlo do granicy widoku i nie znaleziono gracza przerywamy
 
 					que.Dequeue();
-
-					if(que.Count == 0) //nie znaleziono gracza
+					if(que.Count == 0) //jeśli kolejka jest pusta wychodzimy z pętli
 					{
-						return;
+						break;
+					}
+				}
+				int lastFather = visitedMap[targetPosX, targetPosY].father;
+				//wyznaczanie ścieżki
+				for(int i = 0;; ++i)
+				{
+					if(visitedMap[targetPosX, targetPosY].father == 0)
+					{
+						targetPosY -= 1;
+						lastFather = 0;
+					}
+					else if(visitedMap[targetPosX, targetPosY].father == 1)
+					{
+						targetPosX += 1;
+						lastFather = 1;
+					}
+					else if(visitedMap[targetPosX, targetPosY].father == 2)
+					{
+						targetPosY += 1;
+						lastFather = 2;
+					}
+					else if(visitedMap[targetPosX, targetPosY].father == 3)
+					{
+						targetPosX -= 1;
+						lastFather = 3;
+					}
+					else if(visitedMap[targetPosX, targetPosY].father == 4)
+					{
+						Debug.Log("end: " + lastFather);
+						if(lastFather == 0) posY += 1;
+						else if(lastFather == 1) posX -= 1;
+						else if(lastFather == 2) posY -= 1;
+						else if(lastFather == 3) posX += 1;
+						break;
 					}
 				}
 
@@ -310,5 +320,10 @@ public class RogueMonster {
 		{
 			return;
 		}
+	}
+
+	public void HitPlayer()
+	{
+
 	}
 }
