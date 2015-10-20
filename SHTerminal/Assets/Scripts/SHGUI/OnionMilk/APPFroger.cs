@@ -1,209 +1,179 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
+public class crash
+{
+	public	int			graphic; //grafika onazczająca trzy kolejne linijki w stringu z pojazdami
+	public	int			posX; //pozycja pozioma
+	public	int			posY; //pozycja pionowa
+	public	bool		left; //w którą stronę jest odwrócony
+	public	int			width; //ilośćpól zajmowanych w poziomie
+
+	public crash(int type, bool dir, int posy)
+	{
+		left = dir;
+		graphic = type;
+		posY = posy;
+		posX = 5;
+		if(type == 0) //skuterek
+		{
+			width = 4;
+		}
+		else if(type == 1) //niskie autko
+		{
+			width = 8;
+		}
+		else if(type == 2) //zwykłe autko
+		{
+			width = 8;
+		}
+		else if(type == 3) //karetka
+		{
+			width = 8;
+		}
+		else if(type == 4) //łudka
+		{
+			width = 6;
+		}
+		else if(type == 5) //ciężarówka
+		{
+			width = 13;
+		}
+		else if(type == 6) //pociąg
+		{
+			width = 10;
+		}
+		else if(type == 7) //wagon
+		{
+			width = 14;
+		}
+	}
+}
 
 public class APPFroger : SHGUIappbase {
-
-	private enum CellState : byte
+	
+	private string[]			cars	= new string[]
 	{
-		Empty = 0,
-		Train = 1,
-	}
+		"  o ",
+		" /# ",
+		"o--o",
+		" ",
+		" _,--._ ",
+		"'-o--o-'",
+		"   __   ",
+		" _/# \\_",
+		"/0---0--",
+		" ____   ",
+		"|+ [][\\ ",
+		"'o---o-'",
+		" ____ ",
+		"/    |",
+		"\\____|",
+		" __ _________",
+		"|#  |||||||||",
+		"\\-0--0--0--0/",
+		" _____<__ ",
+		"(`===HOT=|",
+		"=o-o--o-o^",
+		"_____________ ",
+		"H==EXPRESS==H|",
+		"-oo-------oo-^"
+	};
 
-	//62x22
-	CellState[,] map = new CellState[32, 22]; //mapa;
 
-	int posX = 16; //pozycja żabki
-	int posY = 21;
+	int posX = 30; //pozycja żabki
+	int posY = 0;
+	int offSetY = 0;
 
 	char frog = '⌂'; //żaba
-	char train = '█'; //pociąg
-	char wall = '│'; //ściana
-	char end = '░'; //końcówka
+	float stepTime = 0.07f; //ruchu
 
-	int lvl = 0; //aktualny poziom
-	int deadCount = 0; //ilosć śmierci
-	int moveCount = 0; //ilość ruchów
-	float gameTime = 0f; //czas gry
+	public	List<crash>			vehicle = new List<crash>();
 
-	string lvlString = "1";
-	string deadCountString = "0";
-	string moveCountString = "0";
-	string gameTimeString = "0";
-
-	int lvlBest = 0; //najlepszy poziom
-	int deadCountBest = 0; //najmniejsza ilość śmierci
-	int moveCountBest = 0; //najmniejsza ilość ruchów
-	float gameTimeBest = 0f; //najlepszy czas
-
-	string lvlStringBest = "1";
-	string deadCountStringBest = "0";
-	string moveCountStringBest = "0";
-	string gameTimeStringBest = "0";
-
-	int harder = 0;
-
-	//float trainTimer = 0.2f;
-
-	bool moveTrain = false;
-
-	public APPFroger()
-	: base("hot_train-v1.3-by-onionmilk")
+	public APPFroger() : base("hot_train-v5.5.5-by-onionmilk")
 	{
-		NextLevel();
+		crash newCar = new crash(0, true, 6);
+		vehicle.Add(newCar);
+		newCar = new crash(5, true, 10);
+		vehicle.Add(newCar);
 	}
 	
 	public override void Update() 
 	{
 		base.Update();
 
-		gameTime += Time.unscaledDeltaTime;
+		stepTime -= Time.unscaledDeltaTime;
 
-		//poruszanie pociągami
-		//trainTimer -= Time.unscaledDeltaTime; //ruszanie co pewien okres czasu
-		//if(trainTimer <= 0f)
-		//{
-		//	trainTimer = 0.2f;
-		if(moveTrain) //poruszanie przy ruchu
+		if(stepTime <= 0f)
 		{
-			moveTrain = false;
+			stepTime = 0.07f;
 
-			for(int j = 0; j < 21; ++j)
-			{	
-				if(j%2 == 0) //ruch pociągów w lewo
+			for(int i = 0; i < vehicle.Count;) //jeżeli minąłeś już jakiś auto i wyleciało poza obszar renderu to je wywalamy
+			{
+				if(vehicle[i].posY < (posY - 4))
 				{
-					for(int i = 0; i < 32; ++i)
-					{
-						if(map[i, j] == CellState.Train) 
-						{
-							map[i, j] = CellState.Empty;
-							if(i == 0) map[31, j] = CellState.Train;
-							else map[i - 1, j] = CellState.Train;
-						}
-					}
+					vehicle.RemoveAt(i);
 				}
-				else //ruch pociągów w prawo
+				else
 				{
-					for(int i = 31; i >= 0; --i)
+					++i;
+				}
+			}
+			
+			for(int i = 0; i < vehicle.Count; ++i) //przesuwanie pojazdu
+			{
+				if(vehicle[i].left)
+				{
+					--vehicle[i].posX;
+					if(vehicle[i].posX < (0 - vehicle[i].width)) vehicle[i].posX = 64;
+				}
+				else
+				{
+					++vehicle[i].posX;
+					if(vehicle[i].posX > (64 + vehicle[i].width)) vehicle[i].posX = 0;
+				}
+			}
+		}
+		
+		for(int i = 0; i < vehicle.Count; ++i) //kolizja
+		{
+			if(vehicle[i].posY <= posY && vehicle[i].posY > posY - 3) //jeśli jest na wysokości pojazdu
+			{
+				if(vehicle[i].left) //dla jadącego w lewo
+				{
+					if(vehicle[i].posX <= posX && vehicle[i].posX > posX - vehicle[i].width)
 					{
-						if(map[i, j] == CellState.Train) 
-						{
-							map[i, j] = CellState.Empty;
-							if(i == 30) map[0, j] = CellState.Train;
-							else map[i + 1, j] = CellState.Train;
-						}
+					
 					}
 				}
 			}
-
 		}
-		if(map[posX, posY] == CellState.Train) //powrót na start po dotchnięciu pociągu
-		{
-			posX = 16;
-			posY = 21;
-			++deadCount;
-		}
-
 	}
 	
 	public override void Redraw(int offx, int offy)
 	{
 		base.Redraw(offx, offy);
 
-		for(int i = 0; i < 32; ++i)
+		SHGUI.current.SetPixelFront(frog, posX, 22 - offSetY, 'w'); //rysowanie żaby
+		
+		//rysowanie pojazdów
+		for(int i = 0; i < vehicle.Count; ++i)
 		{
-			SHGUI.current.SetPixelBack(end, i + 15, 1, 'z'); //rysowanie pociągów
-		}
-		for(int i = 0; i < 22; ++i)
-		{
-			SHGUI.current.SetPixelFront(wall, 14, i + 1, 'w'); //rysowanie pociągów
-			SHGUI.current.SetPixelFront(wall, 47, i + 1, 'w'); //rysowanie pociągów
-		}
-
-		for(int i = 0; i < 32; ++i)
-		{
-			for(int j = 0; j < 22; ++j)
+			for(int y = 0; y < 3; ++y)
 			{
-				if(map[i, j] == CellState.Train)
+				if(22 - (vehicle[i].posY - posY) + y > 0 && 22 - (vehicle[i].posY - posY) + y < 23) //żeby nie właziły na krawędź górną
 				{
-					SHGUI.current.SetPixelFront(train, i + 15, j + 1, 'r'); //rysowanie pociągów
+					for(int x = 0; x < cars[vehicle[i].graphic * 3 + y].Length; ++x)
+					{
+						if(vehicle[i].posX + x > 0 && vehicle[i].posX + x < 63)
+						{
+							SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 22 - (vehicle[i].posY - posY) + y, 'z');
+						}
+					}
 				}
 			}
 		}
-		SHGUI.current.SetPixelFront(frog, posX + 15, posY + 1, 'w'); //rysowanie żaby
-
-		lvlString = lvl.ToString();
-		moveCountString = moveCount.ToString();
-		gameTimeString = gameTime.ToString("F0");
-		deadCountString = deadCount.ToString();
-
-		//LEVEL
-		SHGUI.current.SetPixelFront('L', 53, 4, 'w');
-		SHGUI.current.SetPixelFront('E', 54, 4, 'w');
-		SHGUI.current.SetPixelFront('V', 55, 4, 'w');
-		SHGUI.current.SetPixelFront('E', 56, 4, 'w');
-		SHGUI.current.SetPixelFront('L', 57, 4, 'w');
-		for(int u = 0; u < lvlString.Length; ++u) SHGUI.current.SetPixelFront(lvlString[u], 55 - (lvlString.Length / 2) + u, 5, 'w');
-		//TIME
-		SHGUI.current.SetPixelFront('T', 53, 16, 'w');
-		SHGUI.current.SetPixelFront('I', 54, 16, 'w');
-		SHGUI.current.SetPixelFront('M', 55, 16, 'w');
-		SHGUI.current.SetPixelFront('E', 56, 16, 'w');
-		for(int u = 0; u < gameTimeString.Length; ++u) SHGUI.current.SetPixelFront(gameTimeString[u], 55 - (gameTimeString.Length / 2) + u, 17, 'w');
-		//MOVE
-		SHGUI.current.SetPixelFront('M', 53, 12, 'w');
-		SHGUI.current.SetPixelFront('O', 54, 12, 'w');
-		SHGUI.current.SetPixelFront('V', 55, 12, 'w');
-		SHGUI.current.SetPixelFront('E', 56, 12, 'w');
-		for(int u = 0; u < moveCountString.Length; ++u) SHGUI.current.SetPixelFront(moveCountString[u], 55 - (moveCountString.Length / 2) + u, 13, 'w');
-		//DEAD
-		SHGUI.current.SetPixelFront('D', 53, 8, 'w');
-		SHGUI.current.SetPixelFront('E', 54, 8, 'w');
-		SHGUI.current.SetPixelFront('A', 55, 8, 'w');
-		SHGUI.current.SetPixelFront('D', 56, 8, 'w');
-		for(int u = 0; u < deadCountString.Length; ++u) SHGUI.current.SetPixelFront(deadCountString[u], 55 - (deadCountString.Length / 2) + u, 9, 'w');
-	
-
-		//Besty
-		lvlStringBest = lvlBest.ToString();
-		moveCountStringBest = moveCountBest.ToString();
-		gameTimeStringBest = gameTimeBest.ToString("F0");
-		deadCountStringBest = deadCountBest.ToString();
-
-		SHGUI.current.SetPixelFront('B', 2, 2, 'w');
-		SHGUI.current.SetPixelFront('E', 3, 2, 'w');
-		SHGUI.current.SetPixelFront('S', 4, 2, 'w');
-		SHGUI.current.SetPixelFront('T', 5, 2, 'w');
-		SHGUI.current.SetPixelFront('S', 7, 2, 'w');
-		SHGUI.current.SetPixelFront('C', 8, 2, 'w');
-		SHGUI.current.SetPixelFront('O', 9, 2, 'w');
-		SHGUI.current.SetPixelFront('R', 10, 2, 'w');
-		SHGUI.current.SetPixelFront('E', 11, 2, 'w');
-
-		//LEVEL
-		SHGUI.current.SetPixelFront('L', 4, 4, 'w');
-		SHGUI.current.SetPixelFront('E', 5, 4, 'w');
-		SHGUI.current.SetPixelFront('V', 6, 4, 'w');
-		SHGUI.current.SetPixelFront('E', 7, 4, 'w');
-		SHGUI.current.SetPixelFront('L', 8, 4, 'w');
-		for(int u = 0; u < lvlStringBest.Length; ++u) SHGUI.current.SetPixelFront(lvlStringBest[u], 6 - (lvlStringBest.Length / 2) + u, 5, 'w');
-		//TIME
-		SHGUI.current.SetPixelFront('T', 4, 16, 'w');
-		SHGUI.current.SetPixelFront('I', 5, 16, 'w');
-		SHGUI.current.SetPixelFront('M', 6, 16, 'w');
-		SHGUI.current.SetPixelFront('E', 7, 16, 'w');
-		for(int u = 0; u < gameTimeStringBest.Length; ++u) SHGUI.current.SetPixelFront(gameTimeStringBest[u], 6 - (gameTimeStringBest.Length / 2) + u, 17, 'w');
-		//MOVE
-		SHGUI.current.SetPixelFront('M', 4, 12, 'w');
-		SHGUI.current.SetPixelFront('O', 5, 12, 'w');
-		SHGUI.current.SetPixelFront('V', 6, 12, 'w');
-		SHGUI.current.SetPixelFront('E', 7, 12, 'w');
-		for(int u = 0; u < moveCountStringBest.Length; ++u) SHGUI.current.SetPixelFront(moveCountStringBest[u], 6 - (moveCountStringBest.Length / 2) + u, 13, 'w');
-		//DEAD
-		SHGUI.current.SetPixelFront('D', 4, 8, 'w');
-		SHGUI.current.SetPixelFront('E', 5, 8, 'w');
-		SHGUI.current.SetPixelFront('A', 6, 8, 'w');
-		SHGUI.current.SetPixelFront('D', 7, 8, 'w');
-		for(int u = 0; u < deadCountStringBest.Length; ++u) SHGUI.current.SetPixelFront(deadCountStringBest[u], 6 - (deadCountStringBest.Length / 2) + u, 9, 'w');
 	}
 	
 	public override void ReactToInputKeyboard(SHGUIinput key)
@@ -211,133 +181,62 @@ public class APPFroger : SHGUIappbase {
 		//sterowanie
 		if (key == SHGUIinput.up)
 		{
-
-			if(posY > 0) --posY;
-			else
+			++posY;
+			if(offSetY < 4) ++offSetY;
+			else //tworzenie nowych autek
 			{
-				posY = 0;
-				if(lvl < 1000) NextLevel();
+				if(posY % 3 == 0) randVehicles();
 			}
-			++moveCount;
-			moveTrain = true;
 		}
 		if (key == SHGUIinput.down)
 		{
-			if(posY < 21) ++posY;
-			++moveCount;
-			moveTrain = true;
+			if(offSetY > 0)
+			{
+				--posY;
+				--offSetY;
+			}
 		}
 		if (key == SHGUIinput.right)
 		{
-			if(posX < 30) ++posX;
-			++moveCount;
-			moveTrain = true;
+			if(posX < 62) ++posX;
 		}
 		if (key == SHGUIinput.left)
 		{
-			if(posX > 0) --posX;
-			++moveCount;
-			moveTrain = true;
+			if(posX > 1) --posX;
 		}
 		
 		if (key == SHGUIinput.esc)
 		{
-			if(lvl > lvlBest) //zapisanie wyniku jeśli jest lepszy
-			{
-				SetBestScore();
-			}
-			else if(lvl == lvlBest)
-			{
-				if(deadCount < deadCountBest)
-				{
-					SetBestScore();
-				}
-				else if(deadCount == deadCountBest)
-				{
-					if(moveCount < moveCountBest)
-					{
-						SetBestScore();
-					}
-					else if(moveCount == moveCountBest)
-					{
-						if(gameTimeBest < gameTimeBest)
-						{
-							SetBestScore();
-						}
-					}
-				}
-			}
-
 			SHGUI.current.PopView();
 		}
 
 	}
-
-	void SetBestScore()
+	
+	void randVehicles()
 	{
-		lvlBest = lvl;
-		deadCountBest = deadCount;
-		moveCountBest = moveCount;
-		gameTimeBest = gameTime;
-	}
-
-	private void NextLevel()
-	{
-		Random.seed = lvl;
-		++lvl;
-
-		posX = 16;
-		posY = 21;
-
-		//zwiększanie poziomu trudności
-		if(lvl > 33) harder = 11;
-		else if(lvl > 30) harder = 10;
-		else if(lvl > 27) harder = 9;
-		else if(lvl > 24) harder = 8;
-		else if(lvl > 21) harder = 7;
-		else if(lvl > 18) harder = 6;
-		else if(lvl > 15) harder = 5;
-		else if(lvl > 12) harder = 4;
-		else if(lvl > 9) harder = 3;
-		else if(lvl > 6) harder = 2;
-		else if(lvl > 3) harder = 1;
-
-
-		for(int i = 0; i < 32; ++i) for(int j = 0; j < 22; ++j) map[i, j] = CellState.Empty; //czyszczenie mapy
-
-		int temp = 10;
-		int temp2 = 0;
-
-		if(lvl < 1000) //ustawianie początkowej pozycji pociągu
+		if(posY < 20) //poziom 1 - 12
 		{
-			for(int j = 1; j < 21; ++j)
-			{
-				if(j == 20 && harder < 1) continue;
-				if(j == 17 && harder < 2) continue;
-				if(j == 11 && harder < 9) continue;
-				if(j == 7 && harder < 4) continue;
-				if(j == 5 && harder < 7) continue;
-
-				temp = Random.Range(1 + harder, 7 + harder);
-
-				for(int i = 0; i < temp; ++i)
-				{
-					temp2 = Random.Range(0, 31);
-					if(map[temp2, j] == CellState.Train)
-					{
-						for(;; ++temp2)
-						{
-							if(temp2 == 31) temp2 = 0;
-							if(map[temp2, j] == CellState.Empty)
-							{
-								map[temp2, j] = CellState.Train;
-								break;
-							}
-						}
-					}
-					else map[temp2, j] = CellState.Train;
-				}
-			}
+			
+		}
+		else if(posY < 50) //poziom 2 - 20
+		{
+		
+		}
+		else if(posY < 150) //poziom 3 - 25
+		{
+		
+		}
+		else if(posY < 400) //poziom 4 - 30
+		{
+		
+		}
+		else if(posY < 900) //poziom 5 - 36
+		{
+		
+		}
+		else if(posY < 2000) //poziom 6 - 44
+		{
+		
 		}
 	}
 }
