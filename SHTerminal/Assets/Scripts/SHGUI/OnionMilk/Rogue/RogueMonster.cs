@@ -214,12 +214,15 @@ public class RogueMonster {
 					{
 						if(rogMonsters.map[que.Peek().posX - 1, que.Peek().posY] == 0) //sprawdzenie czy jest to zykłe podłoże a nie ściana czy coś
 						{
-							if(visitedMap[que.Peek().posX - 1, que.Peek().posY].visited == false) //sprawdzenie czy nie został odwiedzony
+							if(CheckFild(3))
 							{
-								visitedMap[que.Peek().posX - 1, que.Peek().posY].visited = true; //zaznaczanie, że się odwiedziło daną pozycje
-								visitedMap[que.Peek().posX - 1, que.Peek().posY].liveTime = que.Peek().liveTime + 1; //zmiana czasu życia
-								visitedMap[que.Peek().posX - 1, que.Peek().posY].father = 1;
-								que.Enqueue(visitedMap[que.Peek().posX - 1, que.Peek().posY]);
+								if(visitedMap[que.Peek().posX - 1, que.Peek().posY].visited == false) //sprawdzenie czy nie został odwiedzony
+								{
+									visitedMap[que.Peek().posX - 1, que.Peek().posY].visited = true; //zaznaczanie, że się odwiedziło daną pozycje
+									visitedMap[que.Peek().posX - 1, que.Peek().posY].liveTime = que.Peek().liveTime + 1; //zmiana czasu życia
+									visitedMap[que.Peek().posX - 1, que.Peek().posY].father = 1;
+									que.Enqueue(visitedMap[que.Peek().posX - 1, que.Peek().posY]);
+								}
 							}
 						}
 					}
@@ -227,12 +230,15 @@ public class RogueMonster {
 					{
 						if(rogMonsters.map[que.Peek().posX + 1, que.Peek().posY] == 0) //sprawdzenie czy jest to zykłe podłoże a nie ściana czy coś
 						{
-							if(visitedMap[que.Peek().posX + 1, que.Peek().posY].visited == false) //sprawdzenie czy nie został odwiedzony
+							if(CheckFild(1))
 							{
-								visitedMap[que.Peek().posX + 1, que.Peek().posY].visited = true; //zaznaczanie, że się odwiedziło daną pozycje
-								visitedMap[que.Peek().posX + 1, que.Peek().posY].liveTime = que.Peek().liveTime + 1; //zmiana czasu życia
-								visitedMap[que.Peek().posX + 1, que.Peek().posY].father = 3;
-								que.Enqueue(visitedMap[que.Peek().posX + 1, que.Peek().posY]);
+								if(visitedMap[que.Peek().posX + 1, que.Peek().posY].visited == false) //sprawdzenie czy nie został odwiedzony
+								{
+									visitedMap[que.Peek().posX + 1, que.Peek().posY].visited = true; //zaznaczanie, że się odwiedziło daną pozycje
+									visitedMap[que.Peek().posX + 1, que.Peek().posY].liveTime = que.Peek().liveTime + 1; //zmiana czasu życia
+									visitedMap[que.Peek().posX + 1, que.Peek().posY].father = 3;
+									que.Enqueue(visitedMap[que.Peek().posX + 1, que.Peek().posY]);
+								}
 							}
 						}
 					}
@@ -240,13 +246,15 @@ public class RogueMonster {
 					{
 						if(rogMonsters.map[que.Peek().posX, que.Peek().posY - 1] == 0) //sprawdzenie czy jest to zykłe podłoże a nie ściana czy coś
 						{
-
-							if(visitedMap[que.Peek().posX, que.Peek().posY - 1].visited == false) //sprawdzenie czy nie został odwiedzony
+							if(CheckFild(0))
 							{
-								visitedMap[que.Peek().posX, que.Peek().posY - 1].visited = true; //zaznaczanie, że się odwiedziło daną pozycje
-								visitedMap[que.Peek().posX, que.Peek().posY - 1].liveTime = que.Peek().liveTime + 1; //zmiana czasu życia
-								visitedMap[que.Peek().posX, que.Peek().posY - 1].father = 2;
-								que.Enqueue(visitedMap[que.Peek().posX, que.Peek().posY - 1]);
+								if(visitedMap[que.Peek().posX, que.Peek().posY - 1].visited == false) //sprawdzenie czy nie został odwiedzony
+								{
+									visitedMap[que.Peek().posX, que.Peek().posY - 1].visited = true; //zaznaczanie, że się odwiedziło daną pozycje
+									visitedMap[que.Peek().posX, que.Peek().posY - 1].liveTime = que.Peek().liveTime + 1; //zmiana czasu życia
+									visitedMap[que.Peek().posX, que.Peek().posY - 1].father = 2;
+									que.Enqueue(visitedMap[que.Peek().posX, que.Peek().posY - 1]);
+								}
 							}
 						}
 					}
@@ -254,12 +262,15 @@ public class RogueMonster {
 					{
 						if(rogMonsters.map[que.Peek().posX, que.Peek().posY + 1] == 0) //sprawdzenie czy jest to zykłe podłoże a nie ściana czy coś
 						{
-							if(visitedMap[que.Peek().posX, que.Peek().posY + 1].visited == false) //sprawdzenie czy nie został odwiedzony
+							if(CheckFild(2))
 							{
-								visitedMap[que.Peek().posX, que.Peek().posY + 1].visited = true; //zaznaczanie, że się odwiedziło daną pozycje
-								visitedMap[que.Peek().posX, que.Peek().posY + 1].liveTime = que.Peek().liveTime + 1; //zmiana czasu życia
-								visitedMap[que.Peek().posX, que.Peek().posY + 1].father = 0;
-								que.Enqueue(visitedMap[que.Peek().posX, que.Peek().posY + 1]);
+								if(visitedMap[que.Peek().posX, que.Peek().posY + 1].visited == false) //sprawdzenie czy nie został odwiedzony
+								{
+									visitedMap[que.Peek().posX, que.Peek().posY + 1].visited = true; //zaznaczanie, że się odwiedziło daną pozycje
+									visitedMap[que.Peek().posX, que.Peek().posY + 1].liveTime = que.Peek().liveTime + 1; //zmiana czasu życia
+									visitedMap[que.Peek().posX, que.Peek().posY + 1].father = 0;
+									que.Enqueue(visitedMap[que.Peek().posX, que.Peek().posY + 1]);
+								}
 							}
 						}
 					}
@@ -304,7 +315,6 @@ public class RogueMonster {
 					}
 					else if(visitedMap[targetPosX, targetPosY].father == 4)
 					{
-						Debug.Log("end: " + lastFather);
 						if(lastFather == 0) posY += 1;
 						else if(lastFather == 1) posX -= 1;
 						else if(lastFather == 2) posY -= 1;
@@ -322,8 +332,14 @@ public class RogueMonster {
 		}
 	}
 
-	public void HitPlayer()
+	public void HitPlayer() //walnięcie w gracza
 	{
 
+	}
+
+	public bool CheckFild(int tempDirect) //sprawdzenie czy na polu na które chcemy sie ruszyć nie stoi jakiś inny potworek
+	{
+
+		return true;
 	}
 }
