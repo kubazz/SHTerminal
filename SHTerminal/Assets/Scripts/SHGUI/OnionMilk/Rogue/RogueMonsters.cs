@@ -11,28 +11,17 @@ public class RogueMonsters {
 	public	List<RogueMonster>			monsterList = new List<RogueMonster>();
 	public	RoguePlayer					player;
 
-	public	int[]						posPlayer = new int[2];
-
 	public RogueMonsters(int[,] mapka, RoguePlayer pl)
 	{
 		monsterList.Clear();
 		map = mapka;
 		player = pl;
 
-		posPlayer[0] = 20;
-		posPlayer[1] = 50;
-
 		//monsterList.Add(new RogueMonster(10, this, 16, 9));
 		//								ID	PARENT	X	Y
 		monsterList.Add(new RogueMonster(7, this, 18, 8));
 		monsterList.Add(new RogueMonster(29, this, 20, 7));
 
-	}
-
-	public void UpdatePosPlayer(int pX, int pY)
-	{
-		posPlayer[0] = pX;
-		posPlayer[1] = pY;
 	}
 
 	public void SetParameters(int ID, RogueMonster monster)
