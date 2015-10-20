@@ -7,7 +7,9 @@ public class RoguePlayer {
 	private int[,]		map			= null;
 
 	//Public
+	//Pozycja
 	public int[]		position	= new int[2] {0, 0};
+	//Dane
 	public int[]		inventory	= new int[20];
 	public int			helmet		= 0;
 	public int			armor		= 0;

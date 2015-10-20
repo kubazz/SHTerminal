@@ -18,6 +18,7 @@ public class RogueMonsters {
 		map = mapka;
 
 		//monsterList.Add(new RogueMonster(10, this, 16, 9));
+		//								ID	PARENT	X	Y
 		monsterList.Add(new RogueMonster(7, this, 18, 8));
 		monsterList.Add(new RogueMonster(29, this, 20, 7));
 
