@@ -9,21 +9,23 @@ public class RogueMonsters {
 
 	//potwory
 	public	List<RogueMonster>			monsterList = new List<RogueMonster>();
+	public	RoguePlayer					player;
 
 	public	int[]						posPlayer = new int[2];
 
-	public RogueMonsters(int[,] mapka, int[] posPl)
+	public RogueMonsters(int[,] mapka, RoguePlayer pl)
 	{
 		monsterList.Clear();
 		map = mapka;
+		player = pl;
+
+		posPlayer[0] = 20;
+		posPlayer[1] = 50;
 
 		//monsterList.Add(new RogueMonster(10, this, 16, 9));
 		monsterList.Add(new RogueMonster(7, this, 18, 8));
 		monsterList.Add(new RogueMonster(29, this, 20, 7));
 
-		SetParameters();
-
-		posPlayer = posPlayer;
 	}
 
 	public void UpdatePosPlayer(int pX, int pY)
@@ -32,901 +34,899 @@ public class RogueMonsters {
 		posPlayer[1] = pY;
 	}
 
-	public void SetParameters()
+	public void SetParameters(int ID, RogueMonster monster)
 	{
-		for(int ID = 0; ID < monsterList.Count; ++ID)
+		//1 - 2
+		if(ID == 0) //Goblin
 		{
-			//1 - 2
-			if(monsterList[ID].ID == 0) //Goblin
-			{
-				monsterList[ID].typeAI	= 1;
-				monsterList[ID].symbol	= 'g';
-				monsterList[ID].name	= "Goblin";
-				monsterList[ID].health	= 23;
-				monsterList[ID].attack	= 10;
-				AddPath(ID, new int[4] {0, 4, 2, 4});
-				
-			}
-			else if(monsterList[ID].ID == 1) //Worm
-			{
-				monsterList[ID].typeAI	= 0;
-				monsterList[ID].symbol	= '.';
-				monsterList[ID].name	= "Worm";
-				monsterList[ID].health	= 15;
-				monsterList[ID].attack	= 0;
-			}
-			else if(monsterList[ID].ID == 2) //Cockroach
-			{
-				monsterList[ID].typeAI	= 1;
-				monsterList[ID].symbol	= ',';
-				monsterList[ID].name	= "Cockroach";
-				monsterList[ID].health	= 10;
-				monsterList[ID].attack	= 5;
-				AddPath(ID, new int[4] {1, 4, 3, 4});
-			}
-			//3 - 4
-			else if(monsterList[ID].ID == 3) //Dwarf
-			{
-				monsterList[ID].typeAI = 1;
-				monsterList[ID].symbol = 'd';
-				monsterList[ID].name = "Dwarf";
-				monsterList[ID].health = 135;
-				monsterList[ID].attack = 42;
-				AddPath(ID, new int[4] {0, 4, 2, 4});
-			}
-			else if(monsterList[ID].ID == 4) //Goblin Scavanger
-			{
-				monsterList[ID].typeAI	= 1;
-				monsterList[ID].symbol	= 'G';
-				monsterList[ID].name	= "Goblin Scavenger";
-				monsterList[ID].health	= 90;
-				monsterList[ID].attack	= 50;
-				AddPath(ID, new int[4] {3, 4, 1, 4});
-			}		
-			else if(monsterList[ID].ID == 5) //Spider
-			{
-				monsterList[ID].typeAI	= 1;
-				monsterList[ID].symbol	= '¤';
-				monsterList[ID].name	= "Spider";
-				monsterList[ID].health	= 78;
-				monsterList[ID].attack	= 45;
-				AddPath(ID, new int[16] {0, 4, 0, 4, 1, 4, 1, 4, 2, 4, 2, 4, 3, 4, 3, 4});
-			}
-			//5 - 6
-			else if(monsterList[ID].ID == 6) //Goblin Slinger
-			{
-				monsterList[ID].typeAI	= 1;
-				monsterList[ID].symbol	= 'ŕ';
-				monsterList[ID].name	= "Goblin Slinger";
-				monsterList[ID].health	= 317;
-				monsterList[ID].attack	= 140;
-				AddPath(ID, new int[8] {1, 4, 2, 4, 0, 4, 3, 4});
-			}
-			else if(monsterList[ID].ID == 7) //Skeleton
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 's';
-				monsterList[ID].name	= "Skeleton";
-				monsterList[ID].health	= 500;
-				monsterList[ID].attack	= 270;
-				monsterList[ID].vision	= 7;
-			}
-			else if(monsterList[ID].ID == 8) //Zombie
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'z';
-				monsterList[ID].name	= "Zombie";
-				monsterList[ID].health	= 800;
-				monsterList[ID].attack	= 45;
-				monsterList[ID].vision	= 7;
-			}
-			else if(monsterList[ID].ID == 9) //Poison Spider
-			{
-				monsterList[ID].typeAI	= 1;
-				monsterList[ID].symbol	= '*';
-				monsterList[ID].name	= "Poison Spider";
-				monsterList[ID].health	= 300;
-				monsterList[ID].attack	= 105;
-				AddPath(ID, new int[16] {4, 1, 4, 1, 4, 1, 4, 2, 4, 3, 4, 3, 4, 3, 4, 0});
-			}
-			//7 - 8
-			else if(monsterList[ID].ID == 10) //Vampire
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'v';
-				monsterList[ID].name	= "Vampire";
-				monsterList[ID].health	= 1590;
-				monsterList[ID].attack	= 258;
-				monsterList[ID].vision	= 11;
-			}
-			else if(monsterList[ID].ID == 11) //Dwarf Miner
-			{
-				monsterList[ID].typeAI	= 1;
-				monsterList[ID].symbol	= 'D';
-				monsterList[ID].name	= "Dwarf Miner";
-				monsterList[ID].health	= 960;
-				monsterList[ID].attack	= 298;
-				AddPath(ID, new int[12] {1, 4, 0, 4, 1, 4, 3, 4, 2, 4, 3, 4});
-			}
-			else if(monsterList[ID].ID == 12) //Scarab
-			{
-				monsterList[ID].typeAI	= 1;
-				monsterList[ID].symbol	= 'ˇ';
-				monsterList[ID].name	= "Scarab";
-				monsterList[ID].health	= 1179;
-				monsterList[ID].attack	= 395;
-				AddPath(ID, new int[16] {3, 4, 3, 4, 3, 4, 2, 4, 1, 4, 1, 4, 1, 4, 0, 4});
-			}
-			else if(monsterList[ID].ID == 13) //Scorpion
-			{
-				monsterList[ID].typeAI	= 1;
-				monsterList[ID].symbol	= '|';
-				monsterList[ID].name	= "Scorpion";
-				monsterList[ID].health	= 629;
-				monsterList[ID].attack	= 1091;
-				AddPath(ID, new int[8] {1, 1, 1, 0, 3, 3, 3, 2});
-			}
-			else if(monsterList[ID].ID == 14) //Skeleton Archer
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'S';
-				monsterList[ID].name	= "Skeleton Archer";
-				monsterList[ID].health	= 2704;
-				monsterList[ID].attack	= 1000;
-				monsterList[ID].vision	= 16;
-			}
-			//9 - 10
-			else if(monsterList[ID].ID == 15) //Lizard
-			{
-				monsterList[ID].typeAI	= 1;
-				monsterList[ID].symbol	= 'l';
-				monsterList[ID].name	= "Lizard";
-				monsterList[ID].health	= 3893;
-				monsterList[ID].attack	= 1764;
-				AddPath(ID, new int[6] {0, 0, 1, 2, 2, 3});
-			}
-			else if(monsterList[ID].ID == 16) //Small Troll
-			{
-				monsterList[ID].typeAI	= 1;
-				monsterList[ID].symbol	= 't';
-				monsterList[ID].name	= "Small Troll";
-				monsterList[ID].health	= 4162;
-				monsterList[ID].attack	= 1593;
-				AddPath(ID, new int[16] {0, 4, 0, 4, 0, 4, 0, 4, 2, 4, 2, 4, 2, 4, 2, 4});
-			}
-			else if(monsterList[ID].ID == 17) //Orc
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'o';
-				monsterList[ID].name	= "Orc";
-				monsterList[ID].health	= 3586;
-				monsterList[ID].attack	= 1890;
-				monsterList[ID].vision	= 15;
-			}
-			else if(monsterList[ID].ID == 18) //Dwarf Solider
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'đ';
-				monsterList[ID].name	= "Dwarf Solider";
-				monsterList[ID].health	= 3129;
-				monsterList[ID].attack	= 1190;
-				monsterList[ID].vision	= 15;
-			}
-			else if(monsterList[ID].ID == 19) //Skeleton Warrior
-			{
-				monsterList[ID].typeAI	= 1;
-				monsterList[ID].symbol	= 'ś';
-				monsterList[ID].name	= "Skeleton Warrior";
-				monsterList[ID].health	= 3786;
-				monsterList[ID].attack	= 1111;
-				AddPath(ID, new int[8] {3, 3, 3, 3, 1, 1, 1, 1});
-			}
-			//11 - 12
-			else if(monsterList[ID].ID == 20) //Troll
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'T';
-				monsterList[ID].name	= "Troll";
-				monsterList[ID].health	= 8540;
-				monsterList[ID].attack	= 2897;
-				monsterList[ID].vision	= 12;
-			}
-			else if(monsterList[ID].ID == 21) //Orc Spearman
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'O';
-				monsterList[ID].name	= "Orc Spearman";
-				monsterList[ID].health	= 4982;
-				monsterList[ID].attack	= 1996;
-				monsterList[ID].vision	= 15;
-			}
-			else if(monsterList[ID].ID == 22) //Goblin Assasin
-			{
-				monsterList[ID].typeAI	= 2;
-				monsterList[ID].symbol	= 'A';
-				monsterList[ID].name	= "Goblin Assasin";
-				monsterList[ID].health	= 4000;
-				monsterList[ID].attack	= 4145;
-				monsterList[ID].vision	= 20;
-			}
-			else if(monsterList[ID].ID == 23) //Ghost
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '▲';
-				monsterList[ID].name	= "Ghost";
-				monsterList[ID].health	= 7541;
-				monsterList[ID].attack	= 2159;
-				monsterList[ID].vision	= 20;
-			}
-			else if(monsterList[ID].ID == 24) //Ghoul
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ů';
-				monsterList[ID].name	= "Ghoul";
-				monsterList[ID].health	= 6892;
-				monsterList[ID].attack	= 2638;
-				monsterList[ID].vision	= 18;
-			}
-			//13 - 14
-			else if(monsterList[ID].ID == 25) //Skeleton Pirate
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ś';
-				monsterList[ID].name	= "Skeleton Pirate";
-				monsterList[ID].health	= 12100;
-				monsterList[ID].attack	= 4582;
-				monsterList[ID].vision	= 16;
-			}
-			else if(monsterList[ID].ID == 26) //Pirate Ghost
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'p';
-				monsterList[ID].name	= "Pirate Ghost";
-				monsterList[ID].health	= 14012;
-				monsterList[ID].attack	= 3582;
-				monsterList[ID].vision	= 20;
-			}
-			else if(monsterList[ID].ID == 27) //Orc Warrior
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'ő';
-				monsterList[ID].name	= "Orc Warrior";
-				monsterList[ID].health	= 11931;
-				monsterList[ID].attack	= 5780;
-				monsterList[ID].vision	= 15;
-			}
-			//15 -  16
-			else if(monsterList[ID].ID == 28) //Giant Spider
-			{
-				monsterList[ID].typeAI	= 2;
-				monsterList[ID].symbol	= 'x';
-				monsterList[ID].name	= "Giant Spider";
-				monsterList[ID].health	= 15019;
-				monsterList[ID].attack	= 8462;
-				monsterList[ID].vision	= 18;
-			}
-			else if(monsterList[ID].ID == 29) //Elf
-			{
-				monsterList[ID].typeAI	= 2;
-				monsterList[ID].symbol	= 'e';
-				monsterList[ID].name	= "Elf";
-				monsterList[ID].health	= 17671;
-				monsterList[ID].attack	= 7340;
-				monsterList[ID].vision	= 25;
-			}
-			else if(monsterList[ID].ID == 30) //Lizard Sentitel
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'L';
-				monsterList[ID].name	= "Lizard Sentitel";
-				monsterList[ID].health	= 18834;
-				monsterList[ID].attack	= 6245;
-				monsterList[ID].vision	= 21;
-			}
-			//17 - 18
-			else if(monsterList[ID].ID == 31) //Dwarf Guard
-			{
-				monsterList[ID].typeAI	= 2;
-				monsterList[ID].symbol	= 'ď';
-				monsterList[ID].name	= "Dwarf Guard";
-				monsterList[ID].health	= 28721;
-				monsterList[ID].attack	= 9012;
-				monsterList[ID].vision	= 20;
-			}
-			else if(monsterList[ID].ID == 32) //Orc Rider
-			{
-				monsterList[ID].typeAI	= 2;
-				monsterList[ID].symbol	= 'Ő';
-				monsterList[ID].name	= "Orc Rider";
-				monsterList[ID].health	= 25012;
-				monsterList[ID].attack	= 7284;
-				monsterList[ID].vision	= 25;
-			}
-			else if(monsterList[ID].ID == 33) //Ancient Scarab
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'š';
-				monsterList[ID].name	= "Ancient Scarab";
-				monsterList[ID].health	= 30102;
-				monsterList[ID].attack	= 5233;
-				monsterList[ID].vision	= 26;
-			}
-			else if(monsterList[ID].ID == 34) //Mummy
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'm';
-				monsterList[ID].name	= "Mummy";
-				monsterList[ID].health	= 29032;
-				monsterList[ID].attack	= 6341;
-				monsterList[ID].vision	= 15;
-			}
-			//19 - 20
-			else if(monsterList[ID].ID == 35) //Swamp Troll
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'ť';
-				monsterList[ID].name	= "Swamp Troll";
-				monsterList[ID].health	= 38901;
-				monsterList[ID].attack	= 15241;
-				monsterList[ID].vision	= 18;
-			}
-			else if(monsterList[ID].ID == 36) //Lizard Legionnaire
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'ł';
-				monsterList[ID].name	= "Lizard Legionnaire";
-				monsterList[ID].health	= 34901;
-				monsterList[ID].attack	= 14891;
-				monsterList[ID].vision	= 23;
-			}
-			else if(monsterList[ID].ID == 37) //Minotaur
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'n';
-				monsterList[ID].name	= "Minotaur";
-				monsterList[ID].health	= 40123;
-				monsterList[ID].attack	= 14002;
-				monsterList[ID].vision	= 22;
-			}
-			else if(monsterList[ID].ID == 38) //Cristal Spider
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'č';
-				monsterList[ID].name	= "Cristal Spider";
-				monsterList[ID].health	= 31023;
-				monsterList[ID].attack	= 18023;
-				monsterList[ID].vision	= 21;
-			}
-			else if(monsterList[ID].ID == 39) //Elf Scout
-			{
-				monsterList[ID].typeAI	= 2;
-				monsterList[ID].symbol	= 'E';
-				monsterList[ID].name	= "Elf Scout";
-				monsterList[ID].health	= 32562;
-				monsterList[ID].attack	= 15023;
-				monsterList[ID].vision	= 35;
-			}
-			//21 - 22
-			else if(monsterList[ID].ID == 40) //Dwarf Geomancer
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ď';
-				monsterList[ID].name	= "Dwarf Geomancer";
-				monsterList[ID].health	= 47013;
-				monsterList[ID].attack	= 24134;
-				monsterList[ID].vision	= 30;
-			}
-			else if(monsterList[ID].ID == 41) //Centipide
-			{
-				monsterList[ID].typeAI	= 2;
-				monsterList[ID].symbol	= 'C';
-				monsterList[ID].name	= "Centipide";
-				monsterList[ID].health	= 57184;
-				monsterList[ID].attack	= 19934;
-				monsterList[ID].vision	= 21;
-			}
-			else if(monsterList[ID].ID == 42) //Dragon Hatchling
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'h';
-				monsterList[ID].name	= "Dragon Hatchling";
-				monsterList[ID].health	= 62314;
-				monsterList[ID].attack	= 21512;
-				monsterList[ID].vision	= 20;
-			}
-			else if(monsterList[ID].ID == 43) //Water Elemental
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'w';
-				monsterList[ID].name	= "Water Elemental";
-				monsterList[ID].health	= 52391;
-				monsterList[ID].attack	= 18236;
-				monsterList[ID].vision	= 25;
-			}
-			//22 - 23
-			else if(monsterList[ID].ID == 44) //Troll Guard
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'ţ';
-				monsterList[ID].name	= "Troll Guard";
-				monsterList[ID].health	= 82130;
-				monsterList[ID].attack	= 39912;
-				monsterList[ID].vision	= 30;
-			}
-			else if(monsterList[ID].ID == 45) //Crypt Shambler
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'c';
-				monsterList[ID].name	= "Crypt Shambler";
-				monsterList[ID].health	= 75023;
-				monsterList[ID].attack	= 35091;
-				monsterList[ID].vision	= 31;
-			}
-			else if(monsterList[ID].ID == 46) //Minotaur Archer
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'N';
-				monsterList[ID].name	= "Minotaur Archer";
-				monsterList[ID].health	= 78671;
-				monsterList[ID].attack	= 38123;
-				monsterList[ID].vision	= 27;
-			}
-			else if(monsterList[ID].ID == 47) //Lizard Warrior
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ł';
-				monsterList[ID].name	= "Lizard Warrior";
-				monsterList[ID].health	= 77123;
-				monsterList[ID].attack	= 36127;
-				monsterList[ID].vision	= 30;
-			}
-			//25 - 26
-			else if(monsterList[ID].ID == 48) //Orc Szaman
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'ö';
-				monsterList[ID].name	= "Orc Szaman";
-				monsterList[ID].health	= 93145;
-				monsterList[ID].attack	= 58243;
-				monsterList[ID].vision	= 34;
-			}
-			else if(monsterList[ID].ID == 49) //Skeleton Mage
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'ş';
-				monsterList[ID].name	= "Skeleton Mage";
-				monsterList[ID].health	= 102451;
-				monsterList[ID].attack	= 61345;
-				monsterList[ID].vision	= 34;
-			}
-			else if(monsterList[ID].ID == 50) //Elf Assasin
-			{
-				monsterList[ID].typeAI	= 2;
-				monsterList[ID].symbol	= 'é';
-				monsterList[ID].name	= "Elf Assasin";
-				monsterList[ID].health	= 123456;
-				monsterList[ID].attack	= 64562;
-				monsterList[ID].vision	= 40;
-			}
-			else if(monsterList[ID].ID == 51) //Insektoid
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'I';
-				monsterList[ID].name	= "Insektoid";
-				monsterList[ID].health	= 135239;
-				monsterList[ID].attack	= 49124;
-				monsterList[ID].vision	= 31;
-			}
-			//27 - 28
-			else if(monsterList[ID].ID == 52) //Orc Berseker
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ö';
-				monsterList[ID].name	= "Orc Berseker";
-				monsterList[ID].health	= 163414;
-				monsterList[ID].attack	= 89142;
-				monsterList[ID].vision	= 32;
-			}
-			else if(monsterList[ID].ID == 53) //Frost Dragon Hatchling
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'f';
-				monsterList[ID].name	= "Frost Dragon Hatchling";
-				monsterList[ID].health	= 182451;
-				monsterList[ID].attack	= 82412;
-				monsterList[ID].vision	= 33;
-			}
-			else if(monsterList[ID].ID == 54) //Nature Elemental
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '♣';
-				monsterList[ID].name	= "Nature Elemental";
-				monsterList[ID].health	= 170973;
-				monsterList[ID].attack	= 72142;
-				monsterList[ID].vision	= 31;
-			}
-			//29 - 30
-			else if(monsterList[ID].ID == 55) //Frost Troll
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ţ';
-				monsterList[ID].name	= "Frost Troll";
-				monsterList[ID].health	= 321445;
-				monsterList[ID].attack	= 102931;
-				monsterList[ID].vision	= 32;
-			}
-			else if(monsterList[ID].ID == 56) //Demon Skeleton
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ş';
-				monsterList[ID].name	= "Demon Skeleton";
-				monsterList[ID].health	= 280912;
-				monsterList[ID].attack	= 191345;
-				monsterList[ID].vision	= 35;
-			}
-			else if(monsterList[ID].ID == 57) //Banshee
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'b';
-				monsterList[ID].name	= "Banshee";
-				monsterList[ID].health	= 254300;
-				monsterList[ID].attack	= 102930;
-				monsterList[ID].vision	= 40;
-			}
-			else if(monsterList[ID].ID == 58) //Minotaur Guard
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'M';
-				monsterList[ID].name	= "Minotaur Guard";
-				monsterList[ID].health	= 312501;
-				monsterList[ID].attack	= 129510;
-				monsterList[ID].vision	= 33;
-			}
-			//31 - 32
-			else if(monsterList[ID].ID == 59) //Crawler
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Č';
-				monsterList[ID].name	= "Crawler";
-				monsterList[ID].health	= 531245;
-				monsterList[ID].attack	= 214556;
-				monsterList[ID].vision	= 32;
-			}
-			else if(monsterList[ID].ID == 60) //Lizard Templar
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'L';
-				monsterList[ID].name	= "Lizard Templar";
-				monsterList[ID].health	= 491450;
-				monsterList[ID].attack	= 229549;
-				monsterList[ID].vision	= 31;
-			}
-			else if(monsterList[ID].ID == 61) //Red Dragon Hatchling
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'r';
-				monsterList[ID].name	= "Red Dragon Hatchling";
-				monsterList[ID].health	= 571308;
-				monsterList[ID].attack	= 246728;
-				monsterList[ID].vision	= 35;
-			}
-			//33 - 34
-			else if(monsterList[ID].ID == 62) //Dragon
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Đ';
-				monsterList[ID].name	= "Dragon";
-				monsterList[ID].health	= 813542;
-				monsterList[ID].attack	= 372348;
-				monsterList[ID].vision	= 32;
-			}
-			else if(monsterList[ID].ID == 63) //Fire Elemental
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '♥';
-				monsterList[ID].name	= "Fire Elemental";
-				monsterList[ID].health	= 801424;
-				monsterList[ID].attack	= 311062;
-				monsterList[ID].vision	= 33;
-			}
-			else if(monsterList[ID].ID == 64) //Cyclop
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '÷';
-				monsterList[ID].name	= "Cyclop";
-				monsterList[ID].health	= 795281;
-				monsterList[ID].attack	= 362369;
-				monsterList[ID].vision	= 31;
-			}
-			else if(monsterList[ID].ID == 65) //Orc Maruder
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'ô';
-				monsterList[ID].name	= "Orc Maruder";
-				monsterList[ID].health	= 752465;
-				monsterList[ID].attack	= 298675;
-				monsterList[ID].vision	= 34;
-			}
-			//35 - 36
-			else if(monsterList[ID].ID == 66) //Grave Troll
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ť';
-				monsterList[ID].name	= "Grave Troll";
-				monsterList[ID].health	= 1012093;
-				monsterList[ID].attack	= 416723;
-				monsterList[ID].vision	= 36;
-			}
-			else if(monsterList[ID].ID == 67) //Spectre
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '~';
-				monsterList[ID].name	= "Spectre";
-				monsterList[ID].health	= 9612421;
-				monsterList[ID].attack	= 382601;
-				monsterList[ID].vision	= 40;
-			}
-			else if(monsterList[ID].ID == 68) //Undead Priest
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= ':';
-				monsterList[ID].name	= "Undead Priest";
-				monsterList[ID].health	= 913560;
-				monsterList[ID].attack	= 40953;
-				monsterList[ID].vision	= 32;
-			}
-			//37 - 38
-			else if(monsterList[ID].ID == 69) //Minotaur Mage
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ň';
-				monsterList[ID].name	= "Minotaur Mage";
-				monsterList[ID].health	= 1309623;
-				monsterList[ID].attack	= 793462;
-				monsterList[ID].vision	= 35;
-			}
-			else if(monsterList[ID].ID == 70) //Giant Mantis
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'X';
-				monsterList[ID].name	= "Giant Mantis";
-				monsterList[ID].health	= 1709308;
-				monsterList[ID].attack	= 582394;
-				monsterList[ID].vision	= 38;
-			}
-			else if(monsterList[ID].ID == 71) //Elf Arcanist
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'É';
-				monsterList[ID].name	= "Elf Arcanist";
-				monsterList[ID].health	= 1538923;
-				monsterList[ID].attack	= 625782;
-				monsterList[ID].vision	= 40;
-			}
-			else if(monsterList[ID].ID == 72) //Lizard Snakecharmer
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '╚';
-				monsterList[ID].name	= "Lizard Snakecharmer";
-				monsterList[ID].health	= 1675447;
-				monsterList[ID].attack	= 592436;
-				monsterList[ID].vision	= 38;
-			}
-			//39 - 40
-			else if(monsterList[ID].ID == 73) //Frost Dragon
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'F';
-				monsterList[ID].name	= "Frost Dragon";
-				monsterList[ID].health	= 2007259;
-				monsterList[ID].attack	= 745270;
-				monsterList[ID].vision	= 36;
-			}
-			else if(monsterList[ID].ID == 74) //Ice Elemental
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '♦';
-				monsterList[ID].name	= "Ice Elemental";
-				monsterList[ID].health	= 1825984;
-				monsterList[ID].attack	= 612340;
-				monsterList[ID].vision	= 35;
-			}
-			else if(monsterList[ID].ID == 75) //Cyclop Worker
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Î';
-				monsterList[ID].name	= "Cyclop Worker";
-				monsterList[ID].health	= 1594138;
-				monsterList[ID].attack	= 783856;
-				monsterList[ID].vision	= 36;
-			}
-			//41 - 42
-			else if(monsterList[ID].ID == 76) //Troll Warrior
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '↑';
-				monsterList[ID].name	= "Troll Warrior";
-				monsterList[ID].health	= 2213173;
-				monsterList[ID].attack	= 809358;
-				monsterList[ID].vision	= 39;
-			}
-			else if(monsterList[ID].ID == 77) //Orc Leader
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ô';
-				monsterList[ID].name	= "Orc Leader";
-				monsterList[ID].health	= 2235633;
-				monsterList[ID].attack	= 901246;
-				monsterList[ID].vision	= 39;
-			}
-			else if(monsterList[ID].ID == 78) //Lich
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ľ';
-				monsterList[ID].name	= "Lich";
-				monsterList[ID].health	= 2182451;
-				monsterList[ID].attack	= 991234;
-				monsterList[ID].vision	= 39;
-			}
-			//43 - 44
-			else if(monsterList[ID].ID == 79) //Elder Elf
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ę';
-				monsterList[ID].name	= "Elder Elf";
-				monsterList[ID].health	= 2501447;
-				monsterList[ID].attack	= 1023501;
-				monsterList[ID].vision	= 49;
-			}
-			else if(monsterList[ID].ID == 80) //Lizard Dragon Priest
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'ľ';
-				monsterList[ID].name	= "Lizard Dragon Priest";
-				monsterList[ID].health	= 2498712;
-				monsterList[ID].attack	= 1001534;
-				monsterList[ID].vision	= 40;
-			}
-			else if(monsterList[ID].ID == 81) //Red Dragon
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'R';
-				monsterList[ID].name	= "Red Dragon";
-				monsterList[ID].health	= 2601345;
-				monsterList[ID].attack	= 1118730;
-				monsterList[ID].vision	= 40;
-			}
-			else if(monsterList[ID].ID == 82) //Stone Elemental
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '♠';
-				monsterList[ID].name	= "Stone Elemental";
-				monsterList[ID].health	= 2889340;
-				monsterList[ID].attack	= 8021470;
-				monsterList[ID].vision	= 41;
-			}
-			//45 - 46
-			else if(monsterList[ID].ID == 83) //Cyclop Smith
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '‼';
-				monsterList[ID].name	= "Cyclop Smith";
-				monsterList[ID].health	= 2814925;
-				monsterList[ID].attack	= 1602831;
-				monsterList[ID].vision	= 42;
-			}
-			else if(monsterList[ID].ID == 84) //Orc Warlord
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '0';
-				monsterList[ID].name	= "Orc Warlord";
-				monsterList[ID].health	= 2701539;
-				monsterList[ID].attack	= 1802931;
-				monsterList[ID].vision	= 42;
-			}
-			else if(monsterList[ID].ID == 85) //Undead Gladiator
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'U';
-				monsterList[ID].name	= "Undead Gladiator";
-				monsterList[ID].health	= 2579342;
-				monsterList[ID].attack	= 1614235;
-				monsterList[ID].vision	= 42;
-			}
-			else if(monsterList[ID].ID == 86) //Lizard High Guard
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'ĺ';
-				monsterList[ID].name	= "Lizard High Guard";
-				monsterList[ID].health	= 2901804;
-				monsterList[ID].attack	= 1312523;
-				monsterList[ID].vision	= 45;
-			}
-			//47 - 48
-			else if(monsterList[ID].ID == 87) //Hydra
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'H';
-				monsterList[ID].name	= "Hydra";
-				monsterList[ID].health	= 3020809;
-				monsterList[ID].attack	= 1748230;
-				monsterList[ID].vision	= 50;
-			}
-			else if(monsterList[ID].ID == 88) //Energy Elemental
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '♀';
-				monsterList[ID].name	= "Energy Elemental";
-				monsterList[ID].health	= 2989010;
-				monsterList[ID].attack	= 1692540;
-				monsterList[ID].vision	= 42;
-			}
-			else if(monsterList[ID].ID == 89) //Cyclop Warrior
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'W';
-				monsterList[ID].name	= "Cyclop Warrior";
-				monsterList[ID].health	= 2171730;
-				monsterList[ID].attack	= 2002380;
-				monsterList[ID].vision	= 41;
-			}
-			//49 - 51
-			else if(monsterList[ID].ID == 90) //Troll Champion
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '▼';
-				monsterList[ID].name	= "Troll Champion";
-				monsterList[ID].health	= 3503850;
-				monsterList[ID].attack	= 2018741;
-				monsterList[ID].vision	= 45;
-			}
-			else if(monsterList[ID].ID == 91) //Lizard Choosen
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'Ĺ';
-				monsterList[ID].name	= "Lizard Choosen";
-				monsterList[ID].health	= 3254100;
-				monsterList[ID].attack	= 1913540;
-				monsterList[ID].vision	= 46;
-			}
-			else if(monsterList[ID].ID == 92) //Cyklop Commander
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= 'ß';
-				monsterList[ID].name	= "Cyklop Commander";
-				monsterList[ID].health	= 3456100;
-				monsterList[ID].attack	= 1998642;
-				monsterList[ID].vision	= 47;
-			}
-			//47 - 48
-			else if(monsterList[ID].ID == 93) //Undead Dragon
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '§';
-				monsterList[ID].name	= "Undead Dragon";
-				monsterList[ID].health	= 4012398;
-				monsterList[ID].attack	= 2017241;
-				monsterList[ID].vision	= 50;
-			}
-			else if(monsterList[ID].ID == 94) //Grim Reaper
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '%';
-				monsterList[ID].name	= "Grim Reaper";
-				monsterList[ID].health	= 3790200;
-				monsterList[ID].attack	= 2408917;
-				monsterList[ID].vision	= 50;
-			}
-			else if(monsterList[ID].ID == 95) //Lava Elemental
-			{
-				monsterList[ID].typeAI	= 3;
-				monsterList[ID].symbol	= '♂';
-				monsterList[ID].name	= "Lava Elemental";
-				monsterList[ID].health	= 4092984;
-				monsterList[ID].attack	= 1992390;
-				monsterList[ID].vision	= 50;
-			}
+			monster.typeAI	= 1;
+			monster.symbol	= 'g';
+			monster.name	= "Goblin";
+			monster.health	= 23;
+			monster.attack	= 10;
+			AddPath(ID, new int[4] {0, 4, 2, 4});
+			
 		}
+		else if(ID == 1) //Worm
+		{
+			monster.typeAI	= 0;
+			monster.symbol	= '.';
+			monster.name	= "Worm";
+			monster.health	= 15;
+			monster.attack	= 0;
+		}
+		else if(ID == 2) //Cockroach
+		{
+			monster.typeAI	= 1;
+			monster.symbol	= ',';
+			monster.name	= "Cockroach";
+			monster.health	= 10;
+			monster.attack	= 5;
+			AddPath(ID, new int[4] {1, 4, 3, 4});
+		}
+		//3 - 4
+		else if(ID == 3) //Dwarf
+		{
+			monster.typeAI = 1;
+			monster.symbol = 'd';
+			monster.name = "Dwarf";
+			monster.health = 135;
+			monster.attack = 42;
+			AddPath(ID, new int[4] {0, 4, 2, 4});
+		}
+		else if(ID == 4) //Goblin Scavanger
+		{
+			monster.typeAI	= 1;
+			monster.symbol	= 'G';
+			monster.name	= "Goblin Scavenger";
+			monster.health	= 90;
+			monster.attack	= 50;
+			AddPath(ID, new int[4] {3, 4, 1, 4});
+		}		
+		else if(ID == 5) //Spider
+		{
+			monster.typeAI	= 1;
+			monster.symbol	= '¤';
+			monster.name	= "Spider";
+			monster.health	= 78;
+			monster.attack	= 45;
+			AddPath(ID, new int[16] {0, 4, 0, 4, 1, 4, 1, 4, 2, 4, 2, 4, 3, 4, 3, 4});
+		}
+		//5 - 6
+		else if(ID == 6) //Goblin Slinger
+		{
+			monster.typeAI	= 1;
+			monster.symbol	= 'ŕ';
+			monster.name	= "Goblin Slinger";
+			monster.health	= 317;
+			monster.attack	= 140;
+			AddPath(ID, new int[8] {1, 4, 2, 4, 0, 4, 3, 4});
+		}
+		else if(ID == 7) //Skeleton
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 's';
+			monster.name	= "Skeleton";
+			monster.health	= 500;
+			monster.attack	= 270;
+			monster.vision	= 7;
+		}
+		else if(ID == 8) //Zombie
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'z';
+			monster.name	= "Zombie";
+			monster.health	= 800;
+			monster.attack	= 45;
+			monster.vision	= 7;
+		}
+		else if(ID == 9) //Poison Spider
+		{
+			monster.typeAI	= 1;
+			monster.symbol	= '*';
+			monster.name	= "Poison Spider";
+			monster.health	= 300;
+			monster.attack	= 105;
+			AddPath(ID, new int[16] {4, 1, 4, 1, 4, 1, 4, 2, 4, 3, 4, 3, 4, 3, 4, 0});
+		}
+		//7 - 8
+		else if(ID == 10) //Vampire
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'v';
+			monster.name	= "Vampire";
+			monster.health	= 1590;
+			monster.attack	= 258;
+			monster.vision	= 11;
+		}
+		else if(ID == 11) //Dwarf Miner
+		{
+			monster.typeAI	= 1;
+			monster.symbol	= 'D';
+			monster.name	= "Dwarf Miner";
+			monster.health	= 960;
+			monster.attack	= 298;
+			AddPath(ID, new int[12] {1, 4, 0, 4, 1, 4, 3, 4, 2, 4, 3, 4});
+		}
+		else if(ID == 12) //Scarab
+		{
+			monster.typeAI	= 1;
+			monster.symbol	= 'ˇ';
+			monster.name	= "Scarab";
+			monster.health	= 1179;
+			monster.attack	= 395;
+			AddPath(ID, new int[16] {3, 4, 3, 4, 3, 4, 2, 4, 1, 4, 1, 4, 1, 4, 0, 4});
+		}
+		else if(ID == 13) //Scorpion
+		{
+			monster.typeAI	= 1;
+			monster.symbol	= '|';
+			monster.name	= "Scorpion";
+			monster.health	= 629;
+			monster.attack	= 1091;
+			AddPath(ID, new int[8] {1, 1, 1, 0, 3, 3, 3, 2});
+		}
+		else if(ID == 14) //Skeleton Archer
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'S';
+			monster.name	= "Skeleton Archer";
+			monster.health	= 2704;
+			monster.attack	= 1000;
+			monster.vision	= 16;
+		}
+		//9 - 10
+		else if(ID == 15) //Lizard
+		{
+			monster.typeAI	= 1;
+			monster.symbol	= 'l';
+			monster.name	= "Lizard";
+			monster.health	= 3893;
+			monster.attack	= 1764;
+			AddPath(ID, new int[6] {0, 0, 1, 2, 2, 3});
+		}
+		else if(ID == 16) //Small Troll
+		{
+			monster.typeAI	= 1;
+			monster.symbol	= 't';
+			monster.name	= "Small Troll";
+			monster.health	= 4162;
+			monster.attack	= 1593;
+			AddPath(ID, new int[16] {0, 4, 0, 4, 0, 4, 0, 4, 2, 4, 2, 4, 2, 4, 2, 4});
+		}
+		else if(ID == 17) //Orc
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'o';
+			monster.name	= "Orc";
+			monster.health	= 3586;
+			monster.attack	= 1890;
+			monster.vision	= 15;
+		}
+		else if(ID == 18) //Dwarf Solider
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'đ';
+			monster.name	= "Dwarf Solider";
+			monster.health	= 3129;
+			monster.attack	= 1190;
+			monster.vision	= 15;
+		}
+		else if(ID == 19) //Skeleton Warrior
+		{
+			monster.typeAI	= 1;
+			monster.symbol	= 'ś';
+			monster.name	= "Skeleton Warrior";
+			monster.health	= 3786;
+			monster.attack	= 1111;
+			AddPath(ID, new int[8] {3, 3, 3, 3, 1, 1, 1, 1});
+		}
+		//11 - 12
+		else if(ID == 20) //Troll
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'T';
+			monster.name	= "Troll";
+			monster.health	= 8540;
+			monster.attack	= 2897;
+			monster.vision	= 12;
+		}
+		else if(ID == 21) //Orc Spearman
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'O';
+			monster.name	= "Orc Spearman";
+			monster.health	= 4982;
+			monster.attack	= 1996;
+			monster.vision	= 15;
+		}
+		else if(ID == 22) //Goblin Assasin
+		{
+			monster.typeAI	= 2;
+			monster.symbol	= 'A';
+			monster.name	= "Goblin Assasin";
+			monster.health	= 4000;
+			monster.attack	= 4145;
+			monster.vision	= 20;
+		}
+		else if(ID == 23) //Ghost
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '▲';
+			monster.name	= "Ghost";
+			monster.health	= 7541;
+			monster.attack	= 2159;
+			monster.vision	= 20;
+		}
+		else if(ID == 24) //Ghoul
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ů';
+			monster.name	= "Ghoul";
+			monster.health	= 6892;
+			monster.attack	= 2638;
+			monster.vision	= 18;
+		}
+		//13 - 14
+		else if(ID == 25) //Skeleton Pirate
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ś';
+			monster.name	= "Skeleton Pirate";
+			monster.health	= 12100;
+			monster.attack	= 4582;
+			monster.vision	= 16;
+		}
+		else if(ID == 26) //Pirate Ghost
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'p';
+			monster.name	= "Pirate Ghost";
+			monster.health	= 14012;
+			monster.attack	= 3582;
+			monster.vision	= 20;
+		}
+		else if(ID == 27) //Orc Warrior
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'ő';
+			monster.name	= "Orc Warrior";
+			monster.health	= 11931;
+			monster.attack	= 5780;
+			monster.vision	= 15;
+		}
+		//15 -  16
+		else if(ID == 28) //Giant Spider
+		{
+			monster.typeAI	= 2;
+			monster.symbol	= 'x';
+			monster.name	= "Giant Spider";
+			monster.health	= 15019;
+			monster.attack	= 8462;
+			monster.vision	= 18;
+		}
+		else if(ID == 29) //Elf
+		{
+			monster.typeAI	= 2;
+			monster.symbol	= 'e';
+			monster.name	= "Elf";
+			monster.health	= 17671;
+			monster.attack	= 7340;
+			monster.vision	= 25;
+		}
+		else if(ID == 30) //Lizard Sentitel
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'L';
+			monster.name	= "Lizard Sentitel";
+			monster.health	= 18834;
+			monster.attack	= 6245;
+			monster.vision	= 21;
+		}
+		//17 - 18
+		else if(ID == 31) //Dwarf Guard
+		{
+			monster.typeAI	= 2;
+			monster.symbol	= 'ď';
+			monster.name	= "Dwarf Guard";
+			monster.health	= 28721;
+			monster.attack	= 9012;
+			monster.vision	= 20;
+		}
+		else if(ID == 32) //Orc Rider
+		{
+			monster.typeAI	= 2;
+			monster.symbol	= 'Ő';
+			monster.name	= "Orc Rider";
+			monster.health	= 25012;
+			monster.attack	= 7284;
+			monster.vision	= 25;
+		}
+		else if(ID == 33) //Ancient Scarab
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'š';
+			monster.name	= "Ancient Scarab";
+			monster.health	= 30102;
+			monster.attack	= 5233;
+			monster.vision	= 26;
+		}
+		else if(ID == 34) //Mummy
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'm';
+			monster.name	= "Mummy";
+			monster.health	= 29032;
+			monster.attack	= 6341;
+			monster.vision	= 15;
+		}
+		//19 - 20
+		else if(ID == 35) //Swamp Troll
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'ť';
+			monster.name	= "Swamp Troll";
+			monster.health	= 38901;
+			monster.attack	= 15241;
+			monster.vision	= 18;
+		}
+		else if(ID == 36) //Lizard Legionnaire
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'ł';
+			monster.name	= "Lizard Legionnaire";
+			monster.health	= 34901;
+			monster.attack	= 14891;
+			monster.vision	= 23;
+		}
+		else if(ID == 37) //Minotaur
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'n';
+			monster.name	= "Minotaur";
+			monster.health	= 40123;
+			monster.attack	= 14002;
+			monster.vision	= 22;
+		}
+		else if(ID == 38) //Cristal Spider
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'č';
+			monster.name	= "Cristal Spider";
+			monster.health	= 31023;
+			monster.attack	= 18023;
+			monster.vision	= 21;
+		}
+		else if(ID == 39) //Elf Scout
+		{
+			monster.typeAI	= 2;
+			monster.symbol	= 'E';
+			monster.name	= "Elf Scout";
+			monster.health	= 32562;
+			monster.attack	= 15023;
+			monster.vision	= 35;
+		}
+		//21 - 22
+		else if(ID == 40) //Dwarf Geomancer
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ď';
+			monster.name	= "Dwarf Geomancer";
+			monster.health	= 47013;
+			monster.attack	= 24134;
+			monster.vision	= 30;
+		}
+		else if(ID == 41) //Centipide
+		{
+			monster.typeAI	= 2;
+			monster.symbol	= 'C';
+			monster.name	= "Centipide";
+			monster.health	= 57184;
+			monster.attack	= 19934;
+			monster.vision	= 21;
+		}
+		else if(ID == 42) //Dragon Hatchling
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'h';
+			monster.name	= "Dragon Hatchling";
+			monster.health	= 62314;
+			monster.attack	= 21512;
+			monster.vision	= 20;
+		}
+		else if(ID == 43) //Water Elemental
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'w';
+			monster.name	= "Water Elemental";
+			monster.health	= 52391;
+			monster.attack	= 18236;
+			monster.vision	= 25;
+		}
+		//22 - 23
+		else if(ID == 44) //Troll Guard
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'ţ';
+			monster.name	= "Troll Guard";
+			monster.health	= 82130;
+			monster.attack	= 39912;
+			monster.vision	= 30;
+		}
+		else if(ID == 45) //Crypt Shambler
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'c';
+			monster.name	= "Crypt Shambler";
+			monster.health	= 75023;
+			monster.attack	= 35091;
+			monster.vision	= 31;
+		}
+		else if(ID == 46) //Minotaur Archer
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'N';
+			monster.name	= "Minotaur Archer";
+			monster.health	= 78671;
+			monster.attack	= 38123;
+			monster.vision	= 27;
+		}
+		else if(ID == 47) //Lizard Warrior
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ł';
+			monster.name	= "Lizard Warrior";
+			monster.health	= 77123;
+			monster.attack	= 36127;
+			monster.vision	= 30;
+		}
+		//25 - 26
+		else if(ID == 48) //Orc Szaman
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'ö';
+			monster.name	= "Orc Szaman";
+			monster.health	= 93145;
+			monster.attack	= 58243;
+			monster.vision	= 34;
+		}
+		else if(ID == 49) //Skeleton Mage
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'ş';
+			monster.name	= "Skeleton Mage";
+			monster.health	= 102451;
+			monster.attack	= 61345;
+			monster.vision	= 34;
+		}
+		else if(ID == 50) //Elf Assasin
+		{
+			monster.typeAI	= 2;
+			monster.symbol	= 'é';
+			monster.name	= "Elf Assasin";
+			monster.health	= 123456;
+			monster.attack	= 64562;
+			monster.vision	= 40;
+		}
+		else if(ID == 51) //Insektoid
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'I';
+			monster.name	= "Insektoid";
+			monster.health	= 135239;
+			monster.attack	= 49124;
+			monster.vision	= 31;
+		}
+		//27 - 28
+		else if(ID == 52) //Orc Berseker
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ö';
+			monster.name	= "Orc Berseker";
+			monster.health	= 163414;
+			monster.attack	= 89142;
+			monster.vision	= 32;
+		}
+		else if(ID == 53) //Frost Dragon Hatchling
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'f';
+			monster.name	= "Frost Dragon Hatchling";
+			monster.health	= 182451;
+			monster.attack	= 82412;
+			monster.vision	= 33;
+		}
+		else if(ID == 54) //Nature Elemental
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '♣';
+			monster.name	= "Nature Elemental";
+			monster.health	= 170973;
+			monster.attack	= 72142;
+			monster.vision	= 31;
+		}
+		//29 - 30
+		else if(ID == 55) //Frost Troll
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ţ';
+			monster.name	= "Frost Troll";
+			monster.health	= 321445;
+			monster.attack	= 102931;
+			monster.vision	= 32;
+		}
+		else if(ID == 56) //Demon Skeleton
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ş';
+			monster.name	= "Demon Skeleton";
+			monster.health	= 280912;
+			monster.attack	= 191345;
+			monster.vision	= 35;
+		}
+		else if(ID == 57) //Banshee
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'b';
+			monster.name	= "Banshee";
+			monster.health	= 254300;
+			monster.attack	= 102930;
+			monster.vision	= 40;
+		}
+		else if(ID == 58) //Minotaur Guard
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'M';
+			monster.name	= "Minotaur Guard";
+			monster.health	= 312501;
+			monster.attack	= 129510;
+			monster.vision	= 33;
+		}
+		//31 - 32
+		else if(ID == 59) //Crawler
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Č';
+			monster.name	= "Crawler";
+			monster.health	= 531245;
+			monster.attack	= 214556;
+			monster.vision	= 32;
+		}
+		else if(ID == 60) //Lizard Templar
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'L';
+			monster.name	= "Lizard Templar";
+			monster.health	= 491450;
+			monster.attack	= 229549;
+			monster.vision	= 31;
+		}
+		else if(ID == 61) //Red Dragon Hatchling
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'r';
+			monster.name	= "Red Dragon Hatchling";
+			monster.health	= 571308;
+			monster.attack	= 246728;
+			monster.vision	= 35;
+		}
+		//33 - 34
+		else if(ID == 62) //Dragon
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Đ';
+			monster.name	= "Dragon";
+			monster.health	= 813542;
+			monster.attack	= 372348;
+			monster.vision	= 32;
+		}
+		else if(ID == 63) //Fire Elemental
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '♥';
+			monster.name	= "Fire Elemental";
+			monster.health	= 801424;
+			monster.attack	= 311062;
+			monster.vision	= 33;
+		}
+		else if(ID == 64) //Cyclop
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '÷';
+			monster.name	= "Cyclop";
+			monster.health	= 795281;
+			monster.attack	= 362369;
+			monster.vision	= 31;
+		}
+		else if(ID == 65) //Orc Maruder
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'ô';
+			monster.name	= "Orc Maruder";
+			monster.health	= 752465;
+			monster.attack	= 298675;
+			monster.vision	= 34;
+		}
+		//35 - 36
+		else if(ID == 66) //Grave Troll
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ť';
+			monster.name	= "Grave Troll";
+			monster.health	= 1012093;
+			monster.attack	= 416723;
+			monster.vision	= 36;
+		}
+		else if(ID == 67) //Spectre
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '~';
+			monster.name	= "Spectre";
+			monster.health	= 9612421;
+			monster.attack	= 382601;
+			monster.vision	= 40;
+		}
+		else if(ID == 68) //Undead Priest
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= ':';
+			monster.name	= "Undead Priest";
+			monster.health	= 913560;
+			monster.attack	= 40953;
+			monster.vision	= 32;
+		}
+		//37 - 38
+		else if(ID == 69) //Minotaur Mage
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ň';
+			monster.name	= "Minotaur Mage";
+			monster.health	= 1309623;
+			monster.attack	= 793462;
+			monster.vision	= 35;
+		}
+		else if(ID == 70) //Giant Mantis
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'X';
+			monster.name	= "Giant Mantis";
+			monster.health	= 1709308;
+			monster.attack	= 582394;
+			monster.vision	= 38;
+		}
+		else if(ID == 71) //Elf Arcanist
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'É';
+			monster.name	= "Elf Arcanist";
+			monster.health	= 1538923;
+			monster.attack	= 625782;
+			monster.vision	= 40;
+		}
+		else if(ID == 72) //Lizard Snakecharmer
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '╚';
+			monster.name	= "Lizard Snakecharmer";
+			monster.health	= 1675447;
+			monster.attack	= 592436;
+			monster.vision	= 38;
+		}
+		//39 - 40
+		else if(ID == 73) //Frost Dragon
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'F';
+			monster.name	= "Frost Dragon";
+			monster.health	= 2007259;
+			monster.attack	= 745270;
+			monster.vision	= 36;
+		}
+		else if(ID == 74) //Ice Elemental
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '♦';
+			monster.name	= "Ice Elemental";
+			monster.health	= 1825984;
+			monster.attack	= 612340;
+			monster.vision	= 35;
+		}
+		else if(ID == 75) //Cyclop Worker
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Î';
+			monster.name	= "Cyclop Worker";
+			monster.health	= 1594138;
+			monster.attack	= 783856;
+			monster.vision	= 36;
+		}
+		//41 - 42
+		else if(ID == 76) //Troll Warrior
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '↑';
+			monster.name	= "Troll Warrior";
+			monster.health	= 2213173;
+			monster.attack	= 809358;
+			monster.vision	= 39;
+		}
+		else if(ID == 77) //Orc Leader
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ô';
+			monster.name	= "Orc Leader";
+			monster.health	= 2235633;
+			monster.attack	= 901246;
+			monster.vision	= 39;
+		}
+		else if(ID == 78) //Lich
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ľ';
+			monster.name	= "Lich";
+			monster.health	= 2182451;
+			monster.attack	= 991234;
+			monster.vision	= 39;
+		}
+		//43 - 44
+		else if(ID == 79) //Elder Elf
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ę';
+			monster.name	= "Elder Elf";
+			monster.health	= 2501447;
+			monster.attack	= 1023501;
+			monster.vision	= 49;
+		}
+		else if(ID == 80) //Lizard Dragon Priest
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'ľ';
+			monster.name	= "Lizard Dragon Priest";
+			monster.health	= 2498712;
+			monster.attack	= 1001534;
+			monster.vision	= 40;
+		}
+		else if(ID == 81) //Red Dragon
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'R';
+			monster.name	= "Red Dragon";
+			monster.health	= 2601345;
+			monster.attack	= 1118730;
+			monster.vision	= 40;
+		}
+		else if(ID == 82) //Stone Elemental
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '♠';
+			monster.name	= "Stone Elemental";
+			monster.health	= 2889340;
+			monster.attack	= 8021470;
+			monster.vision	= 41;
+		}
+		//45 - 46
+		else if(ID == 83) //Cyclop Smith
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '‼';
+			monster.name	= "Cyclop Smith";
+			monster.health	= 2814925;
+			monster.attack	= 1602831;
+			monster.vision	= 42;
+		}
+		else if(ID == 84) //Orc Warlord
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '0';
+			monster.name	= "Orc Warlord";
+			monster.health	= 2701539;
+			monster.attack	= 1802931;
+			monster.vision	= 42;
+		}
+		else if(ID == 85) //Undead Gladiator
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'U';
+			monster.name	= "Undead Gladiator";
+			monster.health	= 2579342;
+			monster.attack	= 1614235;
+			monster.vision	= 42;
+		}
+		else if(ID == 86) //Lizard High Guard
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'ĺ';
+			monster.name	= "Lizard High Guard";
+			monster.health	= 2901804;
+			monster.attack	= 1312523;
+			monster.vision	= 45;
+		}
+		//47 - 48
+		else if(ID == 87) //Hydra
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'H';
+			monster.name	= "Hydra";
+			monster.health	= 3020809;
+			monster.attack	= 1748230;
+			monster.vision	= 50;
+		}
+		else if(ID == 88) //Energy Elemental
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '♀';
+			monster.name	= "Energy Elemental";
+			monster.health	= 2989010;
+			monster.attack	= 1692540;
+			monster.vision	= 42;
+		}
+		else if(ID == 89) //Cyclop Warrior
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'W';
+			monster.name	= "Cyclop Warrior";
+			monster.health	= 2171730;
+			monster.attack	= 2002380;
+			monster.vision	= 41;
+		}
+		//49 - 51
+		else if(ID == 90) //Troll Champion
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '▼';
+			monster.name	= "Troll Champion";
+			monster.health	= 3503850;
+			monster.attack	= 2018741;
+			monster.vision	= 45;
+		}
+		else if(ID == 91) //Lizard Choosen
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'Ĺ';
+			monster.name	= "Lizard Choosen";
+			monster.health	= 3254100;
+			monster.attack	= 1913540;
+			monster.vision	= 46;
+		}
+		else if(ID == 92) //Cyklop Commander
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= 'ß';
+			monster.name	= "Cyklop Commander";
+			monster.health	= 3456100;
+			monster.attack	= 1998642;
+			monster.vision	= 47;
+		}
+		//47 - 48
+		else if(ID == 93) //Undead Dragon
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '§';
+			monster.name	= "Undead Dragon";
+			monster.health	= 4012398;
+			monster.attack	= 2017241;
+			monster.vision	= 50;
+		}
+		else if(ID == 94) //Grim Reaper
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '%';
+			monster.name	= "Grim Reaper";
+			monster.health	= 3790200;
+			monster.attack	= 2408917;
+			monster.vision	= 50;
+		}
+		else if(ID == 95) //Lava Elemental
+		{
+			monster.typeAI	= 3;
+			monster.symbol	= '♂';
+			monster.name	= "Lava Elemental";
+			monster.health	= 4092984;
+			monster.attack	= 1992390;
+			monster.vision	= 50;
+		}
+
 	}
 
 

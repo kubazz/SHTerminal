@@ -53,6 +53,7 @@ public class RogueMonster {
 	{
 		rogMonsters = rogMons;
 		ID = id;
+		rogMonsters.SetParameters(ID, this);
 	}
 
 	public RogueMonster(int id, RogueMonsters rogMons, int pX, int pY)
@@ -61,6 +62,7 @@ public class RogueMonster {
 		ID = id;
 		posX = pX;
 		posY = pY;
+		rogMonsters.SetParameters(ID, this);
 	}
 
 	public void Move()
@@ -168,28 +170,28 @@ public class RogueMonster {
 				}
 			}
 			//sprawdzenie czy gracz stoi zaraz obok
-			if(rogMonsters.posPlayer[0] == posX && rogMonsters.posPlayer[1] == posY - 1) //nad
+			if(rogMonsters.player.position[0] == posX && rogMonsters.player.position[1] == posY - 1) //nad
 			{
 				HitPlayer();
 				return;
 			}
-			if(rogMonsters.posPlayer[0] == posX + 1 && rogMonsters.posPlayer[1] == posY) //po prawo
+			if(rogMonsters.player.position[0] == posX + 1 && rogMonsters.player.position[1] == posY) //po prawo
 			{
 				HitPlayer();
 				return;
 			}
-			if(rogMonsters.posPlayer[0] == posX && rogMonsters.posPlayer[1] == posY + 1) //pod
+			if(rogMonsters.player.position[0] == posX && rogMonsters.player.position[1] == posY + 1) //pod
 			{
 				HitPlayer();
 				return;
 			}
-			if(rogMonsters.posPlayer[0] == posX - 1 && rogMonsters.posPlayer[1] == posY) //po lewo
+			if(rogMonsters.player.position[0] == posX - 1 && rogMonsters.player.position[1] == posY) //po lewo
 			{
 				HitPlayer();
 				return;
 			}
 			//sprawdzenie czy stór widzi(jest wystarczająco blisko) postać
-			if(Mathf.Sqrt(Mathf.Pow(rogMonsters.posPlayer[0] - posX, 2f) + Mathf.Pow(rogMonsters.posPlayer[1] - posY, 2f)) <= vision)
+			if(Mathf.Sqrt(Mathf.Pow(rogMonsters.player.position[0] - posX, 2f) + Mathf.Pow(rogMonsters.player.position[1] - posY, 2f)) <= vision)
 			{
 				SupportMap[,] visitedMap = new SupportMap[rogMonsters.map.GetLength(0), rogMonsters.map.GetLength(1)];
 
@@ -275,10 +277,10 @@ public class RogueMonster {
 						}
 					}
 
-					if(que.Peek().posX == rogMonsters.posPlayer[0] && que.Peek().posY == rogMonsters.posPlayer[1]) //gdy znajdziemy gracza
+					if(que.Peek().posX == rogMonsters.player.position[0] && que.Peek().posY == rogMonsters.player.position[1]) //gdy znajdziemy gracza
 					{
-						targetPosX = rogMonsters.posPlayer[0];
-						targetPosY = rogMonsters.posPlayer[1];
+						targetPosX = rogMonsters.player.position[0];
+						targetPosY = rogMonsters.player.position[1];
 					}
 
 					if(que.Peek().liveTime > vision) break; //jeżeli doszlo do granicy widoku i nie znaleziono gracza przerywamy

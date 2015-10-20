@@ -37,7 +37,7 @@ public class APPRogue : SHGUIappbase {
 		player			= new RoguePlayer(world.map);
 		player.position	= generator.getSpawn();
 
-		monsters		= new RogueMonsters(world.map, player.position);
+		monsters		= new RogueMonsters(world.map, player);
 	}
 
 	public override void Update() {
@@ -179,7 +179,6 @@ public class APPRogue : SHGUIappbase {
 			} else {
 				status.setMessage("Cannot move there!");
 			}
-			monsters.UpdatePosPlayer(player.position[0], player.position[1]);
 			for(int m = 0; m < monsters.monsterList.Count; ++m) //ruch potworów
 			{
 				monsters.monsterList[m].Move();
@@ -199,7 +198,7 @@ public class APPRogue : SHGUIappbase {
 			player			= new RoguePlayer(world.map);
 			player.position	= generator.getSpawn();
 
-			monsters		= new RogueMonsters(world.map, player.position);
+			monsters		= new RogueMonsters(world.map, player);
 		}
 		
 
