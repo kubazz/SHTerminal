@@ -10,12 +10,11 @@ public class crash
 	public	bool		left; //w którą stronę jest odwrócony
 	public	int			width; //ilośćpól zajmowanych w poziomie
 
-	public crash(int type, bool dir, int posy)
+	public crash(int type, bool dir, int posy, int posx)
 	{
 		left = dir;
 		graphic = type;
 		posY = posy;
-		posX = 5;
 		if(type == 0) //skuterek
 		{
 			width = 4;
@@ -81,21 +80,30 @@ public class APPFroger : SHGUIappbase {
 		"-oo-------oo-^"
 	};
 
+	//----------------------------------------------------------
 
-	int posX = 30; //pozycja żabki
-	int posY = 0;
-	int offSetY = 0;
+	int			posX = 30; //pozycja żabki
+	int			posY = 0;
+	int			offSetY = 0;
 
-	char frog = '⌂'; //żaba
-	float stepTime = 0.07f; //ruchu
+	char		frog = '⌂'; //żaba
+	float		stepTime = 0.07f; //ruchu
 
-	public	List<crash>			vehicle = new List<crash>();
+	public		List<crash>		vehicle = new List<crash>();
+
+	public		bool			lose = false;
+
+	//---------------------------------------------------------
 
 	public APPFroger() : base("hot_train-v5.5.5-by-onionmilk")
 	{
-		crash newCar = new crash(0, true, 6);
+		crash newCar = new crash(1, true, 6, 5);
 		vehicle.Add(newCar);
-		newCar = new crash(5, true, 10);
+		newCar = new crash(2, true, 10, 6);
+		vehicle.Add(newCar);
+		newCar = new crash(3, true, 16, 20);
+		vehicle.Add(newCar);
+		newCar = new crash(4, true, 16, 30);
 		vehicle.Add(newCar);
 	}
 	
@@ -105,49 +113,59 @@ public class APPFroger : SHGUIappbase {
 
 		stepTime -= Time.unscaledDeltaTime;
 
-		if(stepTime <= 0f)
+		if(!lose)
 		{
-			stepTime = 0.07f;
+			if(stepTime <= 0f)
+			{
+				stepTime = 0.07f;
 
-			for(int i = 0; i < vehicle.Count;) //jeżeli minąłeś już jakiś auto i wyleciało poza obszar renderu to je wywalamy
-			{
-				if(vehicle[i].posY < (posY - 4))
+				for(int i = 0; i < vehicle.Count;) //jeżeli minąłeś już jakiś auto i wyleciało poza obszar renderu to je wywalamy
 				{
-					vehicle.RemoveAt(i);
-				}
-				else
-				{
-					++i;
-				}
-			}
-			
-			for(int i = 0; i < vehicle.Count; ++i) //przesuwanie pojazdu
-			{
-				if(vehicle[i].left)
-				{
-					--vehicle[i].posX;
-					if(vehicle[i].posX < (0 - vehicle[i].width)) vehicle[i].posX = 64;
-				}
-				else
-				{
-					++vehicle[i].posX;
-					if(vehicle[i].posX > (64 + vehicle[i].width)) vehicle[i].posX = 0;
-				}
-			}
-		}
-		
-		for(int i = 0; i < vehicle.Count; ++i) //kolizja
-		{
-			if(vehicle[i].posY <= posY && vehicle[i].posY > posY - 3) //jeśli jest na wysokości pojazdu
-			{
-				if(vehicle[i].left) //dla jadącego w lewo
-				{
-					if(vehicle[i].posX <= posX && vehicle[i].posX > posX - vehicle[i].width)
+					if(vehicle[i].posY < (posY - 4))
 					{
-					
+						vehicle.RemoveAt(i);
+					}
+					else
+					{
+						++i;
+					}
+				}
+				
+				for(int i = 0; i < vehicle.Count; ++i) //przesuwanie pojazdu
+				{
+					if(vehicle[i].left)
+					{
+						--vehicle[i].posX;
+						if(vehicle[i].posX < (0 - vehicle[i].width)) vehicle[i].posX = 64;
+					}
+					else
+					{
+						++vehicle[i].posX;
+						if(vehicle[i].posX > (64 + vehicle[i].width)) vehicle[i].posX = 0;
 					}
 				}
 			}
+			/*
+			for(int i = 0; i < vehicle.Count; ++i) //kolizja
+			{
+				if(vehicle[i].posY <= posY && vehicle[i].posY > posY - 3) //jeśli jest na wysokości pojazdu
+				{
+					if(vehicle[i].left) //dla jadącego w lewo
+					{
+						if(vehicle[i].posX <= posX && vehicle[i].posX > posX - vehicle[i].width)
+						{
+							lose = true;
+						}
+					}
+					else
+					{
+						if(vehicle[i].posX >= posX && vehicle[i].posX < posX - vehicle[i].width)
+						{
+							lose = true;
+						}
+					}
+				}
+			}*/
 		}
 	}
 	
@@ -166,9 +184,19 @@ public class APPFroger : SHGUIappbase {
 				{
 					for(int x = 0; x < cars[vehicle[i].graphic * 3 + y].Length; ++x)
 					{
-						if(vehicle[i].posX + x > 0 && vehicle[i].posX + x < 63)
+						if(vehicle[i].left)
 						{
-							SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 22 - (vehicle[i].posY - posY) + y, 'z');
+							if(vehicle[i].posX + x > 0 && vehicle[i].posX + x < 63)
+							{
+								SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 22 - (vehicle[i].posY - posY) + y, 'z');
+							}
+						}
+						else
+						{
+							if(vehicle[i].posX - x > 0 && vehicle[i].posX - x < 63)
+							{
+								SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX - x, 22 - (vehicle[i].posY - posY) + y, 'z');
+							}
 						}
 					}
 				}
