@@ -3,16 +3,66 @@ using System.Collections;
 
 public class APP2048 : SHGUIappbase {
 
-	string[]	mapFrame	= new string[9] {
-	"╔════╦════╦════╦════╗",
-	"║    ║    ║    ║    ║",
-	"╠════╬════╬════╬════╣",
-	"║    ║    ║    ║    ║",
-	"╠════╬════╬════╬════╣",
-	"║    ║    ║    ║    ║",
-	"╠════╬════╬════╬════╣",
-	"║    ║    ║    ║    ║",
-	"╚════╩════╩════╩════╝"};
+	string[]	mapFrame	= new string[17]
+	{
+		"╔════════╦════════╦════════╦════════╗",
+		"║        ║        ║        ║        ║",
+		"║        ║        ║        ║        ║",
+		"║        ║        ║        ║        ║",
+		"╠════════╬════════╬════════╬════════╣",
+		"║        ║        ║        ║        ║",
+		"║        ║        ║        ║        ║",
+		"║        ║        ║        ║        ║",
+		"╠════════╬════════╬════════╬════════╣",
+		"║        ║        ║        ║        ║",
+		"║        ║        ║        ║        ║",
+		"║        ║        ║        ║        ║",
+		"╠════════╬════════╬════════╬════════╣",
+		"║        ║        ║        ║        ║",
+		"║        ║        ║        ║        ║",
+		"║        ║        ║        ║        ║",
+		"╚════════╩════════╩════════╩════════╝"};
+
+	string[]	Title		= new string[19]
+	{
+		"███",
+		"  █",
+		"███",
+		"█  ",
+		"███",
+		"   ",
+		"███",
+		"█ █",
+		"███",
+		"   ",
+		"█ █",
+		"███",
+		"  █",
+		"   ",
+		"███",
+		"█ █",
+		"███",
+		"█ █",
+		"███"
+	};
+	/*	"/\\ ",
+		" / ",
+		"/_ ",
+		" _ ",
+		"/ \\",
+		"| |",
+		"\\_/",
+		"   ",
+		" /|",
+		"/_|",
+		"  |",
+		" _ ",
+		"/ \\",
+		"> <",
+		"\\_/"
+	};*/
+
+
 
 	int[,]		mapValue		= new int[4,4];
 	
@@ -66,7 +116,7 @@ public class APP2048 : SHGUIappbase {
 
 		scoreString = "Score: " + score;
 
-		for(int i = 0; i < scoreString.Length; ++i)
+		/*for(int i = 0; i < scoreString.Length; ++i)
 		{
 			SHGUI.current.SetPixelBack(scoreString[i], 22 + i, 7, 'w');
 		}
@@ -77,13 +127,20 @@ public class APP2048 : SHGUIappbase {
 			{
 				SHGUI.current.SetPixelBack(loseString[i], 27 + i, 5, 'r');
 			}
-		}
+		}*/
 
-		for(int i = 0; i < 9; ++i)
+		for(int i = 0; i < 17; ++i)
 		{
-			for(int j = 0; j < 21; ++j)
+			for(int j = 0; j < 37; ++j)
 			{
-				SHGUI.current.SetPixelBack(mapFrame[i][j], 20 + j, 8 + i, 'w');
+				SHGUI.current.SetPixelBack(mapFrame[i][j], 10 + j, 4 + i, 'w');
+			}
+		}
+		for(int i = 0; i < 19; ++i)
+		{
+			for(int j = 0; j < 3; ++j)
+			{
+				SHGUI.current.SetPixelBack(Title[i][j], 50 + j, 3 + i, 'z');
 			}
 		}
 
@@ -91,62 +148,62 @@ public class APP2048 : SHGUIappbase {
 		{
 			for(int j = 0; j < 4; ++j)
 			{
-				if(mapValue[i, j] == 2) SHGUI.current.SetPixelFront('2', 22 + 5 * i, 9 + 2 * j, 'w');
-				else if(mapValue[i, j] == 4) SHGUI.current.SetPixelFront('4', 22 + 5 * i, 9 + 2 * j, 'w');
-				else if(mapValue[i, j] == 8) SHGUI.current.SetPixelFront('8', 22 + 5 * i, 9 + 2 * j, 'w');
+				if(mapValue[i, j] == 2) SHGUI.current.SetPixelFront('2', 15 + 9 * i, 6 + 4 * j, 'w');
+				else if(mapValue[i, j] == 4) SHGUI.current.SetPixelFront('4', 15 + 9 * i, 6 + 4 * j, 'w');
+				else if(mapValue[i, j] == 8) SHGUI.current.SetPixelFront('8', 15 + 9 * i, 6 + 4 * j, 'w');
 				else if(mapValue[i, j] == 16)
 				{
-					SHGUI.current.SetPixelFront('1', 22 + 5 * i, 9 + 2 * j, 'w');
-					SHGUI.current.SetPixelFront('6', 23 + 5 * i, 9 + 2 * j, 'w');
+					SHGUI.current.SetPixelFront('1', 14 + 9 * i, 6 + 4 * j, 'w');
+					SHGUI.current.SetPixelFront('6', 15 + 9 * i, 6 + 4 * j, 'w');
 				}
 				else if(mapValue[i, j] == 32)
 				{
-					SHGUI.current.SetPixelFront('3', 22 + 5 * i, 9 + 2 * j, 'w');
-					SHGUI.current.SetPixelFront('2', 23 + 5 * i, 9 + 2 * j, 'w');
+					SHGUI.current.SetPixelFront('3', 14 + 9 * i, 6 + 4 * j, 'w');
+					SHGUI.current.SetPixelFront('2', 15 + 9 * i, 6 + 4 * j, 'w');
 				}
 				else if(mapValue[i, j] == 64)
 				{
-					SHGUI.current.SetPixelFront('6', 22 + 5 * i, 9 + 2 * j, 'w');
-					SHGUI.current.SetPixelFront('4', 23 + 5 * i, 9 + 2 * j, 'w');
+					SHGUI.current.SetPixelFront('6', 14 + 9 * i, 6 + 4 * j, 'w');
+					SHGUI.current.SetPixelFront('4', 15 + 9 * i, 6 + 4 * j, 'w');
 				}
 				else if(mapValue[i, j] == 128)
 				{
-					SHGUI.current.SetPixelFront('1', 22 + 5 * i, 9 + 2 * j, 'w');
-					SHGUI.current.SetPixelFront('2', 23 + 5 * i, 9 + 2 * j, 'w');
-					SHGUI.current.SetPixelFront('8', 24 + 5 * i, 9 + 2 * j, 'w');
+					SHGUI.current.SetPixelFront('1', 14 + 9 * i, 6 + 4 * j, 'w');
+					SHGUI.current.SetPixelFront('2', 15 + 9 * i, 6 + 4 * j, 'w');
+					SHGUI.current.SetPixelFront('8', 16 + 9 * i, 6 + 4 * j, 'w');
 				}
 				else if(mapValue[i, j] == 256)
 				{
-					SHGUI.current.SetPixelFront('2', 22 + 5 * i, 9 + 2 * j, 'w');
-					SHGUI.current.SetPixelFront('5', 23 + 5 * i, 9 + 2 * j, 'w');
-					SHGUI.current.SetPixelFront('6', 24 + 5 * i, 9 + 2 * j, 'w');
+					SHGUI.current.SetPixelFront('2', 14 + 9 * i, 6 + 4 * j, 'w');
+					SHGUI.current.SetPixelFront('5', 15 + 9 * i, 6 + 4 * j, 'w');
+					SHGUI.current.SetPixelFront('6', 16 + 9 * i, 6 + 4 * j, 'w');
 				}
 				else if(mapValue[i, j] == 512)
 				{
-					SHGUI.current.SetPixelFront('5', 22 + 5 * i, 9 + 2 * j, 'w');
-					SHGUI.current.SetPixelFront('1', 23 + 5 * i, 9 + 2 * j, 'w');
-					SHGUI.current.SetPixelFront('2', 24 + 5 * i, 9 + 2 * j, 'w');
+					SHGUI.current.SetPixelFront('5', 14 + 9 * i, 6 + 4 * j, 'w');
+					SHGUI.current.SetPixelFront('1', 15 + 9 * i, 6 + 4 * j, 'w');
+					SHGUI.current.SetPixelFront('2', 16 + 9 * i, 6 + 4 * j, 'w');
 				}
 				else if(mapValue[i, j] == 1024)
 				{
-					SHGUI.current.SetPixelFront('1', 21 + 5 * i, 9 + 2 * j, 'w');
-					SHGUI.current.SetPixelFront('0', 22 + 5 * i, 9 + 2 * j, 'w');
-					SHGUI.current.SetPixelFront('2', 23 + 5 * i, 9 + 2 * j, 'w');
-					SHGUI.current.SetPixelFront('4', 24 + 5 * i, 9 + 2 * j, 'w');
+					SHGUI.current.SetPixelFront('1', 13 + 9 * i, 6 + 4 * j, 'w');
+					SHGUI.current.SetPixelFront('0', 14 + 9 * i, 6 + 4 * j, 'w');
+					SHGUI.current.SetPixelFront('2', 15 + 9 * i, 6 + 4 * j, 'w');
+					SHGUI.current.SetPixelFront('4', 16 + 9 * i, 6 + 4 * j, 'w');
 				}
 				else if(mapValue[i, j] == 2048)
 				{
-					SHGUI.current.SetPixelFront('2', 21 + 5 * i, 9 + 2 * j, 'r');
-					SHGUI.current.SetPixelFront('0', 22 + 5 * i, 9 + 2 * j, 'r');
-					SHGUI.current.SetPixelFront('4', 23 + 5 * i, 9 + 2 * j, 'r');
-					SHGUI.current.SetPixelFront('8', 24 + 5 * i, 9 + 2 * j, 'r');
+					SHGUI.current.SetPixelFront('2', 13 + 9 * i, 6 + 4 * j, 'r');
+					SHGUI.current.SetPixelFront('0', 14 + 9 * i, 6 + 4 * j, 'r');
+					SHGUI.current.SetPixelFront('4', 15 + 9 * i, 6 + 4 * j, 'r');
+					SHGUI.current.SetPixelFront('8', 16 + 9 * i, 6 + 4 * j, 'r');
 				}
 				else if(mapValue[i, j] == 4096)
 				{
-					SHGUI.current.SetPixelFront('4', 21 + 5 * i, 9 + 2 * j, 'r');
-					SHGUI.current.SetPixelFront('0', 22 + 5 * i, 9 + 2 * j, 'r');
-					SHGUI.current.SetPixelFront('9', 23 + 5 * i, 9 + 2 * j, 'r');
-					SHGUI.current.SetPixelFront('6', 24 + 5 * i, 9 + 2 * j, 'r');
+					SHGUI.current.SetPixelFront('4', 13 + 9 * i, 6 + 4 * j, 'r');
+					SHGUI.current.SetPixelFront('0', 14 + 9 * i, 6 + 4 * j, 'r');
+					SHGUI.current.SetPixelFront('9', 15 + 9 * i, 6 + 4 * j, 'r');
+					SHGUI.current.SetPixelFront('6', 16 + 9 * i, 6 + 4 * j, 'r');
 				}
 			}
 		}
