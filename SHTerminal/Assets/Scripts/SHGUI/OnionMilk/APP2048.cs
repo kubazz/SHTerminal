@@ -21,60 +21,40 @@ public class APP2048 : SHGUIappbase {
 		"║        ║        ║        ║        ║",
 		"║        ║        ║        ║        ║",
 		"║        ║        ║        ║        ║",
-		"╚════════╩════════╩════════╩════════╝"};
-
-	string[]	Title		= new string[19]
-	{
-		"███",
-		"  █",
-		"███",
-		"█  ",
-		"███",
-		"   ",
-		"███",
-		"█ █",
-		"███",
-		"   ",
-		"█ █",
-		"███",
-		"  █",
-		"   ",
-		"███",
-		"█ █",
-		"███",
-		"█ █",
-		"███"
+		"╚════════╩════════╩════════╩════════╝"
 	};
-	/*	"/\\ ",
-		" / ",
-		"/_ ",
-		" _ ",
-		"/ \\",
-		"| |",
-		"\\_/",
-		"   ",
-		" /|",
-		"/_|",
-		"  |",
-		" _ ",
-		"/ \\",
-		"> <",
-		"\\_/"
-	};*/
 
+	string[]	title	= new string[6]
+	{
+		".22222.  .0000.    4444  .88888. ",
+		"22  `22 .00  00.  44~44  88   88 ",
+		"   22D' 00  0'00 44' 44  `88888' ",
+		" .22'   00 0' 00 4444444 .88888. ",
+		"222.    `00  00'     44  88   88 ",
+		"2222222  `0000'      44  `88888' "
+	};
+	string		hintMenu			= "PRESS ENTER TO START";
+	string		hintGame			= "USE ARROW TO PLAY";
+	string		hintDead			= "PRESS ESC BACK TO MENU";
 
+	int[,]		mapValue			= new int[4,4];
 
-	int[,]		mapValue		= new int[4,4];
+	bool[]		lockDirection		= new bool[4]; //oznaczenie który z kierunków jest zablokowany
+	int			allLockCount		= 0; // ilosć zablokowanych kierunków jeżeli jest rónwa 4 przegrywasz
+	int[]		rope				= new int[4]; //sznur czyli wartości w sprawdzanej lini
 	
-	int			lose			= 0; //0 gra | 1 przegrana | 2 zwycięstwo
-	string		loseString		= "You Lose";
+	int			lose				= 0; //0 gra | 1 przegrana | 2 zwycięstwo
+	string		loseString			= "YOU LOSE";
 
-	string		scoreString		= "Score: ";
-	int			score			= 0;
+	string		scoreString			= "Score:";
+	string		currScoreString		= "";
+	int			score				= 0;
 
-	bool[]		lockDirection	= new bool[4]; //oznaczenie który z kierunków jest zablokowany
-	int			allLockCount	= 0; // ilosć zablokowanych kierunków jeżeli jest rónwa 4 przegrywasz
-	int[]		rope			= new int[4];
+	string		bestString			= "Best:";
+	string		currBestString		= "";
+	int			best				= 0;
+
+	bool		menu				= true; //czy znajdujesz się w menu czy w grze
 
 
 	public APP2048()
@@ -96,139 +76,199 @@ public class APP2048 : SHGUIappbase {
 		CheckMove();
 	}
 
-	public override void Update() {
+	public override void Update()
+	{
 		base.Update();
 
-		//sprawdzenie warunku przegranej
-		for(int i = 0; i < 4; ++i) if(lockDirection[i]) ++allLockCount;
-		if(allLockCount == 4) lose = 1;
-		else allLockCount = 0;
+		if(menu) APPINSTRUCTION.text = "ESC-to-quit";
+		else APPINSTRUCTION.text = "ESC-to-reset";
 
-		//sprawdzenie warunku wygranej
-		for(int i = 0; i < 4; ++i) for(int j = 0; j < 4; ++j)
+		if(best < score) best = score;
+
+		if(!menu)
 		{
-			if(mapValue[i, j] == 2048) lose = 2;
+			//sprawdzenie warunku przegranej
+			for(int i = 0; i < 4; ++i) if(lockDirection[i]) ++allLockCount;
+			if(allLockCount == 4) lose = 1;
+			else allLockCount = 0;
+
+			//sprawdzenie warunku wygranej
+			for(int i = 0; i < 4; ++i) for(int j = 0; j < 4; ++j)
+			{
+				if(mapValue[i, j] == 2048) lose = 2;
+			}
+
+			if(best < score) best = score;
 		}
 	}
 
-	public override void Redraw(int offx, int offy) {
+	public override void Redraw(int offx, int offy)
+	{
 		base.Redraw(offx, offy);
 
-		scoreString = "Score: " + score;
+		currScoreString = "" + score;
+		currBestString = "" + best;
 
-		/*for(int i = 0; i < scoreString.Length; ++i)
+		if(menu)
 		{
-			SHGUI.current.SetPixelBack(scoreString[i], 22 + i, 7, 'w');
-		}
-
-		if(lose == 1)
-		{
-			for(int i = 0; i < loseString.Length; ++i)
+			for(int i = 0; i < 6; ++i) //tytuł
 			{
-				SHGUI.current.SetPixelBack(loseString[i], 27 + i, 5, 'r');
-			}
-		}*/
-
-		for(int i = 0; i < 17; ++i)
-		{
-			for(int j = 0; j < 37; ++j)
-			{
-				SHGUI.current.SetPixelBack(mapFrame[i][j], 10 + j, 4 + i, 'w');
-			}
-		}
-		for(int i = 0; i < 19; ++i)
-		{
-			for(int j = 0; j < 3; ++j)
-			{
-				SHGUI.current.SetPixelBack(Title[i][j], 50 + j, 3 + i, 'z');
-			}
-		}
-
-		for(int i = 0; i < 4; ++i)
-		{
-			for(int j = 0; j < 4; ++j)
-			{
-				if(mapValue[i, j] == 2) SHGUI.current.SetPixelFront('2', 15 + 9 * i, 6 + 4 * j, 'w');
-				else if(mapValue[i, j] == 4) SHGUI.current.SetPixelFront('4', 15 + 9 * i, 6 + 4 * j, 'w');
-				else if(mapValue[i, j] == 8) SHGUI.current.SetPixelFront('8', 15 + 9 * i, 6 + 4 * j, 'w');
-				else if(mapValue[i, j] == 16)
+				for(int j = 0; j < title[i].Length; ++j)
 				{
-					SHGUI.current.SetPixelFront('1', 14 + 9 * i, 6 + 4 * j, 'w');
-					SHGUI.current.SetPixelFront('6', 15 + 9 * i, 6 + 4 * j, 'w');
-				}
-				else if(mapValue[i, j] == 32)
-				{
-					SHGUI.current.SetPixelFront('3', 14 + 9 * i, 6 + 4 * j, 'w');
-					SHGUI.current.SetPixelFront('2', 15 + 9 * i, 6 + 4 * j, 'w');
-				}
-				else if(mapValue[i, j] == 64)
-				{
-					SHGUI.current.SetPixelFront('6', 14 + 9 * i, 6 + 4 * j, 'w');
-					SHGUI.current.SetPixelFront('4', 15 + 9 * i, 6 + 4 * j, 'w');
-				}
-				else if(mapValue[i, j] == 128)
-				{
-					SHGUI.current.SetPixelFront('1', 14 + 9 * i, 6 + 4 * j, 'w');
-					SHGUI.current.SetPixelFront('2', 15 + 9 * i, 6 + 4 * j, 'w');
-					SHGUI.current.SetPixelFront('8', 16 + 9 * i, 6 + 4 * j, 'w');
-				}
-				else if(mapValue[i, j] == 256)
-				{
-					SHGUI.current.SetPixelFront('2', 14 + 9 * i, 6 + 4 * j, 'w');
-					SHGUI.current.SetPixelFront('5', 15 + 9 * i, 6 + 4 * j, 'w');
-					SHGUI.current.SetPixelFront('6', 16 + 9 * i, 6 + 4 * j, 'w');
-				}
-				else if(mapValue[i, j] == 512)
-				{
-					SHGUI.current.SetPixelFront('5', 14 + 9 * i, 6 + 4 * j, 'w');
-					SHGUI.current.SetPixelFront('1', 15 + 9 * i, 6 + 4 * j, 'w');
-					SHGUI.current.SetPixelFront('2', 16 + 9 * i, 6 + 4 * j, 'w');
-				}
-				else if(mapValue[i, j] == 1024)
-				{
-					SHGUI.current.SetPixelFront('1', 13 + 9 * i, 6 + 4 * j, 'w');
-					SHGUI.current.SetPixelFront('0', 14 + 9 * i, 6 + 4 * j, 'w');
-					SHGUI.current.SetPixelFront('2', 15 + 9 * i, 6 + 4 * j, 'w');
-					SHGUI.current.SetPixelFront('4', 16 + 9 * i, 6 + 4 * j, 'w');
-				}
-				else if(mapValue[i, j] == 2048)
-				{
-					SHGUI.current.SetPixelFront('2', 13 + 9 * i, 6 + 4 * j, 'r');
-					SHGUI.current.SetPixelFront('0', 14 + 9 * i, 6 + 4 * j, 'r');
-					SHGUI.current.SetPixelFront('4', 15 + 9 * i, 6 + 4 * j, 'r');
-					SHGUI.current.SetPixelFront('8', 16 + 9 * i, 6 + 4 * j, 'r');
-				}
-				else if(mapValue[i, j] == 4096)
-				{
-					SHGUI.current.SetPixelFront('4', 13 + 9 * i, 6 + 4 * j, 'r');
-					SHGUI.current.SetPixelFront('0', 14 + 9 * i, 6 + 4 * j, 'r');
-					SHGUI.current.SetPixelFront('9', 15 + 9 * i, 6 + 4 * j, 'r');
-					SHGUI.current.SetPixelFront('6', 16 + 9 * i, 6 + 4 * j, 'r');
+					SHGUI.current.SetPixelBack(title[i][j], (62 - title[i].Length)/2 + j, 5 + i, 'w');
 				}
 			}
-		}
+			for(int i = 0; i < hintMenu.Length; ++i) //podpowiedź
+			{
+				SHGUI.current.SetPixelBack(hintMenu[i], (62 - hintMenu.Length)/2 + i, 14, 'w');
+			}
 
+			//najlepszy wynik
+			for(int i = 0; i < bestString.Length; ++i) SHGUI.current.SetPixelBack(bestString[i], (62 - bestString.Length)/2 + i + 1, 16, 'w');
+			for(int i = 0; i < currBestString.Length; ++i) SHGUI.current.SetPixelBack(currBestString[i], (62 - currBestString.Length)/2 + i, 17, 'w');
+		}
+		else
+		{
+			//obecny wynik
+			for(int i = 0; i < scoreString.Length; ++i) SHGUI.current.SetPixelBack(scoreString[i], 20 + i, 2, 'w');
+			for(int i = 0; i < currScoreString.Length; ++i) SHGUI.current.SetPixelBack(currScoreString[i], 22 - (currScoreString.Length/2) + i, 3, 'w');
+
+			//najlepszy wynik
+			for(int i = 0; i < bestString.Length; ++i) SHGUI.current.SetPixelBack(bestString[i], 40 + i, 2, 'w');
+			for(int i = 0; i < currBestString.Length; ++i) SHGUI.current.SetPixelBack(currBestString[i], 42 - (currBestString.Length/2) + i, 3, 'w');
+
+
+			for(int i = 0; i < 17; ++i) //ramka
+			{
+				for(int j = 0; j < 37; ++j)
+				{
+					SHGUI.current.SetPixelBack(mapFrame[i][j], 13 + j, 4 + i, 'w');
+				}
+			}
+
+			if(lose == 0)
+			{
+				for(int i = 0; i < hintGame.Length; ++i) //podpowiedź na dole ekranu
+				{
+					SHGUI.current.SetPixelBack(hintGame[i], (62 - hintGame.Length)/2 + i, 21, 'w');
+				}
+			}
+
+			for(int i = 0; i < 4; ++i) //rysowanie wartości w okienkach
+			{
+				for(int j = 0; j < 4; ++j)
+				{
+					if(mapValue[i, j] == 2) SHGUI.current.SetPixelFront('2', 18 + 9 * i, 6 + 4 * j, 'w');
+					else if(mapValue[i, j] == 4) SHGUI.current.SetPixelFront('4', 18 + 9 * i, 6 + 4 * j, 'w');
+					else if(mapValue[i, j] == 8) SHGUI.current.SetPixelFront('8', 18 + 9 * i, 6 + 4 * j, 'w');
+					else if(mapValue[i, j] == 16)
+					{
+						SHGUI.current.SetPixelFront('1', 17 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('6', 18 + 9 * i, 6 + 4 * j, 'w');
+					}
+					else if(mapValue[i, j] == 32)
+					{
+						SHGUI.current.SetPixelFront('3', 17 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('2', 18 + 9 * i, 6 + 4 * j, 'w');
+					}
+					else if(mapValue[i, j] == 64)
+					{
+						SHGUI.current.SetPixelFront('6', 17 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('4', 18 + 9 * i, 6 + 4 * j, 'w');
+					}
+					else if(mapValue[i, j] == 128)
+					{
+						SHGUI.current.SetPixelFront('1', 17 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('2', 18 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('8', 19 + 9 * i, 6 + 4 * j, 'w');
+					}
+					else if(mapValue[i, j] == 256)
+					{
+						SHGUI.current.SetPixelFront('2', 17 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('5', 18 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('6', 19 + 9 * i, 6 + 4 * j, 'w');
+					}
+					else if(mapValue[i, j] == 512)
+					{
+						SHGUI.current.SetPixelFront('5', 17 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('1', 18 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('2', 19 + 9 * i, 6 + 4 * j, 'w');
+					}
+					else if(mapValue[i, j] == 1024)
+					{
+						SHGUI.current.SetPixelFront('1', 16 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('0', 17 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('2', 18 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('4', 19 + 9 * i, 6 + 4 * j, 'w');
+					}
+					else if(mapValue[i, j] == 2048)
+					{
+						SHGUI.current.SetPixelFront('2', 16 + 9 * i, 6 + 4 * j, 'r');
+						SHGUI.current.SetPixelFront('0', 17 + 9 * i, 6 + 4 * j, 'r');
+						SHGUI.current.SetPixelFront('4', 18 + 9 * i, 6 + 4 * j, 'r');
+						SHGUI.current.SetPixelFront('8', 19 + 9 * i, 6 + 4 * j, 'r');
+					}
+					else if(mapValue[i, j] == 4096)
+					{
+						SHGUI.current.SetPixelFront('4', 16 + 9 * i, 6 + 4 * j, 'r');
+						SHGUI.current.SetPixelFront('0', 17 + 9 * i, 6 + 4 * j, 'r');
+						SHGUI.current.SetPixelFront('9', 18 + 9 * i, 6 + 4 * j, 'r');
+						SHGUI.current.SetPixelFront('6', 19 + 9 * i, 6 + 4 * j, 'r');
+					}
+				}
+			}
+			if(lose == 1)
+			{
+				for(int i = 0; i < loseString.Length; ++i) //ekran przegranej
+				{
+					SHGUI.current.SetPixelBack(loseString[i], (62 - loseString.Length)/2 + i, 9, 'r');
+				}
+				for(int i = 0; i < hintDead.Length; ++i) //ekran przegranej
+				{
+					SHGUI.current.SetPixelBack(hintDead[i], (62 - hintDead.Length)/2 + i, 12, 'r');
+				}
+			}
+		}
 	}
 
 	public override void ReactToInputKeyboard(SHGUIinput key) {
-		//sterowanie
-		if (key == SHGUIinput.up) {
-			if(lose == 0) Move(0);
+		if(menu)
+		{
+			if(key == SHGUIinput.esc) SHGUI.current.PopView();
+			if(key == SHGUIinput.enter) //start / reset gry
+			{
+				for(int i = 0; i < 4; ++i) for(int j = 0; j < 4; ++j)
+				{
+					mapValue[i, j] = 0;
+				}
+				
+				Rand2();
+				Rand2();
+				
+				for(int i = 0; i < 4; ++i)
+				{
+					lockDirection[i] = false;
+					rope[i] = 0;
+				}
+				
+				CheckMove();
+				score = 0;
+				allLockCount = 0;
+				lose = 0;
+				menu = false;
+			}
 		}
-		if (key == SHGUIinput.down) {
-			if(lose == 0) Move(2);
+		else
+		{
+			//sterowanie
+			if(key == SHGUIinput.up) if(lose == 0) Move(0);
+			if(key == SHGUIinput.down) if(lose == 0) Move(2);
+			if (key == SHGUIinput.right) if(lose == 0) Move(1);
+			if (key == SHGUIinput.left) if(lose == 0) Move(3);
+
+			if(key == SHGUIinput.esc) menu = true;
 		}
-		if (key == SHGUIinput.right) {
-			if(lose == 0) Move(1);
-		}
-		if (key == SHGUIinput.left) {
-			if(lose == 0) Move(3);
-		}
-		
-		
-		if (key == SHGUIinput.esc)
-			SHGUI.current.PopView();
-		//--
+
 	}
 	void Move(int direct)
 	{
@@ -253,7 +293,7 @@ public class APP2048 : SHGUIappbase {
 						{
 							if(tempPos == j) continue; //pilnowanie żeby nie podwoiło się dokładnie to samo pole
 
-							score += mapValue[i, j];
+							score += mapValue[i, j] * 2;
 							mapValue[i, tempPos] += mapValue[i, j]; //zwiększanie tych samych wartości
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
 							++tempPos; //przesunięcie strażnika na następne pole by w jednym ruchu jakaś liczba nie zwiększyła się kilka razy
@@ -292,7 +332,7 @@ public class APP2048 : SHGUIappbase {
 						{
 							if(tempPos == i) continue; //pilnowanie żeby nie podwoiło się dokładnie to samo pole
 
-							score += mapValue[i, j];
+							score += mapValue[i, j] * 2;
 							mapValue[tempPos, j] += mapValue[i, j]; //zwiększanie tych samych wartości
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
 							--tempPos; //przesunięcie strażnika na następne pole by w jednym ruchu jakaś liczba nie zwiększyła się kilka razy
@@ -331,7 +371,7 @@ public class APP2048 : SHGUIappbase {
 						{
 							if(tempPos == j) continue; //pilnowanie żeby nie podwoiło się dokładnie to samo pole
 
-							score += mapValue[i, j];
+							score += mapValue[i, j] * 2;
 							mapValue[i, tempPos] += mapValue[i, j]; //zwiększanie tych samych wartości
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
 							--tempPos; //przesunięcie strażnika na następne pole by w jednym ruchu jakaś liczba nie zwiększyła się kilka razy
@@ -370,7 +410,7 @@ public class APP2048 : SHGUIappbase {
 						{
 							if(tempPos == i) continue; //pilnowanie żeby nie podwoiło się dokładnie to samo pole
 
-							score += mapValue[i, j];
+							score += mapValue[i, j] * 2;
 							mapValue[tempPos, j] += mapValue[i, j]; //zwiększanie tych samych wartości
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
 							++tempPos; //przesunięcie strażnika na następne pole by w jednym ruchu jakaś liczba nie zwiększyła się kilka razy
@@ -509,7 +549,6 @@ public class APP2048 : SHGUIappbase {
 			if(mapValue[tempPosX, tempPosY] == 0)
 			{
 				mapValue[tempPosX, tempPosY] = 2;
-				score += 2;
 				break;
 			}
 			else
@@ -537,7 +576,6 @@ public class APP2048 : SHGUIappbase {
 							if(mapValue[i, j] == 0)
 							{
 								mapValue[i, j] = 2;
-								score += 2;
 								return;
 							}
 						}
