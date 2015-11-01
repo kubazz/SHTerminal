@@ -1,4 +1,5 @@
 <Data>
+	<item type="app" name ="snake.exe" appclass="APPSnake"/>
   <item type="app" name="roar.exe" appclass="APProar"/>
   <item type="lua" name="test.lua" luafile="luatest"/>
   <item type="app" name="outflow.exe" appclass="APPoutflow"/>
@@ -223,5 +224,6 @@ I also like the silliness of writing notes to myself. Like anyone would read tha
 		<item type="app" name ="maze.exe" appclass="APPColorMaze"/>
 		<item type="app" name ="onionman.exe" appclass="APPOnionMan"/>
 		<item type="app" name ="rogue.exe" appclass="APPRogue"/>
+		<item type="app" name ="snake.exe" appclass="APPSnake"/>
 	</onionmilk>
 </Data>
