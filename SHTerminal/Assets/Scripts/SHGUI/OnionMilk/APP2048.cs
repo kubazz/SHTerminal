@@ -1,5 +1,35 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
+public class MergeAnim 
+{
+	public	int			lifeTime			= 0; //obecna klatka animacji max 5
+	public	float		changeCounter		= 0.2f;
+
+	public	int			posX				= 0;
+	public	int			posY				= 0;
+
+	public MergeAnim(int pX, int pY)
+	{
+		posX = pX;
+		posY = pY;
+	}
+
+	public bool MergeUpdate(float timeDelta)
+	{
+		changeCounter -= timeDelta;
+		if(changeCounter <= 0f)
+		{
+			changeCounter = 0.1f;
+			++lifeTime;
+			if(lifeTime >= 6) return true;
+		}
+
+		return false;
+	}
+
+};
 
 public class APP2048 : SHGUIappbase {
 
@@ -33,29 +63,65 @@ public class APP2048 : SHGUIappbase {
 		"222.    `00  00'     44  88   88 ",
 		"2222222  `0000'      44  `88888' "
 	};
-	string		hintMenu			= "PRESS ENTER TO START";
-	string		hintGame			= "USE ARROW TO PLAY";
-	string		hintDead			= "PRESS ESC BACK TO MENU";
 
-	int[,]		mapValue			= new int[4,4];
+	string[]	boomAnim	= new string[18]
+	{
+		"      ",
+		"  ..  ",
+		"      ",
+		"      ",
+		"  **  ",
+		"      ",
+		" '  ' ",
+		" -**- ",
+		" '  ' ",
+		" \\  / ",
+		" -  - ",
+		" /  \\ ",
+		" \\  / ",
+		"      ",
+		" /  \\ ",
+		" .  . ",
+		"      ",
+		" .  . "
+	};
 
-	bool[]		lockDirection		= new bool[4]; //oznaczenie który z kierunków jest zablokowany
-	int			allLockCount		= 0; // ilosć zablokowanych kierunków jeżeli jest rónwa 4 przegrywasz
-	int[]		rope				= new int[4]; //sznur czyli wartości w sprawdzanej lini
+	string			hintMenu			= "PRESS ENTER TO START";
+	string			hintGame			= "USE ARROW TO PLAY";
+	string			hintDead			= "PRESS ESC BACK TO MENU";
+
+	List<MergeAnim>	animList			= new List<MergeAnim>();
+
+	int[,]			mapValue			= new int[4,4];
+	int[,]			mapTemp				= new int[4,4];
+
+	bool[]			lockDirection		= new bool[4]; //oznaczenie który z kierunków jest zablokowany
+	int				allLockCount		= 0; // ilosć zablokowanych kierunków jeżeli jest rónwa 4 przegrywasz
+	int[]			rope				= new int[4]; //sznur czyli wartości w sprawdzanej lini
 	
-	int			lose				= 0; //0 gra | 1 przegrana | 2 zwycięstwo
-	string		loseString			= "YOU LOSE";
+	int				lose				= 0; //0 gra | 1 przegrana | 2 zwycięstwo
+	string			loseString			= "YOU LOSE";
+	string			winString			= "CONGRATULATIONS YOU WIN";
 
-	string		scoreString			= "Score:";
-	string		currScoreString		= "";
-	int			score				= 0;
+	string			scoreString			= "Score:";
+	string			currScoreString		= "";
+	int				score				= 0;
 
-	string		bestString			= "Best:";
-	string		currBestString		= "";
-	int			best				= 0;
+	string			bestString			= "Best:";
+	string			currBestString		= "";
+	int				best				= 0;
 
-	bool		menu				= true; //czy znajdujesz się w menu czy w grze
+	float			gameTimer			= 0f; //czas trwania gry
+		
+	bool			menu				= true; //czy znajdujesz się w menu czy w grze
 
+	bool			animBlock			= false; //czy jest właśnie wykonywana animacja
+	float			animTimer			= 0f; //czas blokady
+
+	//nowo stawiany klocuch
+	int				newPosX				= 0;
+	int				newPosY				= 0;
+	float			newTimer			= 0.2f;
 
 	public APP2048()
 	: base("2048-v1500.100.900-by-onionmilk") {
@@ -74,6 +140,11 @@ public class APP2048 : SHGUIappbase {
 		}
 
 		CheckMove();
+
+		currScoreString = "" + score;
+		currBestString = "" + best;
+
+		//animList.Add(new MergeAnim(1, 1));
 	}
 
 	public override void Update()
@@ -87,6 +158,32 @@ public class APP2048 : SHGUIappbase {
 
 		if(!menu)
 		{
+
+			for(int i = 0; i < animList.Count;) //animacja łączenia obiektów
+			{
+				//sprawdzenie czy element jest do zniszczenia i ustawienie wartości zawartości
+				if(animList[i].MergeUpdate(Time.unscaledDeltaTime))
+				{
+					animList.RemoveAt(i);
+					continue;
+				}
+				++i;
+			}
+
+			gameTimer += Time.unscaledDeltaTime;
+			if(newTimer > 0f) newTimer -= Time.unscaledDeltaTime;
+
+			if(animBlock)
+			{
+				animTimer -= Time.deltaTime;
+				if(animTimer <= 0)
+				{
+					animBlock = false;
+					currScoreString = "" + score;
+					currBestString = "" + best;
+				}
+			}
+
 			//sprawdzenie warunku przegranej
 			for(int i = 0; i < 4; ++i) if(lockDirection[i]) ++allLockCount;
 			if(allLockCount == 4) lose = 1;
@@ -105,9 +202,6 @@ public class APP2048 : SHGUIappbase {
 	public override void Redraw(int offx, int offy)
 	{
 		base.Redraw(offx, offy);
-
-		currScoreString = "" + score;
-		currBestString = "" + best;
 
 		if(menu)
 		{
@@ -158,48 +252,53 @@ public class APP2048 : SHGUIappbase {
 			{
 				for(int j = 0; j < 4; ++j)
 				{
-					if(mapValue[i, j] == 2) SHGUI.current.SetPixelFront('2', 18 + 9 * i, 6 + 4 * j, 'w');
-					else if(mapValue[i, j] == 4) SHGUI.current.SetPixelFront('4', 18 + 9 * i, 6 + 4 * j, 'w');
-					else if(mapValue[i, j] == 8) SHGUI.current.SetPixelFront('8', 18 + 9 * i, 6 + 4 * j, 'w');
+					char tempKolor = 'w';
+					if(newPosX == i && newPosY == j && newTimer > 0f)
+					{
+						tempKolor = 'r';
+					}
+					if(mapValue[i, j] == 2) SHGUI.current.SetPixelFront('2', 18 + 9 * i, 6 + 4 * j, tempKolor);
+					else if(mapValue[i, j] == 4) SHGUI.current.SetPixelFront('4', 18 + 9 * i, 6 + 4 * j, tempKolor);
+					else if(mapValue[i, j] == 8) SHGUI.current.SetPixelFront('8', 18 + 9 * i, 6 + 4 * j, tempKolor);
 					else if(mapValue[i, j] == 16)
 					{
-						SHGUI.current.SetPixelFront('1', 17 + 9 * i, 6 + 4 * j, 'w');
-						SHGUI.current.SetPixelFront('6', 18 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('1', 17 + 9 * i, 6 + 4 * j, tempKolor);
+						SHGUI.current.SetPixelFront('6', 18 + 9 * i, 6 + 4 * j, tempKolor);
 					}
 					else if(mapValue[i, j] == 32)
 					{
-						SHGUI.current.SetPixelFront('3', 17 + 9 * i, 6 + 4 * j, 'w');
-						SHGUI.current.SetPixelFront('2', 18 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('3', 17 + 9 * i, 6 + 4 * j, tempKolor);
+						SHGUI.current.SetPixelFront('2', 18 + 9 * i, 6 + 4 * j, tempKolor);
 					}
 					else if(mapValue[i, j] == 64)
 					{
-						SHGUI.current.SetPixelFront('6', 17 + 9 * i, 6 + 4 * j, 'w');
-						SHGUI.current.SetPixelFront('4', 18 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('6', 17 + 9 * i, 6 + 4 * j, tempKolor);
+						SHGUI.current.SetPixelFront('4', 18 + 9 * i, 6 + 4 * j, tempKolor);
 					}
 					else if(mapValue[i, j] == 128)
 					{
-						SHGUI.current.SetPixelFront('1', 17 + 9 * i, 6 + 4 * j, 'w');
-						SHGUI.current.SetPixelFront('2', 18 + 9 * i, 6 + 4 * j, 'w');
-						SHGUI.current.SetPixelFront('8', 19 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('1', 17 + 9 * i, 6 + 4 * j, tempKolor);
+						SHGUI.current.SetPixelFront('2', 18 + 9 * i, 6 + 4 * j, tempKolor);
+						SHGUI.current.SetPixelFront('8', 19 + 9 * i, 6 + 4 * j, tempKolor);
 					}
 					else if(mapValue[i, j] == 256)
 					{
-						SHGUI.current.SetPixelFront('2', 17 + 9 * i, 6 + 4 * j, 'w');
-						SHGUI.current.SetPixelFront('5', 18 + 9 * i, 6 + 4 * j, 'w');
-						SHGUI.current.SetPixelFront('6', 19 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('2', 17 + 9 * i, 6 + 4 * j, tempKolor);
+						SHGUI.current.SetPixelFront('5', 18 + 9 * i, 6 + 4 * j, tempKolor);
+						SHGUI.current.SetPixelFront('6', 19 + 9 * i, 6 + 4 * j, tempKolor);
 					}
 					else if(mapValue[i, j] == 512)
 					{
-						SHGUI.current.SetPixelFront('5', 17 + 9 * i, 6 + 4 * j, 'w');
-						SHGUI.current.SetPixelFront('1', 18 + 9 * i, 6 + 4 * j, 'w');
-						SHGUI.current.SetPixelFront('2', 19 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('5', 17 + 9 * i, 6 + 4 * j, tempKolor);
+						SHGUI.current.SetPixelFront('1', 18 + 9 * i, 6 + 4 * j, tempKolor);
+						SHGUI.current.SetPixelFront('2', 19 + 9 * i, 6 + 4 * j, tempKolor);
 					}
 					else if(mapValue[i, j] == 1024)
 					{
-						SHGUI.current.SetPixelFront('1', 16 + 9 * i, 6 + 4 * j, 'w');
-						SHGUI.current.SetPixelFront('0', 17 + 9 * i, 6 + 4 * j, 'w');
-						SHGUI.current.SetPixelFront('2', 18 + 9 * i, 6 + 4 * j, 'w');
-						SHGUI.current.SetPixelFront('4', 19 + 9 * i, 6 + 4 * j, 'w');
+						SHGUI.current.SetPixelFront('1', 16 + 9 * i, 6 + 4 * j, tempKolor);
+						SHGUI.current.SetPixelFront('0', 17 + 9 * i, 6 + 4 * j, tempKolor);
+						SHGUI.current.SetPixelFront('2', 18 + 9 * i, 6 + 4 * j, tempKolor);
+						SHGUI.current.SetPixelFront('4', 19 + 9 * i, 6 + 4 * j, tempKolor);
 					}
 					else if(mapValue[i, j] == 2048)
 					{
@@ -217,13 +316,39 @@ public class APP2048 : SHGUIappbase {
 					}
 				}
 			}
-			if(lose == 1)
+			//wyświetlanie splash efektów
+			for(int i = 0; i < animList.Count; ++i)
 			{
-				for(int i = 0; i < loseString.Length; ++i) //ekran przegranej
+				for(int x = 0; x < 5; ++x)
+				{
+					for(int y = 0; y < 3; ++y)
+					{
+						if(boomAnim[y + 3 * animList[i].lifeTime][x] != ' ')
+						{
+							SHGUI.current.SetPixelFront(boomAnim[y + 3 * animList[i].lifeTime][x], 15 + 9 * animList[i].posX + x, 5 + 4 * animList[i].posY + y, 'w');
+						}
+					}
+				}
+			}
+
+			if(lose == 1) //ekran przegranej
+			{
+				for(int i = 0; i < loseString.Length; ++i) //napis, że przegrałeś
 				{
 					SHGUI.current.SetPixelBack(loseString[i], (62 - loseString.Length)/2 + i, 9, 'r');
 				}
-				for(int i = 0; i < hintDead.Length; ++i) //ekran przegranej
+				for(int i = 0; i < hintDead.Length; ++i) //co możesz zrobić jak zginiesz
+				{
+					SHGUI.current.SetPixelBack(hintDead[i], (62 - hintDead.Length)/2 + i, 12, 'r');
+				}
+			}
+			if(lose == 2) //ekran wygranej
+			{
+				for(int i = 0; i < winString.Length; ++i) //napis, że przegrałeś
+				{
+					SHGUI.current.SetPixelBack(winString[i], (62 - winString.Length)/2 + i, 9, 'r');
+				}
+				for(int i = 0; i < hintDead.Length; ++i) //co możesz zrobić jak zginiesz
 				{
 					SHGUI.current.SetPixelBack(hintDead[i], (62 - hintDead.Length)/2 + i, 12, 'r');
 				}
@@ -244,6 +369,7 @@ public class APP2048 : SHGUIappbase {
 				
 				Rand2();
 				Rand2();
+				newTimer = 0f;
 				
 				for(int i = 0; i < 4; ++i)
 				{
@@ -256,6 +382,9 @@ public class APP2048 : SHGUIappbase {
 				allLockCount = 0;
 				lose = 0;
 				menu = false;
+
+				currScoreString = "" + score;
+				currBestString = "" + best;
 			}
 		}
 		else
@@ -266,12 +395,30 @@ public class APP2048 : SHGUIappbase {
 			if (key == SHGUIinput.right) if(lose == 0) Move(1);
 			if (key == SHGUIinput.left) if(lose == 0) Move(3);
 
-			if(key == SHGUIinput.esc) menu = true;
+			if(key == SHGUIinput.esc)
+			{
+				currScoreString = "" + score;
+				currBestString = "" + best;
+				menu = true;
+			}
 		}
 
 	}
 	void Move(int direct)
 	{
+		if(animBlock) return;
+
+		//zapisanie tymczasowych wartości do mapy
+		for(int i = 0; i < 4; ++i)
+		{
+			for(int j = 0; j < 4; ++j)
+			{
+				mapTemp[i,j] = mapValue[i,j];
+			}
+		}
+		animBlock = true;
+		animTimer = 0.3f;
+
 		if(direct == 0 && !lockDirection[0]) //góra
 		{
 			int tempPos = 0;
@@ -288,6 +435,7 @@ public class APP2048 : SHGUIappbase {
 						{
 							mapValue[i, tempPos] = mapValue[i, j]; //przesunięcie do najdalszej wolnej pozycji
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
+
 						}
 						else if(mapValue[i, tempPos] == mapValue[i, j]) //jeżeli na drodze jest drugi ten sam element
 						{
@@ -297,6 +445,8 @@ public class APP2048 : SHGUIappbase {
 							mapValue[i, tempPos] += mapValue[i, j]; //zwiększanie tych samych wartości
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
 							++tempPos; //przesunięcie strażnika na następne pole by w jednym ruchu jakaś liczba nie zwiększyła się kilka razy
+
+							animList.Add(new MergeAnim(i, tempPos - 1));
 						}
 						else //jeżeli elementy nie są równe, a pole jest zajęte
 						{
@@ -304,7 +454,6 @@ public class APP2048 : SHGUIappbase {
 							int tempVal = mapValue[i, j];
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
 							mapValue[i, tempPos] = tempVal; //przesunięcie do najdalszej wolnej pozycji
-
 						}
 					}
 				}
@@ -327,6 +476,7 @@ public class APP2048 : SHGUIappbase {
 						{
 							mapValue[tempPos, j] = mapValue[i, j]; //przesunięcie do najdalszej wolnej pozycji
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
+
 						}
 						else if(mapValue[tempPos, j] == mapValue[i, j]) //jeżeli na drodze jest drugi ten sam element
 						{
@@ -336,6 +486,8 @@ public class APP2048 : SHGUIappbase {
 							mapValue[tempPos, j] += mapValue[i, j]; //zwiększanie tych samych wartości
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
 							--tempPos; //przesunięcie strażnika na następne pole by w jednym ruchu jakaś liczba nie zwiększyła się kilka razy
+
+							animList.Add(new MergeAnim(tempPos + 1, j));
 						}
 						else //jeżeli elementy nie są równe, a pole jest zajęte
 						{
@@ -343,7 +495,7 @@ public class APP2048 : SHGUIappbase {
 							int tempVal = mapValue[i, j];
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
 							mapValue[tempPos, j] = tempVal; //przesunięcie do najdalszej wolnej pozycji
-							
+
 						}
 					}
 				}
@@ -366,6 +518,7 @@ public class APP2048 : SHGUIappbase {
 						{
 							mapValue[i, tempPos] = mapValue[i, j]; //przesunięcie do najdalszej wolnej pozycji
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
+
 						}
 						else if(mapValue[i, tempPos] == mapValue[i, j]) //jeżeli na drodze jest drugi ten sam element
 						{
@@ -375,6 +528,8 @@ public class APP2048 : SHGUIappbase {
 							mapValue[i, tempPos] += mapValue[i, j]; //zwiększanie tych samych wartości
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
 							--tempPos; //przesunięcie strażnika na następne pole by w jednym ruchu jakaś liczba nie zwiększyła się kilka razy
+
+							animList.Add(new MergeAnim(i, tempPos + 1));
 						}
 						else //jeżeli elementy nie są równe, a pole jest zajęte
 						{
@@ -405,6 +560,7 @@ public class APP2048 : SHGUIappbase {
 						{
 							mapValue[tempPos, j] = mapValue[i, j]; //przesunięcie do najdalszej wolnej pozycji
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
+
 						}
 						else if(mapValue[tempPos, j] == mapValue[i, j]) //jeżeli na drodze jest drugi ten sam element
 						{
@@ -414,6 +570,8 @@ public class APP2048 : SHGUIappbase {
 							mapValue[tempPos, j] += mapValue[i, j]; //zwiększanie tych samych wartości
 							mapValue[i, j] = 0; //wyzerowanie starego zajmowanego pola
 							++tempPos; //przesunięcie strażnika na następne pole by w jednym ruchu jakaś liczba nie zwiększyła się kilka razy
+
+							animList.Add(new MergeAnim(tempPos - 1, j));
 						}
 						else //jeżeli elementy nie są równe, a pole jest zajęte
 						{
@@ -484,10 +642,11 @@ public class APP2048 : SHGUIappbase {
 		else lockDirection[3] = false;
 		countLock = 0;
 	}
+
 	bool CalcLock(bool rev)
 	{
 		int FoundZero = 0; //ilość zer w sznurze
-		if(rev) //odwracanie sznura
+		if(rev) //odwracanie sznura dla ułatwienia liczenia
 		{
 			int tempVal = rope[0];
 			rope[0] = rope[3];
@@ -496,39 +655,39 @@ public class APP2048 : SHGUIappbase {
 			rope[1] = rope[2];
 			rope[2] = tempVal;
 		}
-		for(int i = 0; i < 4; ++i) if(rope[i] == 0) ++FoundZero;
+		for(int i = 0; i < 4; ++i) if(rope[i] == 0) ++FoundZero; //liczenie zer w sznurze
 
-		if(FoundZero == 4) return true;
-		else if(FoundZero == 3)
+		if(FoundZero == 4) return true; //jeżeli są same zera
+		else if(FoundZero == 3) //jeżeli są 3 zera
 		{
-			if(rope[0] != 0) return true;
+			if(rope[0] != 0) return true; // jeżeli pierwszy element nie jest zerem
 		}
-		else if(FoundZero == 2)
+		else if(FoundZero == 2) //jeżeli są 2 zera
 		{
-			if(rope[0] != 0)
+			if(rope[0] != 0) //jeżeli pierwszy element nie jest zerem
 			{
-				if(rope[1] != 0 && rope[1] != rope[0]) return true;
+				if(rope[1] != 0 && rope[1] != rope[0]) return true; //jeżeli nie zera lub rózne elementy zajują pierwsze pozycje
 			}
 		}
-		else if(FoundZero == 1)
+		else if(FoundZero == 1) //jeżeli jest 1 zero
 		{
-			if(rope[0] != 0)
+			if(rope[0] != 0) //jeżeli pierwszy element nie jest zerem
 			{
-				if(rope[1] != 0 && rope[1] != rope[0])
+				if(rope[1] != 0 && rope[1] != rope[0]) //jeżeli nie zera lub rózne elementy zajują pierwsze pozycje
 				{
-					if(rope[2] != 0 && rope[2] != rope[1]) return true;
+					if(rope[2] != 0 && rope[2] != rope[1]) return true; //jeżeli nie zera lub rózne elementy zajują pierwsze pozycje
 				}
 			}
 		}
 		else if(FoundZero == 0)
 		{
-			if(rope[0] != 0)
+			if(rope[0] != 0) //jeżeli pierwszy element nie jest zerem
 			{
-				if(rope[1] != 0 && rope[1] != rope[0])
+				if(rope[1] != 0 && rope[1] != rope[0]) //jeżeli nie zera lub rózne elementy zajują pierwsze pozycje
 				{
-					if(rope[2] != 0 && rope[2] != rope[1])
+					if(rope[2] != 0 && rope[2] != rope[1]) //jeżeli nie zera lub rózne elementy zajują pierwsze pozycje
 					{
-						if(rope[3] != 0 && rope[3] != rope[2])
+						if(rope[3] != 0 && rope[3] != rope[2]) //jeżeli nie zera lub rózne elementy zajują pierwsze pozycje
 						{
 							return true;
 						}
@@ -539,7 +698,7 @@ public class APP2048 : SHGUIappbase {
 		return false;
 	}
 
-	void Rand2()
+	void Rand2() //losowanie pozycji na dołożenie dwujki do mapy
 	{
 		for(;;)
 		{
@@ -549,6 +708,9 @@ public class APP2048 : SHGUIappbase {
 			if(mapValue[tempPosX, tempPosY] == 0)
 			{
 				mapValue[tempPosX, tempPosY] = 2;
+				newPosX = tempPosX;
+				newPosY = tempPosY;
+				newTimer = 0.2f;
 				break;
 			}
 			else
@@ -576,6 +738,9 @@ public class APP2048 : SHGUIappbase {
 							if(mapValue[i, j] == 0)
 							{
 								mapValue[i, j] = 2;
+								newPosX = i;
+								newPosY = j;
+								newTimer = 0.2f;
 								return;
 							}
 						}
@@ -584,4 +749,6 @@ public class APP2048 : SHGUIappbase {
 			}
 		}
 	}
+
+
 }
