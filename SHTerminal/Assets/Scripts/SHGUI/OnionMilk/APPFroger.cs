@@ -10,7 +10,7 @@ public class crash
 	public	bool		left; //w którą stronę jest odwrócony
 	public	int			width; //ilośćpól zajmowanych w poziomie
 
-	public crash(int type, bool dir, int posy, int posx)
+	public crash(int type, bool dir, int posx, int posy)
 	{
 		left = dir;
 		graphic = type;
@@ -31,19 +31,15 @@ public class crash
 		{
 			width = 8;
 		}
-		else if(type == 4) //łudka
-		{
-			width = 6;
-		}
-		else if(type == 5) //ciężarówka
+		else if(type == 4) //ciężarówka
 		{
 			width = 13;
 		}
-		else if(type == 6) //pociąg
+		else if(type == 5) //pociąg
 		{
 			width = 10;
 		}
-		else if(type == 7) //wagon
+		else if(type == 6) //wagon
 		{
 			width = 14;
 		}
@@ -62,13 +58,10 @@ public class APPFroger : SHGUIappbase {
 		"'-o--o-'",
 		"   __   ",
 		" _/# \\_",
-		"/0---0--",
-		" ____   ",
-		"|+ [][\\ ",
-		"'o---o-'",
-		" ____ ",
-		"/    |",
-		"\\____|",
+		"'0---0--",
+		" ______ ",
+		"/][]  +|",
+		"'-o---o'",
 		" __ _________",
 		"|#  |||||||||",
 		"\\-0--0--0--0/",
@@ -80,30 +73,68 @@ public class APPFroger : SHGUIappbase {
 		"-oo-------oo-^"
 	};
 
-	//----------------------------------------------------------
+	private string[]			animal = new string[]
+	{
+		" ()_() ",
+		" (O.O) ",
+		"'()”()'",
+		" /\\_/\\ ",
+		"(=^.^=)",
+		" (”_”)/",
+		"  ___  ",
+		" ('v') ",
+		"((,_,))",
+		" ^___^ ",
+		"( 'o' )",
+		"( u u )",
+	};
+	private string[]			animalBack = new string[]
+	{
+		" ()_() ",
+		" (   ) ",
+		"'(_o_)'",
+		" /\\_/\\ ",
+		"(     )",
+		" (___)/",
+		"  ___  ",
+		" (   ) ",
+		"((___))",
+		" ^___^ ",
+		"(     )",
+		"(__@__)",
+	};
+	//-------Kolizje i rysowanie podlega zasadzie lewogo górnego rogu-------
 
-	int			posX = 30; //pozycja żabki
-	int			posY = 0;
-	int			offSetY = 0;
+	//postać
+	int			posX			= 30; //pozycja żabki
+	int			posY			= 0;
 
-	char		frog = '⌂'; //żaba
-	float		stepTime = 0.07f; //ruchu
+	int			yourDirection	= 1; //0 - przód | 1 - tył
+	int			yourLook		= 3; //0 - królik | 1 - kot | 2 - ptak | 3 - świnka
 
+	float		stepTime		= 0.07f; //ruchu
+
+	//kamera
+	int			cameraHeight	= 0;
+	float		cameraJump		= 1f; //czas pomiędzy kolejnym przejściem kamery
+	
+	//pojazdy
 	public		List<crash>		vehicle = new List<crash>();
 
+	//mechanika
 	public		bool			lose = false;
 
-	//---------------------------------------------------------
+	//---------------------------------------------------------------------
 
 	public APPFroger() : base("hot_train-v5.5.5-by-onionmilk")
 	{
-		crash newCar = new crash(1, true, 6, 5);
+		crash newCar = new crash(1, true, 5, 6);
 		vehicle.Add(newCar);
-		newCar = new crash(2, true, 10, 6);
+		newCar = new crash(2, true, 6, 12);
 		vehicle.Add(newCar);
-		newCar = new crash(3, true, 16, 20);
+		newCar = new crash(3, true, 20, 15);
 		vehicle.Add(newCar);
-		newCar = new crash(4, true, 16, 30);
+		newCar = new crash(4, true, 30, 18);
 		vehicle.Add(newCar);
 	}
 	
@@ -115,13 +146,20 @@ public class APPFroger : SHGUIappbase {
 
 		if(!lose)
 		{
+			cameraJump -= Time.unscaledDeltaTime;
+			if(cameraJump <= 0f)
+			{
+				++cameraHeight;
+				cameraJump = 1f;
+			}
+
 			if(stepTime <= 0f)
 			{
 				stepTime = 0.07f;
 
-				for(int i = 0; i < vehicle.Count;) //jeżeli minąłeś już jakiś auto i wyleciało poza obszar renderu to je wywalamy
+				for(int i = 0; i < vehicle.Count;) //jeżeli minąłeś już jakieś auto i wyleciało poza obszar renderu to je wywalamy
 				{
-					if(vehicle[i].posY < (posY - 4))
+					if(vehicle[i].posY < (posY - 8))
 					{
 						vehicle.RemoveAt(i);
 					}
@@ -145,27 +183,7 @@ public class APPFroger : SHGUIappbase {
 					}
 				}
 			}
-			/*
-			for(int i = 0; i < vehicle.Count; ++i) //kolizja
-			{
-				if(vehicle[i].posY <= posY && vehicle[i].posY > posY - 3) //jeśli jest na wysokości pojazdu
-				{
-					if(vehicle[i].left) //dla jadącego w lewo
-					{
-						if(vehicle[i].posX <= posX && vehicle[i].posX > posX - vehicle[i].width)
-						{
-							lose = true;
-						}
-					}
-					else
-					{
-						if(vehicle[i].posX >= posX && vehicle[i].posX < posX - vehicle[i].width)
-						{
-							lose = true;
-						}
-					}
-				}
-			}*/
+
 		}
 	}
 	
@@ -173,14 +191,35 @@ public class APPFroger : SHGUIappbase {
 	{
 		base.Redraw(offx, offy);
 
-		SHGUI.current.SetPixelFront(frog, posX, 22 - offSetY, 'w'); //rysowanie żaby
-		
+		//rysowanie postaci
+		for(int j = 0; j < 3; ++j)
+		{
+			for(int i = 0; i < 7; ++i)
+			{
+				if(yourDirection == 0)
+				{
+					if(20 - (posY - cameraHeight) + j < 23)
+					{
+						SHGUI.current.SetPixelFront(animal[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
+					}
+				}
+				else
+				{
+					if(20 - (posY - cameraHeight) + j < 23)
+					{
+						SHGUI.current.SetPixelFront(animalBack[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
+					}
+				}
+			}
+		}
+		//koniec rysowania postaci
+
 		//rysowanie pojazdów
 		for(int i = 0; i < vehicle.Count; ++i)
 		{
 			for(int y = 0; y < 3; ++y)
 			{
-				if(22 - (vehicle[i].posY - posY) + y > 0 && 22 - (vehicle[i].posY - posY) + y < 23) //żeby nie właziły na krawędź górną
+				if(22 - (vehicle[i].posY - cameraHeight) + y > 0 && 20 - (vehicle[i].posY - cameraHeight) + y < 23) //żeby nie właziły na krawędź górną
 				{
 					for(int x = 0; x < cars[vehicle[i].graphic * 3 + y].Length; ++x)
 					{
@@ -188,20 +227,21 @@ public class APPFroger : SHGUIappbase {
 						{
 							if(vehicle[i].posX + x > 0 && vehicle[i].posX + x < 63)
 							{
-								SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 22 - (vehicle[i].posY - posY) + y, 'z');
+								SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
 							}
 						}
 						else
 						{
 							if(vehicle[i].posX - x > 0 && vehicle[i].posX - x < 63)
 							{
-								SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX - x, 22 - (vehicle[i].posY - posY) + y, 'z');
+								SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX - x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
 							}
 						}
 					}
 				}
 			}
 		}
+		//koniec rysowania pojazdów
 	}
 	
 	public override void ReactToInputKeyboard(SHGUIinput key)
@@ -209,24 +249,24 @@ public class APPFroger : SHGUIappbase {
 		//sterowanie
 		if (key == SHGUIinput.up)
 		{
-			++posY;
-			if(offSetY < 4) ++offSetY;
-			else //tworzenie nowych autek
-			{
-				if(posY % 3 == 0) randVehicles();
-			}
+			cameraJump = 1f;
+			posY += 3;
+			yourDirection = 1;
+			cameraHeight += 2;
+			if(posY - 4 > cameraHeight) cameraHeight += 1;
+
 		}
 		if (key == SHGUIinput.down)
 		{
-			if(offSetY > 0)
+			if(!(posY - 3 < cameraHeight)) //sprawdzanie, żeby postać nie wyszła poza obszar kamery
 			{
-				--posY;
-				--offSetY;
+				posY -= 3;
+				yourDirection = 0;
 			}
 		}
 		if (key == SHGUIinput.right)
 		{
-			if(posX < 62) ++posX;
+			if(posX < 56) ++posX;
 		}
 		if (key == SHGUIinput.left)
 		{
