@@ -40,7 +40,7 @@ public class APPSnake : SHGUIappbase {
 				SHGUI.current.SetPixelFront(
 					menuHandle.menuOptionsBar[offset],
 					2 + x,
-					1 + y,
+					11,
 					'w'
 				);
 			}

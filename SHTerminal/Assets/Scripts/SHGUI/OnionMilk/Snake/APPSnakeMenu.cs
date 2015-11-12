@@ -4,10 +4,10 @@ using System.Collections;
 public class APPSnakeMenu {
 	//Public
 	
-	public string	menuOptionsBar		= "    [ CLASSIC ]       [ WITH BONUSES ]        [ EXIT ]      ";
+	public string	menuOptionsBar		= "  [ WITH BONUSES ]      [ CLASSIC ]           [ EXIT ]      ";
 	public int		currentOption		= 0;
-	public int		optionsOffset		= 40;
-	public float	optionsOffsetTarget	= 40;
+	public int		optionsOffset		= 0;
+	public float	optionsOffsetTarget	= 0;
 	public float	optionsAnimTimer	= 0;
 
 	public APPSnakeMenu() {
@@ -16,29 +16,33 @@ public class APPSnakeMenu {
 
 	public void Update() {
 		optionsAnimTimer	+= Time.unscaledDeltaTime;
-		if (optionsOffset != optionsOffsetTarget
-		&&	optionsAnimTimer > 0.025f
+		if (optionsOffsetTarget != 0
+		&&	optionsAnimTimer > 0.0012f
 		) {
-			if (optionsOffset >= optionsOffsetTarget) {
-				optionsOffset		= (optionsOffset + 1)%menuOptionsBar.Length;
-				--optionsOffsetTarget;
-			} else {
-				optionsOffset		= (optionsOffset - 1)%menuOptionsBar.Length;
+			if (optionsOffsetTarget < 0) {
 				++optionsOffsetTarget;
-			}//Licznik przesunięć
+				optionsOffset	-= 1;
+			} else if (optionsOffsetTarget > 0) {
+				--optionsOffsetTarget;
+				optionsOffset	+= 1;
+			}
+			optionsOffset	%= menuOptionsBar.Length;
 			
 			optionsAnimTimer	= 0;
 		}
 	}
 
 	public bool InputUpdate(SHGUIinput key) {
-		if (optionsOffset == optionsOffsetTarget) {
-			if (key == SHGUIinput.right || key == SHGUIinput.down)
-				optionsOffsetTarget	= optionsOffset + 20;
-			//--
-			if (key == SHGUIinput.left || key == SHGUIinput.up)
-				optionsOffsetTarget	= optionsOffset - 20;
-			//--
+		if (optionsOffsetTarget == 0) {
+			if (key == SHGUIinput.right || key == SHGUIinput.down) {
+				optionsOffsetTarget	= 20;
+				currentOption		+= 1;
+			}
+			if (key == SHGUIinput.left || key == SHGUIinput.up) {
+				optionsOffsetTarget	= -20;
+				currentOption		-= 1;
+			}
+			currentOption	%= 3;
 		}
 
 		if (key == SHGUIinput.esc)
