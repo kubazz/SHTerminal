@@ -37,6 +37,10 @@ public class APPSnakeGame {
 	public bool		snakeDead		= false;
 
 	public APPSnakeGame() {
+		restart();
+	}
+
+	public void restart() {
 		for(int y = 0; y < map.GetLength(1); ++y)
 			for(int x = 0; x < map.GetLength(0); ++x) {
 				if (x == 0 || x == (map.GetLength(0) - 1) || y == 0 || y == (map.GetLength(1) - 1))
