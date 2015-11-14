@@ -20,9 +20,14 @@ public class APPSnake : SHGUIappbase {
 		base.Update();
 		if (gamePhase)
 			gameHandle.Update();
-		else if (menuPhase)
+		else if (menuPhase) {
 			menuHandle.Update();
-		//--
+			if (menuHandle.gameSwitch != 0) {
+				gamePhase				= true;
+				menuPhase				= false;
+				menuHandle.gameSwitch	= 0;
+			}
+		}
 	}
 
 	public override void Redraw(int offx, int offy) {
@@ -44,6 +49,13 @@ public class APPSnake : SHGUIappbase {
 					'w'
 				);
 			}
+
+			SHGUI.current.SetPixelFront(
+				menuHandle.currentOption.ToString()[0],
+				1,
+				1,
+				'w'
+			);
 			
 		} else if (gamePhase) {
 			if (gameHandle.snakeDead)	return;
@@ -88,7 +100,8 @@ public class APPSnake : SHGUIappbase {
 	public override void ReactToInputKeyboard(SHGUIinput key) {
 		if (gamePhase) {
 			if (gameHandle.InputUpdate(key) == false) {
-				SHGUI.current.PopView();
+				gamePhase	= false;
+				menuPhase	= true;
 			}
 		} else if (menuPhase)
 			if (menuHandle.InputUpdate(key) == false) {
