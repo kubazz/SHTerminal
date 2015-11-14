@@ -47,7 +47,8 @@ public class crash
 }
 
 public class APPFroger : SHGUIappbase {
-	
+
+	//---------------------grafiki------------------------
 	private string[]			cars	= new string[]
 	{
 		"  o ",
@@ -103,30 +104,53 @@ public class APPFroger : SHGUIappbase {
 		"(     )",
 		"(__@__)",
 	};
+
+	private string[]			titleText = new string[]
+	{
+		"█  █ ███ █████   ███  ███ ███ ██  ███",
+		"█  █ █ █   █     █  █ █ █ █ █ █ █ █  ",
+		"████ █ █   █     ███  █ █ ███ █ █ ███",
+		"█  █ █ █   █     █  █ █ █ █ █ █ █   █",
+		"█  █ ███   █     █  █ ███ █ █ ██  ███"
+	};
 	//-------Kolizje i rysowanie podlega zasadzie lewogo górnego rogu-------
 
 	//postać
-	int			posX			= 30; //pozycja żabki
-	int			posY			= 0;
+	int				posX			= 30; //pozycja żabki
+	int				posY			= 0;
 
-	int			yourDirection	= 1; //0 - przód | 1 - tył
-	int			yourLook		= 3; //0 - królik | 1 - kot | 2 - ptak | 3 - świnka
+	int				yourDirection	= 1; //0 - przód | 1 - tył
+	int				yourLook		= 0; //0 - królik | 1 - kot | 2 - ptak | 3 - świnka
 
-	float		stepTime		= 0.07f; //ruchu
+	float			stepTime		= 0.07f; //ruchu
 
 	//kamera
-	int			cameraHeight	= 0;
-	float		cameraJump		= 1f; //czas pomiędzy kolejnym przejściem kamery
+	int				cameraHeight	= 0;
+	float			cameraJump		= 1f; //czas pomiędzy kolejnym przejściem kamery
 	
 	//pojazdy
-	public		List<crash>		vehicle = new List<crash>();
+	public			List<crash>		vehicle = new List<crash>();
 
 	//mechanika
-	public		bool			lose = false;
+	bool			menu			= true;
+	bool			lose			= false;
+	
+	//manu
+	string			pressText		= "==PRESS ENTER TO START==";
+	string			unlockText		= "UNLOCK COST: 100";
+	string			bestText		= "PERSONAL BEST: 0";
+	string			moneyText		= "YOUR MONEY: 0";
+
+	//zapis
+	bool[]			lockTab			= new bool[] {false, true, true, true}; //zablokowane / odblokowane postacie
+	int				piniadze		= 100; //ilość pinieniędzy
+	int				best			= 0; //najlepszy osobisty wynik
+	int				score			= 0; //obecny wynik podczas rozgrywki
+
 
 	//---------------------------------------------------------------------
 
-	public APPFroger() : base("hot_train-v5.5.5-by-onionmilk")
+	public APPFroger() : base("hot_roads-v5.5.5-by-onionmilk")
 	{
 		crash newCar = new crash(1, true, 5, 6);
 		vehicle.Add(newCar);
@@ -136,54 +160,115 @@ public class APPFroger : SHGUIappbase {
 		vehicle.Add(newCar);
 		newCar = new crash(4, true, 30, 18);
 		vehicle.Add(newCar);
+
 	}
 	
 	public override void Update() 
 	{
 		base.Update();
 
-		stepTime -= Time.unscaledDeltaTime;
-
-		if(!lose)
+		if(!menu)
 		{
-			cameraJump -= Time.unscaledDeltaTime;
-			if(cameraJump <= 0f)
-			{
-				++cameraHeight;
-				cameraJump = 1f;
-			}
+			stepTime -= Time.unscaledDeltaTime;
 
-			if(stepTime <= 0f)
+			//-----------------------podczas gry-------------------------------
+			if(!lose) 
 			{
-				stepTime = 0.07f;
-
-				for(int i = 0; i < vehicle.Count;) //jeżeli minąłeś już jakieś auto i wyleciało poza obszar renderu to je wywalamy
+				cameraJump -= Time.unscaledDeltaTime;
+				if(cameraJump <= 0f)
 				{
-					if(vehicle[i].posY < (posY - 8))
+					++cameraHeight;
+					cameraJump = 1f;
+				}
+
+				//---------------------------przesuwanie pojazdu-------------------------------
+				if(stepTime <= 0f)
+				{
+					stepTime = 0.07f;
+
+					for(int i = 0; i < vehicle.Count;) //jeżeli minąłeś już jakieś auto i wyleciało poza obszar renderu to je wywalamy
 					{
-						vehicle.RemoveAt(i);
+						if(vehicle[i].posY < (posY - 8))
+						{
+							vehicle.RemoveAt(i);
+						}
+						else
+						{
+							++i;
+						}
 					}
-					else
+					
+					for(int i = 0; i < vehicle.Count; ++i) //przesuwanie pojazdu
 					{
-						++i;
+						if(vehicle[i].left)
+						{
+							--vehicle[i].posX;
+							if(vehicle[i].posX < (0 - vehicle[i].width)) vehicle[i].posX = 64;
+						}
+						else
+						{
+							++vehicle[i].posX;
+							if(vehicle[i].posX > (64 + vehicle[i].width)) vehicle[i].posX = 0;
+						}
 					}
 				}
-				
-				for(int i = 0; i < vehicle.Count; ++i) //przesuwanie pojazdu
+				//-----------------------koniec przesuwania pojazdu-------------------------------
+
+
+				//-----------------------kolizja-----------------------
+				for(int i = 0; i < vehicle.Count; ++i)
 				{
-					if(vehicle[i].left)
+					if(vehicle[i].posY == posY) //jeśli jest na wysokości pojazdu
 					{
-						--vehicle[i].posX;
-						if(vehicle[i].posX < (0 - vehicle[i].width)) vehicle[i].posX = 64;
+						if(posX < vehicle[i].posX) //jeśli zwierzak jest z lewej strony auta
+						{
+							if(vehicle[i].posX < posX + 7)
+							{
+								lose = true;
+							}
+						}
+						else if(posX > vehicle[i].posX) //jeśli zwierzak jest z prawej strony auta
+						{
+							if(vehicle[i].posX + vehicle[i].width > posX)
+							{
+								lose = true;
+							}
+						}
+						else //wpadł równo
+						{
+							lose = true;
+						}
 					}
-					else
-					{
-						++vehicle[i].posX;
-						if(vehicle[i].posX > (64 + vehicle[i].width)) vehicle[i].posX = 0;
-					}
+
+				}
+
+				//-----------------------koniec kolizji-----------------------
+			}
+			else
+			{
+				Debug.Log("Umarłeś");
+			}
+		}
+		else
+		{
+			bestText		= "PERSONAL BEST: " + best;
+			moneyText		= "YOUR MONEY: " + piniadze;
+
+			if(lockTab[yourLook])
+			{
+				if(piniadze >= 100)
+				{
+					pressText		= "==PRESS ENTER TO BUY==";
+				}
+				else
+				{
+					pressText		= "";
 				}
 			}
-
+			else
+			{
+				pressText		= "==PRESS ENTER TO START==";
+			}
 		}
 	}
 	
@@ -191,91 +276,186 @@ public class APPFroger : SHGUIappbase {
 	{
 		base.Redraw(offx, offy);
 
-		//rysowanie postaci
-		for(int j = 0; j < 3; ++j)
+		if(menu)
 		{
-			for(int i = 0; i < 7; ++i)
+			for(int j = 0; j < 5; ++j)
 			{
-				if(yourDirection == 0)
+				for(int i = 0; i < titleText[j].Length; ++i)
 				{
-					if(20 - (posY - cameraHeight) + j < 23)
-					{
-						SHGUI.current.SetPixelFront(animal[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
-					}
-				}
-				else
-				{
-					if(20 - (posY - cameraHeight) + j < 23)
-					{
-						SHGUI.current.SetPixelFront(animalBack[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
-					}
+					SHGUI.current.SetPixelFront(titleText[j][i], 31 - (titleText[j].Length / 2) + i, j + 3, 'w');
 				}
 			}
-		}
-		//koniec rysowania postaci
 
-		//rysowanie pojazdów
-		for(int i = 0; i < vehicle.Count; ++i)
-		{
-			for(int y = 0; y < 3; ++y)
+			for(int i = 0; i < pressText.Length; ++i) //hint czym się włącza grę lub kupuje zwierzaka
 			{
-				if(22 - (vehicle[i].posY - cameraHeight) + y > 0 && 20 - (vehicle[i].posY - cameraHeight) + y < 23) //żeby nie właziły na krawędź górną
+				SHGUI.current.SetPixelFront(pressText[i], 31 - (pressText.Length / 2) + i, 10, 'w');
+			}
+
+			for(int j = 0; j < 3; ++j) //rysowanie postaci
+			{
+				for(int i = 0; i < 7; ++i)
 				{
-					for(int x = 0; x < cars[vehicle[i].graphic * 3 + y].Length; ++x)
+					SHGUI.current.SetPixelFront(animal[j + (yourLook * 3)][i], 31 - (animal[j + (yourLook * 3)].Length / 2) + i, 15 + j, 'w');
+				}
+			}
+
+			SHGUI.current.SetPixelFront('>', 37, 16, 'w');
+			SHGUI.current.SetPixelFront('<', 25, 16, 'w');
+
+			if(lockTab[yourLook]) //zablokowany / odblokowany zwierzak
+			{
+				for(int i = 0; i < unlockText.Length; ++i)
+				{
+					SHGUI.current.SetPixelFront(unlockText[i], 31 - (unlockText.Length / 2) + i, 13, 'z');
+				}
+			}
+
+			for(int i = 0; i < bestText.Length; ++i)
+			{
+				SHGUI.current.SetPixelFront(bestText[i], 31 - (bestText.Length / 2) + i, 20, 'w');
+			}
+
+			for(int i = 0; i < moneyText.Length; ++i)
+			{
+				SHGUI.current.SetPixelFront(moneyText[i], 31 - (moneyText.Length / 2) + i, 21, 'z');
+			}
+		}
+		else
+		{
+			//rysowanie postaci
+			for(int j = 0; j < 3; ++j)
+			{
+				for(int i = 0; i < 7; ++i)
+				{
+					if(yourDirection == 0)
 					{
-						if(vehicle[i].left)
+						if(20 - (posY - cameraHeight) + j < 23)
 						{
-							if(vehicle[i].posX + x > 0 && vehicle[i].posX + x < 63)
-							{
-								SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
-							}
+							SHGUI.current.SetPixelFront(animal[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
 						}
-						else
+					}
+					else
+					{
+						if(20 - (posY - cameraHeight) + j < 23)
 						{
-							if(vehicle[i].posX - x > 0 && vehicle[i].posX - x < 63)
+							SHGUI.current.SetPixelFront(animalBack[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
+						}
+					}
+				}
+			}
+			//koniec rysowania postaci
+
+			//rysowanie pojazdów
+			for(int i = 0; i < vehicle.Count; ++i)
+			{
+				for(int y = 0; y < 3; ++y)
+				{
+					if(22 - (vehicle[i].posY - cameraHeight) + y > 0 && 20 - (vehicle[i].posY - cameraHeight) + y < 23) //żeby nie właziły na krawędź górną
+					{
+						for(int x = 0; x < cars[vehicle[i].graphic * 3 + y].Length; ++x)
+						{
+							if(vehicle[i].left)
 							{
-								SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX - x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+								if(vehicle[i].posX + x > 0 && vehicle[i].posX + x < 63)
+								{
+									SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+								}
+							}
+							else
+							{
+								if(vehicle[i].posX - x > 0 && vehicle[i].posX - x < 63)
+								{
+									SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX - x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+								}
 							}
 						}
 					}
 				}
 			}
+			//koniec rysowania pojazdów
 		}
-		//koniec rysowania pojazdów
 	}
 	
-	public override void ReactToInputKeyboard(SHGUIinput key)
+	public override void ReactToInputKeyboard(SHGUIinput key)//sterowanie
 	{
-		//sterowanie
+		if(key == SHGUIinput.enter)
+		{
+			if(menu)
+			{
+				if(!lockTab[yourLook])
+				{
+					menu = false;
+					lose = false;
+				}
+				else if(piniadze >= 100)
+				{
+					piniadze -= 100;
+					lockTab[yourLook] = false;
+				}
+			}
+			else if(!menu && lose)
+			{
+				menu = true;
+			}
+		}
 		if (key == SHGUIinput.up)
 		{
-			cameraJump = 1f;
-			posY += 3;
-			yourDirection = 1;
-			cameraHeight += 2;
-			if(posY - 4 > cameraHeight) cameraHeight += 1;
+			if(!menu && !lose) //poeuszanie w górę
+			{
+				cameraJump = 1f;
+				posY += 3;
+				yourDirection = 1;
+				cameraHeight += 2;
+				if(posY - 4 > cameraHeight) cameraHeight += 1;
+			}
 
 		}
 		if (key == SHGUIinput.down)
 		{
-			if(!(posY - 3 < cameraHeight)) //sprawdzanie, żeby postać nie wyszła poza obszar kamery
+			if(!menu && !lose) //poruszanie w dół
 			{
-				posY -= 3;
-				yourDirection = 0;
+				if(!(posY - 3 < cameraHeight)) //sprawdzanie, żeby postać nie wyszła poza obszar kamery
+				{
+					posY -= 3;
+					yourDirection = 0;
+				}
 			}
 		}
 		if (key == SHGUIinput.right)
 		{
-			if(posX < 56) ++posX;
+			if(!menu && !lose) //poruszanie w prawo
+			{
+				if(posX < 56) ++posX;
+			}
+			else if(menu)
+			{
+				++yourLook;
+				if(yourLook > 3) yourLook = 0;
+			}
 		}
 		if (key == SHGUIinput.left)
 		{
-			if(posX > 1) --posX;
+			if(!menu && !lose) //poruszanie w lewo
+			{
+				if(posX > 1) --posX;
+			}
+			else if(menu)
+			{
+				--yourLook;
+				if(yourLook < 0) yourLook = 3;
+			}
 		}
 		
 		if (key == SHGUIinput.esc)
 		{
-			SHGUI.current.PopView();
+			if(menu) SHGUI.current.PopView();
+
+			if(!menu && !lose)
+			{
+				menu = true;
+				lose = false;
+			}
+
 		}
 
 	}

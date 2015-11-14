@@ -31,7 +31,7 @@ public class APPColorMaze : SHGUIappbase {
 	int posY = 0;
 	int kolor = 0;
 
-	public APPColorMaze() : base("hot_sleeker-v3.1-by-onionmilk")
+	public APPColorMaze() : base("super_maze-v3.1-by-onionmilk")
 	{
 		for(int i = 0; i < Timers.Length; ++i) Timers[i] = 0f;
 
@@ -41,7 +41,7 @@ public class APPColorMaze : SHGUIappbase {
 	public override void Update()
 	{
 		base.Update();
-		APPLABEL.text = "hot_sleeker-v3.1-by-onionmilk level: " + lvl;
+		APPLABEL.text = "super_maze-v3.1-by-onionmilk level: " + lvl;
 
 		if(startPosX == posX && startPosY == posY) APPINSTRUCTION.text = "ESC-to-quit";
 		else APPINSTRUCTION.text = "ESC-to-reset";
