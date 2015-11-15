@@ -54,8 +54,8 @@ public class APPFroger : SHGUIappbase {
 		"  o ",
 		" /# ",
 		"o--o",
-		" ",
-		" _,--._ ",
+		"   __",
+		" _/0 \\_ ",
 		"'-o--o-'",
 		"   __   ",
 		" _/# \\_",
@@ -73,6 +73,30 @@ public class APPFroger : SHGUIappbase {
 		"H==EXPRESS==H|",
 		"-oo-------oo-^"
 	};
+	private string[]			carsRev	= new string[]
+	{
+		" o  ",
+		" #\\ ",
+		"o--o",
+		"   __   ",
+		" _/ 0\\_ ",
+		"'-o--o-'",
+		"   __   ",
+		" _/ #\\_",
+		"--0---0-'",
+		" ______ ",
+		"|+  [][\\",
+		"'o---o-'",
+		"_________ __ ",
+		"|||||||||  #|",
+		"\\0--0--0--0-/",
+		" __>_____ ",
+		"|=HOT===`)",
+		"^o-o--o-o=",
+		" _____________",
+		"|H==EXPRESS==H",
+		"^-oo-------oo-"
+	};
 
 	private string[]			animal = new string[]
 	{
@@ -88,6 +112,9 @@ public class APPFroger : SHGUIappbase {
 		" ^___^ ",
 		"( 'o' )",
 		"( u u )",
+		"(o)_(o)",
+		"(     )",
+		"(||_||)"
 	};
 	private string[]			animalBack = new string[]
 	{
@@ -103,6 +130,9 @@ public class APPFroger : SHGUIappbase {
 		" ^___^ ",
 		"(     )",
 		"(__@__)",
+		"( )_( )",
+		"(     )",
+		"(_._._)"
 	};
 
 	private string[]			titleText = new string[]
@@ -113,6 +143,10 @@ public class APPFroger : SHGUIappbase {
 		"█  █ █ █   █     █  █ █ █ █ █ █ █   █",
 		"█  █ ███   █     █  █ ███ █ █ ██  ███"
 	};
+
+
+	char grass = '░';
+
 	//-------Kolizje i rysowanie podlega zasadzie lewogo górnego rogu-------
 
 	//postać
@@ -120,7 +154,7 @@ public class APPFroger : SHGUIappbase {
 	int				posY			= 0;
 
 	int				yourDirection	= 1; //0 - przód | 1 - tył
-	int				yourLook		= 0; //0 - królik | 1 - kot | 2 - ptak | 3 - świnka
+	int				yourLook		= 0; //0 - królik | 1 - kot | 2 - ptak | 3 - świnka | 4 - żaba
 
 	float			stepTime		= 0.07f; //ruchu
 
@@ -134,6 +168,7 @@ public class APPFroger : SHGUIappbase {
 	//mechanika
 	bool			menu			= true;
 	bool			lose			= false;
+	int[]			roadsMap		= new int[10];
 	
 	//manu
 	string			pressText		= "==PRESS ENTER TO START==";
@@ -142,7 +177,7 @@ public class APPFroger : SHGUIappbase {
 	string			moneyText		= "YOUR MONEY: 0";
 
 	//zapis
-	bool[]			lockTab			= new bool[] {false, true, true, true}; //zablokowane / odblokowane postacie
+	bool[]			lockTab			= new bool[] {false, true, true, true , true}; //zablokowane / odblokowane postacie
 	int				piniadze		= 100; //ilość pinieniędzy
 	int				best			= 0; //najlepszy osobisty wynik
 	int				score			= 0; //obecny wynik podczas rozgrywki
@@ -152,15 +187,23 @@ public class APPFroger : SHGUIappbase {
 
 	public APPFroger() : base("hot_roads-v5.5.5-by-onionmilk")
 	{
+		for(int i = 0; i < roadsMap.Length; ++i)
+		{
+			//if(i == 3 || i == 4 || i == 7 || i == 8) roadsMap[i] = 1;
+			//else roadsMap[i] = 0;
+			roadsMap[i] = 1;
+		}
+
 		crash newCar = new crash(1, true, 5, 6);
 		vehicle.Add(newCar);
-		newCar = new crash(2, true, 6, 12);
+		newCar = new crash(2, false, 6, 12);
 		vehicle.Add(newCar);
 		newCar = new crash(3, true, 20, 15);
 		vehicle.Add(newCar);
-		newCar = new crash(4, true, 30, 18);
+		newCar = new crash(4, false, 30, 18);
 		vehicle.Add(newCar);
-
+		newCar = new crash(1, false, 30, 21);
+		vehicle.Add(newCar);
 	}
 	
 	public override void Update() 
@@ -249,7 +292,7 @@ public class APPFroger : SHGUIappbase {
 				Debug.Log("Umarłeś");
 			}
 		}
-		else
+		else //--------------------------uaktualnianie tekstów-----------------
 		{
 			bestText		= "PERSONAL BEST: " + best;
 			moneyText		= "YOUR MONEY: " + piniadze;
@@ -269,7 +312,7 @@ public class APPFroger : SHGUIappbase {
 			{
 				pressText		= "==PRESS ENTER TO START==";
 			}
-		}
+		}//-----------------koniec uaktualniania tekstów-----------------
 	}
 	
 	public override void Redraw(int offx, int offy)
@@ -322,7 +365,26 @@ public class APPFroger : SHGUIappbase {
 		}
 		else
 		{
-			//rysowanie postaci
+			//--------------------------------rysowanie mapy----------------------------------
+			for(int l = 0; l < roadsMap.Length; ++l)
+			{
+				if(roadsMap[l] == 0) //rysowanie trawy
+				{
+					for(int j = 0; j < 3; ++j)
+					{
+						for(int i = 0; i < 62; ++i)
+						{
+							if((j + (l * 3)) + (posY - cameraHeight) > 0 && (j + (l * 3)) + (posY - cameraHeight) < 23)
+							{
+								SHGUI.current.SetPixelFront(grass, i + 1, 23 - (j + (l * 3)) + (posY - cameraHeight), 'z');
+							}
+						}
+					}
+				}
+			}
+			//---------------------------koniec rysowania trawy----------------------------------
+
+			//------------------------------rysowanie postaci---------------------------------
 			for(int j = 0; j < 3; ++j)
 			{
 				for(int i = 0; i < 7; ++i)
@@ -343,9 +405,9 @@ public class APPFroger : SHGUIappbase {
 					}
 				}
 			}
-			//koniec rysowania postaci
+			//----------------------koniec rysowania postaci---------------------------
 
-			//rysowanie pojazdów
+			//-------------------------rysowanie pojazdów------------------------------
 			for(int i = 0; i < vehicle.Count; ++i)
 			{
 				for(int y = 0; y < 3; ++y)
@@ -354,29 +416,30 @@ public class APPFroger : SHGUIappbase {
 					{
 						for(int x = 0; x < cars[vehicle[i].graphic * 3 + y].Length; ++x)
 						{
-							if(vehicle[i].left)
+							if(vehicle[i].left) //rysowanie jadących w lewo
 							{
 								if(vehicle[i].posX + x > 0 && vehicle[i].posX + x < 63)
 								{
 									SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
 								}
 							}
-							else
+							else //rysowanie jadących w prawo
 							{
-								if(vehicle[i].posX - x > 0 && vehicle[i].posX - x < 63)
+								if(vehicle[i].posX + x > 0 && vehicle[i].posX + x < 63)
 								{
-									SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX - x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+									SHGUI.current.SetPixelFront(carsRev[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
 								}
 							}
 						}
 					}
 				}
 			}
-			//koniec rysowania pojazdów
+			//--------------------------koniec rysowania pojazdów----------------------------------
 		}
 	}
 	
-	public override void ReactToInputKeyboard(SHGUIinput key)//sterowanie
+	//=======================================sterowanie======================================
+	public override void ReactToInputKeyboard(SHGUIinput key)
 	{
 		if(key == SHGUIinput.enter)
 		{
@@ -400,7 +463,7 @@ public class APPFroger : SHGUIappbase {
 		}
 		if (key == SHGUIinput.up)
 		{
-			if(!menu && !lose) //poeuszanie w górę
+			if(!menu && !lose) //poruszanie w górę
 			{
 				cameraJump = 1f;
 				posY += 3;
@@ -430,7 +493,7 @@ public class APPFroger : SHGUIappbase {
 			else if(menu)
 			{
 				++yourLook;
-				if(yourLook > 3) yourLook = 0;
+				if(yourLook > 4) yourLook = 0;
 			}
 		}
 		if (key == SHGUIinput.left)
@@ -442,7 +505,7 @@ public class APPFroger : SHGUIappbase {
 			else if(menu)
 			{
 				--yourLook;
-				if(yourLook < 0) yourLook = 3;
+				if(yourLook < 0) yourLook = 4;
 			}
 		}
 		
@@ -457,8 +520,8 @@ public class APPFroger : SHGUIappbase {
 			}
 
 		}
-
 	}
+	//==============================koniec sterowania=================================
 	
 	void randVehicles()
 	{
