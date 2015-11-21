@@ -101,15 +101,15 @@ public class APPFroger : SHGUIappbase {
 
 	private string[]			animal = new string[]
 	{
-		" ()_() ",
-		" (O.O) ",
+		"?()_()?",
+		"?(O.O)?",
 		"'()”()'",
-		" /\\_/\\ ",
+		"?/\\_/\\?",
 		"(=^.^=)",
-		" (”_”)/",
-		"  ___  ",
-		" ('v') ",
-		"((,_,))",
+		"?(”_”)/",
+		"?(^v^)?",
+		"<(   )>",
+		"??^?^??",
 		" ^___^ ",
 		"( 'o' )",
 		"( u u )",
@@ -119,16 +119,16 @@ public class APPFroger : SHGUIappbase {
 	};
 	private string[]			animalBack = new string[]
 	{
-		" ()_() ",
-		" (   ) ",
+		"?()_()?",
+		"?(   )?",
 		"'(_o_)'",
-		" /\\_/\\ ",
+		"?/\\_/\\?",
 		"(     )",
-		" (___)/",
-		"  ___  ",
-		" (   ) ",
-		"((___))",
-		" ^___^ ",
+		"?(___)/",
+		"?(¯¯¯)?",
+		"<(   )>",
+		"??^?^??",
+		"?^___^?",
 		"(     )",
 		"(__@__)",
 		"( )_( )",
@@ -146,7 +146,7 @@ public class APPFroger : SHGUIappbase {
 	};
 
 
-	char grass = '░';
+	char grass = '"';
 
 	//-------Kolizje i rysowanie podlega zasadzie lewogo górnego rogu-------
 
@@ -169,22 +169,34 @@ public class APPFroger : SHGUIappbase {
 	float			stepTime		= 0.07f; //ruchu
 
 	//mechanika
-	bool			menu			= true;
-	bool			lose			= false;
-	int[]			roadsMap		= new int[13];
+	bool			menu			= true; //czy jesteś w menu
+	bool			lose			= false; //czy przegrałeś
+	int[]			roadsMap		= new int[13]; //rodzaj podłoża
+	int[]			stepCounter		= new int[13]; //za ile ma się zrespić kolejne autko
+	bool[]			roadsDirection	= new bool[13]; //w którą stronę po danej ulicy się jeździ
+	int				actualStep		= 3; //ilość skoków mapy od początku gry
 	
 	//manu
 	string			pressText		= "==PRESS ENTER TO START==";
 	string			unlockText		= "UNLOCK COST: 100";
-	string			bestText		= "PERSONAL BEST: 0";
+	string			bestText		= "PERSONAL TOP: 0";
 	string			moneyText		= "YOUR MONEY: 0";
+
+	//end game
+	string			restartText		= "==PRESS ENTER TO RESTART==";
+	string			endText			= "==PRESS ESCAPE TO BECK MENU==";
+	string			endPointsText	= "SCORE ";
+	string			endBestText		= "NEW TOP SCORE";
 
 	//zapis
 	bool[]			lockTab			= new bool[] {false, true, true, true , true}; //zablokowane / odblokowane postacie
 	int				piniadze		= 100; //ilość pinieniędzy
 	int				best			= 0; //najlepszy osobisty wynik
 	int				score			= 0; //obecny wynik podczas rozgrywki
-
+	int				oldBest			= 0; //nallepszy wynik jaki był w poprzedniej rundzie
+	string			gameMoneyText	= "0$";
+	string			gameScoreText	= "Score ";
+	string			gameBestText	= "Top ";
 
 	//---------------------------------------------------------------------
 
@@ -192,8 +204,16 @@ public class APPFroger : SHGUIappbase {
 	{
 		for(int i = 0; i < roadsMap.Length; ++i)
 		{
+			//ustawianie ulic i trawy
 			if(i == 0 || i == 1 || i == 2 || i == 3 || i == 6 || i == 7 || i == 10 || i == 11) roadsMap[i] = 0;
 			else roadsMap[i] = 1;
+
+			//losowanie kierunków w których się będą poruszać pojazdy
+			if(Random.value > 0.5) roadsDirection[i] = false;
+			else roadsDirection[i] = true;
+
+			//za ile ma się zrespić kolejne autko
+			stepCounter[i] = Random.Range(8, 15);
 		}
 	}
 	
@@ -208,6 +228,9 @@ public class APPFroger : SHGUIappbase {
 			//-----------------------podczas gry-------------------------------
 			if(!lose) 
 			{
+				if(score < (posY / 3)) score = posY / 3;
+				if(best < score) best = score;
+
 				if(cameraHeight - 2 > posY) lose = true; //jeśli za długo stoisz w jednym miejscu
 
 				jumpTimer -= Time.unscaledDeltaTime;
@@ -236,18 +259,31 @@ public class APPFroger : SHGUIappbase {
 							++i;
 						}
 					}
+
+					for(int b = 0; b < roadsMap.Length; ++b) //generowanie nowych pojazdów
+					{
+						if(roadsMap[b] == 1)
+						{
+							--stepCounter[b];
+							if(stepCounter[b] <= 0)
+							{
+								int tempWidth = randVehicles(b);
+								stepCounter[b] = tempWidth + Random.Range(15, 30);
+							}
+						}
+					}
 					
 					for(int i = 0; i < vehicle.Count; ++i) //przesuwanie pojazdu
 					{
 						if(vehicle[i].left)
 						{
 							--vehicle[i].posX;
-							if(vehicle[i].posX < (0 - vehicle[i].width)) vehicle[i].posX = 70;
+							if(vehicle[i].posX < (-20 - vehicle[i].width)) vehicle.RemoveAt(i); //jak dojdą do krawędzi to wywalamy
 						}
 						else
 						{
 							++vehicle[i].posX;
-							if(vehicle[i].posX > (64 + vehicle[i].width)) vehicle[i].posX = -15;
+							if(vehicle[i].posX > (70 + vehicle[i].width)) vehicle.RemoveAt(i); //jak dojdą do krawędzi to wywalamy
 						}
 					}
 				}
@@ -285,13 +321,14 @@ public class APPFroger : SHGUIappbase {
 			}
 			else
 			{
-				Debug.Log("Umarłeś");
+				if(best > oldBest) oldBest = best;
+
 			}
 		}
 		else //--------------------------uaktualnianie tekstów-----------------
 		{
-			bestText		= "PERSONAL BEST: " + best;
-			moneyText		= "YOUR MONEY: " + piniadze;
+			bestText		= "PERSONAL TOP: " + best;
+			moneyText		= "YOUR MONEY: " + piniadze + "$";
 
 			if(lockTab[yourLook])
 			{
@@ -317,6 +354,7 @@ public class APPFroger : SHGUIappbase {
 
 		if(menu)
 		{
+			//----------------Rysowanie tytułu---------------------------------------------
 			for(int j = 0; j < 5; ++j)
 			{
 				for(int i = 0; i < titleText[j].Length; ++i)
@@ -324,17 +362,20 @@ public class APPFroger : SHGUIappbase {
 					SHGUI.current.SetPixelFront(titleText[j][i], 31 - (titleText[j].Length / 2) + i, j + 3, 'w');
 				}
 			}
-
-			for(int i = 0; i < pressText.Length; ++i) //hint czym się włącza grę lub kupuje zwierzaka
+			//------------------hint czym się włącza grę lub kupuje zwierzaka---------------
+			for(int i = 0; i < pressText.Length; ++i) 
 			{
 				SHGUI.current.SetPixelFront(pressText[i], 31 - (pressText.Length / 2) + i, 10, 'w');
 			}
-
-			for(int j = 0; j < 3; ++j) //rysowanie postaci
+			//---------------------------rysowanie postaci---------------------------------
+			for(int j = 0; j < 3; ++j) 
 			{
 				for(int i = 0; i < 7; ++i)
 				{
-					SHGUI.current.SetPixelFront(animal[j + (yourLook * 3)][i], 31 - (animal[j + (yourLook * 3)].Length / 2) + i, 15 + j, 'w');
+					if(animal[j + (yourLook * 3)][i] != '?')
+					{
+						SHGUI.current.SetPixelFront(animal[j + (yourLook * 3)][i], 31 - (animal[j + (yourLook * 3)].Length / 2) + i, 15 + j, 'w');
+					}
 				}
 			}
 
@@ -392,14 +433,20 @@ public class APPFroger : SHGUIappbase {
 					{
 						if(20 - (posY - cameraHeight) + j < 23)
 						{
-							SHGUI.current.SetPixelFront(animal[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
+							if(animal[j + (yourLook * 3)][i] != '?')
+							{
+								SHGUI.current.SetPixelFront(animal[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
+							}
 						}
 					}
 					else
 					{
 						if(20 - (posY - cameraHeight) + j < 23)
 						{
-							SHGUI.current.SetPixelFront(animalBack[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
+							if(animalBack[j + (yourLook * 3)][i] != '?')
+							{
+								SHGUI.current.SetPixelFront(animalBack[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
+							}
 						}
 					}
 				}
@@ -419,14 +466,20 @@ public class APPFroger : SHGUIappbase {
 							{
 								if(vehicle[i].posX + x > 0 && vehicle[i].posX + x < 63)
 								{
-									SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+									if((20 - (vehicle[i].posY - cameraHeight) + y) > 0 && (20 - (vehicle[i].posY - cameraHeight) + y) < 23)
+									{
+										SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+									}
 								}
 							}
 							else //rysowanie jadących w prawo
 							{
 								if(vehicle[i].posX + x > 0 && vehicle[i].posX + x < 63)
 								{
-									SHGUI.current.SetPixelFront(carsRev[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+									if((20 - (vehicle[i].posY - cameraHeight) + y) > 0 && (20 - (vehicle[i].posY - cameraHeight) + y) < 23)
+									{
+										SHGUI.current.SetPixelFront(carsRev[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+									}
 								}
 							}
 						}
@@ -434,6 +487,57 @@ public class APPFroger : SHGUIappbase {
 				}
 			}
 			//--------------------------koniec rysowania pojazdów----------------------------------
+		
+			//----------------------------rysowanie napisów po przegranej-------------------------
+			if(lose)
+			{
+				for(int n = 0; n < restartText.Length; ++n)
+				{
+					SHGUI.current.SetPixelFront(restartText[n], (62 - restartText.Length) / 2 + n, 8, 'w');
+				}
+				for(int n = 0; n < endText.Length; ++n)
+				{
+					SHGUI.current.SetPixelFront(endText[n], (62 - endText.Length) / 2 + n, 10, 'w');
+				}
+
+				endPointsText = "SCORE " + score;
+
+				for(int n = 0; n < endPointsText.Length; ++n)
+				{
+					SHGUI.current.SetPixelFront(endPointsText[n], (62 - endPointsText.Length) / 2 + n, 12, 'w');
+				}
+				if(score == best)
+				{
+					for(int n = 0; n < endBestText.Length; ++n)
+					{
+						SHGUI.current.SetPixelFront(endBestText[n], (62 - endBestText.Length) / 2 + n, 14, 'w');
+					}
+				}
+			}
+			//-----------------------koniec rysowania napisów po przegranej---------------------
+
+			//----------------------------rysowanie pieniędzy i punktów-------------------------
+			if(!lose)
+			{
+				gameScoreText = "Score " + score;
+				for(int n = 0; n < gameScoreText.Length; ++n)
+				{
+					SHGUI.current.SetPixelFront(gameScoreText[n], n + 1, 1, 'w');
+				}
+
+				gameMoneyText = "" + piniadze + "$";
+				for(int n = 0; n < gameMoneyText.Length; ++n)
+				{
+					SHGUI.current.SetPixelFront(gameMoneyText[n], 62 - gameMoneyText.Length + 1 + n, 1, 'w');
+				}
+
+				gameBestText = "Top " + best;
+				for(int n = 0; n < gameBestText.Length; ++n)
+				{
+					SHGUI.current.SetPixelFront(gameBestText[n], n + 1, 2, 'w');
+				}
+			}
+			//----------------------koniec rysowania pieniędzy i punktów-----------------------
 		}
 	}
 	
@@ -446,46 +550,7 @@ public class APPFroger : SHGUIappbase {
 			{
 				if(!lockTab[yourLook]) //startowanie gry
 				{
-					//postać
-					posX			= 30; //pozycja żabki
-					posY			= 0;
-					
-					yourDirection	= 0; //0 - przód | 1 - tył
-					
-					stepTime		= 0.07f; //ruchu
-					
-					//kamera
-					cameraHeight	= 0;
-					cameraJump		= 1f; //czas pomiędzy kolejnym przejściem kamery
-
-					//mapa
-					for(int i = 0; i < roadsMap.Length; ++i)
-					{
-						if(i == 0 || i == 1 || i == 2 || i == 3 || i == 6 || i == 7 || i == 10 || i == 11) roadsMap[i] = 0;
-						else roadsMap[i] = 1;
-					}
-
-					//mechanika
-					for(int i = 0; i < vehicle.Count;) //niszczenie wszystkich aut
-					{
-						vehicle.RemoveAt(i);
-					}
-					menu = false;
-					lose = false;
-					score = 0;
-
-					//przykladowe autka
-					crash newCar = new crash(1, true, 5, 6);
-					vehicle.Add(newCar);
-					newCar = new crash(2, false, 6, 18);
-					vehicle.Add(newCar);
-					newCar = new crash(3, true, 20, 15);
-					vehicle.Add(newCar);
-					newCar = new crash(4, false, 32, 18);
-					vehicle.Add(newCar);
-					newCar = new crash(1, false, 30, 27);
-					vehicle.Add(newCar);
-					//hue
+					resetGame();
 
 				}
 				else if(piniadze >= 100)
@@ -496,7 +561,7 @@ public class APPFroger : SHGUIappbase {
 			}
 			else if(!menu && lose)
 			{
-				menu = true;
+				resetGame();
 			}
 		}
 		if (key == SHGUIinput.up)
@@ -567,8 +632,7 @@ public class APPFroger : SHGUIappbase {
 		if (key == SHGUIinput.esc)
 		{
 			if(menu) SHGUI.current.PopView();
-
-			if(!menu && !lose)
+			else if(!menu)
 			{
 				menu = true;
 				lose = false;
@@ -578,46 +642,117 @@ public class APPFroger : SHGUIappbase {
 	}
 	//==============================koniec sterowania=================================
 	
-	void randVehicles()
+	int randVehicles(int road)
 	{
-		if(posY < 20) //poziom 1 - 12
+		int tempPosY = (road + actualStep - 6) * 3;
+		int tempPosX = 0;
+
+		int tempType = Random.Range(0, 5);
+		int tempWidth = 0;
+
+		if(tempType == 0) tempWidth = 4;
+		else if(tempType == 1) tempWidth = 8;
+		else if(tempType == 2) tempWidth = 8;
+		else if(tempType == 3) tempWidth = 8;
+		else if(tempType == 4) tempWidth = 13;
+
+		if(roadsDirection[road])
 		{
+			tempPosX = 63;
+		}
+		else
+		{
+			tempPosX = (-tempWidth) - 1;
+		}
+
+		crash newCar = new crash(tempType, roadsDirection[road], tempPosX, tempPosY);
+		vehicle.Add(newCar);
+
+		return vehicle[vehicle.Count - 1].width;
+	}
+
+	void resetGame()
+	{
+		//postać
+		posX			= 30; //pozycja żabki
+		posY			= 0;
+		
+		yourDirection	= 0; //0 - przód | 1 - tył
+		
+		stepTime		= 0.07f; //ruchu
+
+		actualStep		= 3;
+
+		//kamera
+		cameraHeight	= 0;
+		cameraJump		= 1f; //czas pomiędzy kolejnym przejściem kamery
+		
+		//mapa
+		//ustawianie ulic i trawy
+		for(int i = 0; i < roadsMap.Length; ++i)
+		{
+			if(i == 0 || i == 1 || i == 2 || i == 3 || i == 6 || i == 7 || i == 10 || i == 11) roadsMap[i] = 0;
+			else roadsMap[i] = 1;
 			
+			//losowanie kierunków w których się będą poruszać pojazdy
+			if(Random.value > 0.5) roadsDirection[i] = false;
+			else roadsDirection[i] = true;
+			
+			//za ile ma się zrespić kolejne autko
+			stepCounter[i] = Random.Range(8, 15);
 		}
-		else if(posY < 50) //poziom 2 - 20
-		{
 		
-		}
-		else if(posY < 150) //poziom 3 - 25
+		//mechanika
+		for(int i = 0; i < vehicle.Count;) //niszczenie wszystkich aut
 		{
-		
+			vehicle.RemoveAt(i);
 		}
-		else if(posY < 400) //poziom 4 - 30
+		menu = false;
+		lose = false;
+		score = 0;
+		
+		//wstepne autka
+		for(int b = 3; b < roadsMap.Length; ++b)
 		{
-		
+			if(roadsMap[b] == 1)
+			{
+				crash newCar = new crash(Random.Range(0, 5), roadsDirection[b], Random.Range(20, 40), (actualStep + b - 6) * 3);
+				vehicle.Add(newCar);
+			}
 		}
-		else if(posY < 900) //poziom 5 - 36
-		{
-		
-		}
-		else if(posY < 2000) //poziom 6 - 44
-		{
-		
-		}
+		//hue
 	}
 
 	void moveMap()
 	{
-		for(int i = 0; i < roadsMap.Length-1; ++i)
+		++actualStep;
+
+		for(int i = 0; i < roadsMap.Length - 1; ++i) //przesuwanie mapy
 		{
 			roadsMap[i] = roadsMap[i + 1];
+			roadsDirection[i] = roadsDirection[i + 1];
+			stepCounter[i] = stepCounter[i + 1];
 		}
+		//generowanie nowego odcinka mapy
 		if(roadsMap[12] == 1 && roadsMap[11] == 1 && roadsMap[10] == 1 && roadsMap[9] == 1) roadsMap[12] = 0;
 		else if(roadsMap[10] == 0 && roadsMap[11] == 0) roadsMap[12] = 1;
 		else if(roadsMap[10] == 2 && roadsMap[11] == 2) roadsMap[12] = 0;
 		else
 		{
 			roadsMap[12] = Random.Range(0, 2);
+		}
+
+		//losowanie kierunków w których się będą poruszać pojazdy
+		if(Random.value > 0.5) roadsDirection[12] = false;
+		else roadsDirection[12] = true;
+
+		//za ile ma się zrespić kolejne autko
+		stepCounter[12] = Random.Range(4, 10);
+
+		if(roadsMap[12] == 1)
+		{
+			crash newCar = new crash(Random.Range(0, 5), roadsDirection[12], Random.Range(15, 40), (actualStep + 7) * 3);
+			vehicle.Add(newCar);
 		}
 	}
 }
