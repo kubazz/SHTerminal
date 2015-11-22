@@ -47,6 +47,18 @@ public class crash
 	}
 }
 
+public class coin
+{
+	public	int		posX;
+	public	int		posY;
+
+	public coin(int px, int py)
+	{
+		posX = px;
+		posY = py;
+	}
+}
+
 public class APPFroger : SHGUIappbase {
 
 	//---------------------grafiki------------------------
@@ -145,6 +157,12 @@ public class APPFroger : SHGUIappbase {
 		"█  █ ███   █     █  █ ███ █ █ ██  ███"
 	};
 
+	private string[]			coinLook = new string[]
+	{
+		"/¯¯¯\\",
+		"| $ |",
+		"\\___/"
+	};
 
 	char grass = '"';
 
@@ -168,6 +186,9 @@ public class APPFroger : SHGUIappbase {
 	public			List<crash>		vehicle = new List<crash>();
 	float			stepTime		= 0.07f; //ruchu
 
+	//kasa
+	public			List<coin>		coinList = new List<coin>();
+
 	//mechanika
 	bool			menu			= true; //czy jesteś w menu
 	bool			lose			= false; //czy przegrałeś
@@ -175,6 +196,7 @@ public class APPFroger : SHGUIappbase {
 	int[]			stepCounter		= new int[13]; //za ile ma się zrespić kolejne autko
 	bool[]			roadsDirection	= new bool[13]; //w którą stronę po danej ulicy się jeździ
 	int				actualStep		= 3; //ilość skoków mapy od początku gry
+	bool			backAnimal		= false; //jeśli się cofniesz pilnowanie by trawa się nie rozjeżdżała
 	
 	//manu
 	string			pressText		= "==PRESS ENTER TO START==";
@@ -241,6 +263,19 @@ public class APPFroger : SHGUIappbase {
 				{
 					++cameraHeight;
 					cameraJump = 1f;
+				}
+
+				//-----------------------------usówanie zbędnych monet------------------------
+				for(int i = 0; i < coinList.Count;) //jeżeli minąłeś już jakąś monete i wyleciała poza obszar renderu to ją wywalamy
+				{
+					if(coinList[i].posY < (posY - 8))
+					{
+						coinList.RemoveAt(i);
+					}
+					else
+					{
+						++i;
+					}
 				}
 
 				//---------------------------przesuwanie pojazdu-------------------------------
@@ -317,6 +352,36 @@ public class APPFroger : SHGUIappbase {
 
 				}
 
+				//---------------------zmieranie piniądzów------------------
+
+				for(int i = 0; i < coinList.Count; ++i)
+				{
+					if(coinList[i].posY == posY)
+					{
+						if(posX < coinList[i].posX) //jeśli zwierzak jest z lewej strony monetki
+						{
+							if(coinList[i].posX < posX + 5)
+							{
+								coinList.RemoveAt(i);
+								++piniadze;
+							}
+						}
+						else if(posX > coinList[i].posX) //jeśli zwierzak jest z prawej strony monetki
+						{
+							if(coinList[i].posX + 5 > posX)
+							{
+								coinList.RemoveAt(i);
+								++piniadze;
+							}
+						}
+						else //wpadł równo
+						{
+							coinList.RemoveAt(i);
+							++piniadze;
+						}
+					}
+
+				}
 				//-----------------------koniec kolizji-----------------------
 			}
 			else
@@ -411,18 +476,54 @@ public class APPFroger : SHGUIappbase {
 					{
 						for(int i = 0; i < 62; ++i)
 						{
-							if(20 - (posY - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
+							if(backAnimal)
 							{
-								if(20 - (posY - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+								if(20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
 								{
-									SHGUI.current.SetPixelFront(grass, i + 1, 20 - (posY - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+									if(20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+									{
+										SHGUI.current.SetPixelFront(grass, i + 1, 20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+									}
+								}
+							}
+							else
+							{
+								if(20 - (posY - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
+								{
+									if(20 - (posY - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+									{
+										SHGUI.current.SetPixelFront(grass, i + 1, 20 - (posY - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-			//---------------------------koniec rysowania trawy----------------------------------
+
+			//---------------------------koniec rysowania mapy----------------------------------
+
+			//-------------------------------rysowanie monetek-----------------------------------
+
+			for(int i = 0; i < coinList.Count; ++i)
+			{
+				for(int y = 0; y < 3; ++y)
+				{
+					if(22 - (coinList[i].posY - cameraHeight) + y > 0 && 20 - (coinList[i].posY - cameraHeight) + y < 23) //żeby nie właziły na krawędź górną
+					{
+						for(int x = 0; x < coinLook[y].Length; ++x)
+						{
+							if((20 - (coinList[i].posY - cameraHeight) + y) > 0 && (20 - (coinList[i].posY - cameraHeight) + y) < 23)
+							{
+								SHGUI.current.SetPixelFront(coinLook[y][x], coinList[i].posX + x, 20 - (coinList[i].posY - cameraHeight) + y, 'z');
+							}
+						}
+					}
+				}
+			}
+
+
+			//---------------------------koniec rysowania monetek--------------------------------
 
 			//------------------------------rysowanie postaci---------------------------------
 			for(int j = 0; j < 3; ++j)
@@ -435,6 +536,9 @@ public class APPFroger : SHGUIappbase {
 						{
 							if(animal[j + (yourLook * 3)][i] != '?')
 							{
+								if(lose)
+								SHGUI.current.SetPixelFront(animal[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'r');
+								else
 								SHGUI.current.SetPixelFront(animal[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
 							}
 						}
@@ -445,6 +549,9 @@ public class APPFroger : SHGUIappbase {
 						{
 							if(animalBack[j + (yourLook * 3)][i] != '?')
 							{
+								if(lose)
+								SHGUI.current.SetPixelFront(animalBack[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'r');
+								else
 								SHGUI.current.SetPixelFront(animalBack[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
 							}
 						}
@@ -572,10 +679,12 @@ public class APPFroger : SHGUIappbase {
 
 				posY += 3; //przesuwanie do góry
 
-				moveMap(); //losowanie nowego pola
+				if(!backAnimal) moveMap(); //losowanie nowego pola
 				cameraJump = 1f; //ustawianie czasu do następnego ruchu kamerą
 				yourDirection = 1; //obrócenie plecami
 				cameraHeight += 2;
+
+				backAnimal = false;
 
 				if(posY - 4 > cameraHeight)
 				{
@@ -593,6 +702,7 @@ public class APPFroger : SHGUIappbase {
 					posY -= 3;
 					yourDirection = 0;
 					jumpTimer = 0.3f;
+					backAnimal = true;
 				}
 			}
 		}
@@ -683,6 +793,8 @@ public class APPFroger : SHGUIappbase {
 
 		actualStep		= 3;
 
+		backAnimal = false;
+
 		//kamera
 		cameraHeight	= 0;
 		cameraJump		= 1f; //czas pomiędzy kolejnym przejściem kamery
@@ -695,8 +807,16 @@ public class APPFroger : SHGUIappbase {
 			else roadsMap[i] = 1;
 			
 			//losowanie kierunków w których się będą poruszać pojazdy
-			if(Random.value > 0.5) roadsDirection[i] = false;
-			else roadsDirection[i] = true;
+			if(i == 0)
+			{
+				if(Random.value > 0.5f) roadsDirection[i] = false;
+				else roadsDirection[i] = true;
+			}
+			else
+			{
+				if(roadsDirection[i - 1]) roadsDirection[i] = false;
+				else roadsDirection[i] = true;
+			}
 			
 			//za ile ma się zrespić kolejne autko
 			stepCounter[i] = Random.Range(8, 15);
@@ -743,7 +863,7 @@ public class APPFroger : SHGUIappbase {
 		}
 
 		//losowanie kierunków w których się będą poruszać pojazdy
-		if(Random.value > 0.5) roadsDirection[12] = false;
+		if(roadsDirection[11] == true) roadsDirection[12] = false;
 		else roadsDirection[12] = true;
 
 		//za ile ma się zrespić kolejne autko
@@ -753,6 +873,12 @@ public class APPFroger : SHGUIappbase {
 		{
 			crash newCar = new crash(Random.Range(0, 5), roadsDirection[12], Random.Range(15, 40), (actualStep + 7) * 3);
 			vehicle.Add(newCar);
+		}
+
+		if(Random.value > 0.95)
+		{
+			coin newCoin = new coin(Random.Range(15, 40), (actualStep + 7) * 3);
+			coinList.Add(newCoin);
 		}
 	}
 }
