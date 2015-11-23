@@ -183,11 +183,14 @@ public class APPFroger : SHGUIappbase {
 	float			cameraJump		= 1f; //czas pomiędzy kolejnym przejściem kamery
 	
 	//pojazdy
-	public			List<crash>		vehicle = new List<crash>();
+	public			List<crash>		vehicle = new List<crash>(); //lista przechowująca pojazdy
 	float			stepTime		= 0.07f; //ruchu
 
+	public			List<crash>		train = new List<crash>(); //lista przechowująca pociągi
+	float			stepTrainTime	= 0.03f; //ruch pociągu
+
 	//kasa
-	public			List<coin>		coinList = new List<coin>();
+	public			List<coin>		coinList = new List<coin>(); //lista przechowujące monety
 
 	//mechanika
 	bool			menu			= true; //czy jesteś w menu
@@ -246,6 +249,7 @@ public class APPFroger : SHGUIappbase {
 		if(!menu)
 		{
 			stepTime -= Time.unscaledDeltaTime;
+			stepTrainTime -= Time.unscaledDeltaTime;
 
 			//-----------------------podczas gry-------------------------------
 			if(!lose) 
@@ -302,7 +306,7 @@ public class APPFroger : SHGUIappbase {
 							--stepCounter[b];
 							if(stepCounter[b] <= 0)
 							{
-								int tempWidth = randVehicles(b);
+								int tempWidth = randVehicles(b, 1);
 								stepCounter[b] = tempWidth + Random.Range(15, 30);
 							}
 						}
@@ -319,6 +323,50 @@ public class APPFroger : SHGUIappbase {
 						{
 							++vehicle[i].posX;
 							if(vehicle[i].posX > (70 + vehicle[i].width)) vehicle.RemoveAt(i); //jak dojdą do krawędzi to wywalamy
+						}
+					}
+				}
+
+				if(stepTrainTime <= 0) //pociągi
+				{
+					stepTrainTime = 0.03f;
+					
+					for(int i = 0; i < train.Count;) //jeżeli minąłeś już jakieś pociąg i wyleciał on poza obszar renderu to go wywalamy
+					{
+						if(train[i].posY < (posY - 8))
+						{
+							train.RemoveAt(i);
+						}
+						else
+						{
+							++i;
+						}
+					}
+
+					for(int b = 0; b < roadsMap.Length; ++b) //generowanie nowych pociągów
+					{
+						if(roadsMap[b] == 2)
+						{
+							--stepCounter[b];
+							if(stepCounter[b] <= 0)
+							{
+								int tempWidth = randVehicles(b, 2);
+								stepCounter[b] = 180 + Random.Range(0, 40);
+							}
+						}
+					}
+
+					for(int i = 0; i < train.Count; ++i) //przesuwanie pociągów
+					{
+						if(train[i].left)
+						{
+							--train[i].posX;
+							if(train[i].posX < -80) train.RemoveAt(i); //jak dojdą do krawędzi to wywalamy
+						}
+						else
+						{
+							++train[i].posX;
+							if(train[i].posX > 100) train.RemoveAt(i); //jak dojdą do krawędzi to wywalamy
 						}
 					}
 				}
@@ -351,7 +399,31 @@ public class APPFroger : SHGUIappbase {
 					}
 
 				}
-
+				for(int i = 0; i < train.Count; ++i)
+				{
+					if(train[i].posY == posY) //jeśli jest na wysokości pojazdu
+					{
+						if(posX < train[i].posX) //jeśli zwierzak jest z lewej strony auta
+						{
+							if(train[i].posX < posX + 7)
+							{
+								lose = true;
+							}
+						}
+						else if(posX > train[i].posX) //jeśli zwierzak jest z prawej strony auta
+						{
+							if(train[i].posX + train[i].width > posX)
+							{
+								lose = true;
+							}
+						}
+						else //wpadł równo
+						{
+							lose = true;
+						}
+					}
+					
+				}
 				//---------------------zmieranie piniądzów------------------
 
 				for(int i = 0; i < coinList.Count; ++i)
@@ -499,6 +571,38 @@ public class APPFroger : SHGUIappbase {
 						}
 					}
 				}
+				else if(roadsMap[l] == 2) //rysowanie torów
+				{
+					for(int j = 0; j < 3; ++j)
+					{
+						for(int i = 0; i < 62; ++i)
+						{
+							if(j == 2 && i%2 == 0)
+							{
+								if(backAnimal)
+								{
+									if(20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
+									{
+										if(20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+										{
+											SHGUI.current.SetPixelFront('/', i + 1, 20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+										}
+									}
+								}
+								else
+								{
+									if(20 - (posY - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
+									{
+										if(20 - (posY - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+										{
+											SHGUI.current.SetPixelFront('/', i + 1, 20 - (posY - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 
 			//---------------------------koniec rysowania mapy----------------------------------
@@ -586,6 +690,38 @@ public class APPFroger : SHGUIappbase {
 									if((20 - (vehicle[i].posY - cameraHeight) + y) > 0 && (20 - (vehicle[i].posY - cameraHeight) + y) < 23)
 									{
 										SHGUI.current.SetPixelFront(carsRev[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			for(int i = 0; i < train.Count; ++i) //pociągi
+			{
+				for(int y = 0; y < 3; ++y)
+				{
+					if(22 - (train[i].posY - cameraHeight) + y > 0 && 20 - (train[i].posY - cameraHeight) + y < 23) //żeby nie właziły na krawędź górną
+					{
+						for(int x = 0; x < cars[train[i].graphic * 3 + y].Length; ++x)
+						{
+							if(train[i].left) //rysowanie jadących w lewo
+							{
+								if(train[i].posX + x > 0 && train[i].posX + x < 63)
+								{
+									if((20 - (train[i].posY - cameraHeight) + y) > 0 && (20 - (train[i].posY - cameraHeight) + y) < 23)
+									{
+										SHGUI.current.SetPixelFront(cars[train[i].graphic * 3 + y][x], train[i].posX + x, 20 - (train[i].posY - cameraHeight) + y, 'z');
+									}
+								}
+							}
+							else //rysowanie jadących w prawo
+							{
+								if(train[i].posX + x > 0 && train[i].posX + x < 63)
+								{
+									if((20 - (train[i].posY - cameraHeight) + y) > 0 && (20 - (train[i].posY - cameraHeight) + y) < 23)
+									{
+										SHGUI.current.SetPixelFront(carsRev[train[i].graphic * 3 + y][x], train[i].posX + x, 20 - (train[i].posY - cameraHeight) + y, 'z');
 									}
 								}
 							}
@@ -752,7 +888,7 @@ public class APPFroger : SHGUIappbase {
 	}
 	//==============================koniec sterowania=================================
 	
-	int randVehicles(int road)
+	int randVehicles(int road, int type)
 	{
 		int tempPosY = (road + actualStep - 6) * 3;
 		int tempPosX = 0;
@@ -775,8 +911,66 @@ public class APPFroger : SHGUIappbase {
 			tempPosX = (-tempWidth) - 1;
 		}
 
-		crash newCar = new crash(tempType, roadsDirection[road], tempPosX, tempPosY);
-		vehicle.Add(newCar);
+		if(type == 1) //auto
+		{
+			crash newCar = new crash(tempType, roadsDirection[road], tempPosX, tempPosY);
+			vehicle.Add(newCar);
+
+		}
+		else //pociąg
+		{
+			if(roadsDirection[road])
+			{
+				tempPosX = 70;
+
+				crash newTrain = new crash(5, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+				tempPosX += 11;
+				newTrain = new crash(6, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+				tempPosX += 15;
+				newTrain = new crash(6, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+				tempPosX += 15;
+				newTrain = new crash(6, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+				tempPosX += 15;
+				newTrain = new crash(6, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+				tempPosX += 15;
+				newTrain = new crash(6, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+				tempPosX += 15;
+				newTrain = new crash(6, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+			}
+			else
+			{
+				tempPosX = -5;
+				
+				crash newTrain = new crash(5, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+				tempPosX -= 11;
+				newTrain = new crash(6, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+				tempPosX -= 15;
+				newTrain = new crash(6, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+				tempPosX -= 15;
+				newTrain = new crash(6, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+				tempPosX -= 15;
+				newTrain = new crash(6, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+				tempPosX -= 15;
+				newTrain = new crash(6, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+				tempPosX -= 15;
+				newTrain = new crash(6, roadsDirection[road], tempPosX, tempPosY);
+				train.Add(newTrain);
+			}
+			return 0;
+		}
 
 		return vehicle[vehicle.Count - 1].width;
 	}
@@ -805,6 +999,8 @@ public class APPFroger : SHGUIappbase {
 		{
 			if(i == 0 || i == 1 || i == 2 || i == 3 || i == 6 || i == 7 || i == 10 || i == 11) roadsMap[i] = 0;
 			else roadsMap[i] = 1;
+
+			roadsMap[10] = 2;
 			
 			//losowanie kierunków w których się będą poruszać pojazdy
 			if(i == 0)
@@ -826,6 +1022,10 @@ public class APPFroger : SHGUIappbase {
 		for(int i = 0; i < vehicle.Count;) //niszczenie wszystkich aut
 		{
 			vehicle.RemoveAt(i);
+		}
+		for(int i = 0; i < train.Count;) //niszczenie wszystkich pociągów
+		{
+			train.RemoveAt(i);
 		}
 		menu = false;
 		lose = false;
@@ -860,6 +1060,13 @@ public class APPFroger : SHGUIappbase {
 		else
 		{
 			roadsMap[12] = Random.Range(0, 2);
+			if(Random.value > 0.90)
+			{
+				if(roadsMap[10] != 2 || roadsMap[11] != 2)
+				{
+					roadsMap[12] = 2;
+				}
+			}
 		}
 
 		//losowanie kierunków w których się będą poruszać pojazdy
