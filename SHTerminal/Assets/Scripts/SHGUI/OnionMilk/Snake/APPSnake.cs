@@ -26,6 +26,7 @@ public class APPSnake : SHGUIappbase {
 				gamePhase				= true;
 				menuPhase				= false;
 				menuHandle.gameSwitch	= 0;
+				gameHandle.restart();
 			}
 		}
 	}
@@ -37,6 +38,41 @@ public class APPSnake : SHGUIappbase {
 		if (menuPhase) {
 			//Menu
 			int	offset	= 0;
+
+			//Logo
+			for(int y = 0; y < menuHandle.menuLogo.Length; ++y)
+				for(int x = 0; x < menuHandle.menuLogo[y].Length; ++x) {
+					SHGUI.current.SetPixelBack(
+						menuHandle.menuLogo[y][x],
+						1 + x,
+						3 + y,
+						'w'
+					);	
+				}
+			//--
+
+			//Snake
+			offset	= 14;
+			for(int x = 0; x < menuHandle.map.GetLength(0); ++x) {
+				SHGUI.current.SetPixelBack('=', 1 + x, 13, 'w');
+			}
+			for(int y = 0; y < (menuHandle.map.GetLength(1) / 2); ++y)
+				for(int x = 0; x < menuHandle.map.GetLength(0); ++x) {
+					//Snake
+					if (menuHandle.map[x, (y * 2)] > 0 && menuHandle.map[x, (y * 2) + 1] > 0) {
+						SHGUI.current.SetPixelBack(gameHandle.snakeGfx[2], 1 + x, offset + y, gameHandle.snakeColor);
+					} else if (menuHandle.map[x, (y * 2)] > 0 && menuHandle.map[x, (y * 2) + 1] <= 0) {
+						SHGUI.current.SetPixelBack(gameHandle.snakeGfx[0], 1 + x, offset + y, gameHandle.snakeColor);
+					} else if (menuHandle.map[x, (y * 2)] <= 0 && menuHandle.map[x, (y * 2) + 1] > 0) {
+						SHGUI.current.SetPixelBack(gameHandle.snakeGfx[1], 1 + x, offset + y, gameHandle.snakeColor);
+					}
+				}
+			//--
+			for(int x = 0; x < menuHandle.map.GetLength(0); ++x) {
+				SHGUI.current.SetPixelBack('=', 1 + x, offset + (menuHandle.map.GetLength(1) / 2), 'w');
+			}
+
+			//Menu bar
 			for(int x = 0; x < menuHandle.menuOptionsBar.Length; ++x) {
 				offset	 = (x + menuHandle.optionsOffset)%menuHandle.menuOptionsBar.Length;
 				if (offset < 0)
@@ -49,19 +85,11 @@ public class APPSnake : SHGUIappbase {
 					'w'
 				);
 			}
-
-			SHGUI.current.SetPixelFront(
-				menuHandle.currentOption.ToString()[0],
-				1,
-				1,
-				'w'
-			);
-			
 		} else if (gamePhase) {
 			if (gameHandle.snakeDead)	return;
 
 			//Map
-			for(int y = 0; y < 22; ++y)
+			for(int y = 0; y < (gameHandle.map.GetLength(1) / 2); ++y)
 				for(int x = 0; x < gameHandle.map.GetLength(0); ++x) {
 					//Ściana
 					if (gameHandle.map[x, (y * 2)] == 1 && gameHandle.map[x, (y * 2) + 1] == 1) {
