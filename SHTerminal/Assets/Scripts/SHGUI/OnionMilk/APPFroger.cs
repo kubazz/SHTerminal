@@ -999,8 +999,6 @@ public class APPFroger : SHGUIappbase {
 		{
 			if(i == 0 || i == 1 || i == 2 || i == 3 || i == 6 || i == 7 || i == 10 || i == 11) roadsMap[i] = 0;
 			else roadsMap[i] = 1;
-
-			roadsMap[10] = 2;
 			
 			//losowanie kierunków w których się będą poruszać pojazdy
 			if(i == 0)
