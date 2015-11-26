@@ -12,33 +12,34 @@ public class APPSnakeMenu {
 
 	public int		gameSwitch			= 0;	/* 1 - klasyczna / 2 - z bonusami */
 
-public string[]		menuScreen = new string[22] {
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                ",
-	"                                                                "
+public string[]		menuLogo = new string[5] {
+	"        █████ ██████ ██████ ██    █ █████ █  █ █████            ",
+	"        █     █      █      █ █   █ █   █ █ █  █                ",
+	"        █████ ██████ ██████ █  █  █ █   █ ██   ████             ",
+	"            █      █      █ █   █ █ █████ █ █  █                ",
+	"        █████ ██████ ██████ █    ██ █   █ █  █ █████            "
 };
 
-	public APPSnakeMenu() {
+	//Animacja węża
+	public int[,]	map				= new int[62, 16];
+	public int		snakePosX		= 31;
+	public int		snakePosY		= 5;
+	public int		foodPosX		= 0;
+	public int		foodPosY		= 0;
+	public int		snakeLength		= 10;
+	public float	snakeMoveTimer	= 0f;
+	public float	snakeDirTimer	= 0f;
+	public float	snakeGrowTimer	= 0f;
 
+	public APPSnakeMenu() {
+		for(int y = 0; y < map.GetLength(1); ++y)
+			for(int x = 0; x < map.GetLength(0); ++x)
+				map[x, y]	= 0;
+			//--
+		//--
+
+		map[snakePosX, snakePosY]	= snakeLength;
+		generateFood();
 	}
 
 	public void Update() {
@@ -56,6 +57,42 @@ public string[]		menuScreen = new string[22] {
 			optionsOffset	%= menuOptionsBar.Length;
 			
 			optionsAnimTimer	= 0;
+		}
+
+		snakeMoveTimer	+= Time.unscaledDeltaTime;
+		snakeDirTimer	+= Time.unscaledDeltaTime;
+		snakeGrowTimer	+= Time.unscaledDeltaTime;
+		if (snakeMoveTimer >= 0.1f) {
+			if (snakeDirTimer >= 0.5f) {
+				snakePosY		= snakePosY + (Mathf.FloorToInt(Random.value * 3) - 1);
+				snakeDirTimer	= 0;
+			} else {
+				snakePosX += 1;
+				snakePosX %= map.GetLength(0);
+			}
+
+			snakePosY	%= map.GetLength(1);
+			if (snakePosY < 0) {
+				snakePosY	= map.GetLength(1) - 1;
+			}
+			map[snakePosX, snakePosY]	= (int)Mathf.Abs(snakeLength);
+
+			for(int y = 0; y < map.GetLength(1); ++y)
+				for(int x = 0; x < map.GetLength(0); ++x)
+					if (map[x, y] > 0)
+						--map[x, y];
+					//--
+				//--
+			//--
+			
+			if (snakeGrowTimer > 1f) {
+				++snakeLength;
+				if (snakeLength > 50)
+					snakeLength	= -50;
+				//--
+			}
+
+			snakeMoveTimer	= 0f;
 		}
 	}
 
@@ -97,5 +134,20 @@ public string[]		menuScreen = new string[22] {
 		//--
 		
 		return true;
+	}
+
+	void generateFood() {
+		int	x	= Mathf.FloorToInt(Random.value * map.GetLength(0));
+		int	y	= Mathf.FloorToInt(Random.value * map.GetLength(1));
+
+		if (map[x, y] != 0)
+			generateFood();
+		else {
+			map[x, y]	= -1;
+			foodPosX	= x;
+			foodPosY	= y;
+		}
+		
+		return;
 	}
 }

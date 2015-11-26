@@ -15,7 +15,7 @@ public class APPSnakeGame {
 	};
 
 	public char[]	snakeGfx = {
-		'▀', '▄', '▒'
+		'▀', '▄', '█'
 	};
 	public char	snakeColor		= 'r';
 	
@@ -52,7 +52,11 @@ public class APPSnakeGame {
 			}
 		//--
 		
-		snakePos	= new Vector2(31, 10);
+		snakeTailLength	= 5;
+		snakeDirecton	= 0;
+		snakeSpeed		= 0.3f;
+		snakeDead		= false;
+		snakePos		= new Vector2(31, 10);
 		for(int y = (int)snakePos.y; y < Mathf.FloorToInt(snakePos.y + 5); ++y) {
 			snakeTailMap[(int)snakePos.x, y]	= snakeTailLength + (((int)snakePos.y) - y);
 		}
@@ -61,7 +65,9 @@ public class APPSnakeGame {
 	}
 
 	public void Update() {
-		if (snakeDead)	return;
+		if (snakeDead)	{
+			return;
+		}
 
 		//Snake Movement
 		snakeSpeedTimer	+= Time.unscaledDeltaTime;
@@ -71,6 +77,8 @@ public class APPSnakeGame {
 	}
 
 	public bool InputUpdate(SHGUIinput key) {
+		if (snakeDead)	return false;
+
 		if (snakeDirecton == 1 || snakeDirecton == 3) {
 			if (key == SHGUIinput.up)
 				snakeDirecton	= 0;
@@ -92,6 +100,7 @@ public class APPSnakeGame {
 		if (key == SHGUIinput.esc)
 			return false;
 		//--
+
 		return true;
 	}
 
@@ -187,6 +196,15 @@ public class APPSnakeGame {
 		else {
 			snakeSpeed	= 0.95f * snakeSpeed;
 			map[x, y]	= 2;
+			if (Random.value < 0.25f) {
+				generateFood();
+				if (Random.value < 0.0001f) {
+					generateFood();
+					generateFood();
+					generateFood();
+					generateFood();
+				}
+			}
 		}
 		
 		return;
