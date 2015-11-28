@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class MergeAnim 
 {
 	public	int			lifeTime			= 0; //obecna klatka animacji max 5
-	public	float		changeCounter		= 0.2f;
+	public	float		changeCounter		= 0.02f;
 
 	public	int			posX				= 0;
 	public	int			posY				= 0;
@@ -21,7 +21,7 @@ public class MergeAnim
 		changeCounter -= timeDelta;
 		if(changeCounter <= 0f)
 		{
-			changeCounter = 0.1f;
+			changeCounter = 0.02f;
 			++lifeTime;
 			if(lifeTime >= 6) return true;
 		}
@@ -236,7 +236,7 @@ public class APP2048 : SHGUIappbase {
 			{
 				for(int j = 0; j < 37; ++j)
 				{
-					SHGUI.current.SetPixelBack(mapFrame[i][j], 13 + j, 4 + i, 'w');
+					SHGUI.current.SetPixelBack(mapFrame[i][j], 13 + j, 4 + i, 'z');
 				}
 			}
 

@@ -30,75 +30,57 @@ public class decoration
 public class APPFlappy : SHGUIappbase {
 
 	//liczby
-	private string[]	Number0			= new string[] {
-		" ___ ",
-		"|   |",
-		"| | |",
-		"|   |",
-		" ¯¯¯ "
-	};
-	private string[]	Number1			= new string[] {
-		"  _  ",
-		" | | ",
-		" | | ",
-		" | | ",
-		"  ¯  "
-	};
-	private string[]	Number2			= new string[] {
-		" ___ ",
-		"|__ |",
-		"| __|",
-		"|   |",
-		" ¯¯¯ "
-	};
-	private string[]	Number3			= new string[] {
-		" ___ ",
-		"|__ |",
-		"|__ |",
-		"|   |",
-		" ¯¯¯ "
-	};
-	private string[]	Number4			= new string[] {
-		" _ _ ",
-		"| | |",
-		"|__ |",
-		"  | |",
-		"   ¯ "
-	};
-	private string[]	Number5			= new string[] {
-		" ___ ",
-		"| __|",
-		"|__ |",
-		"|   |",
-		" ¯¯¯ "
-	};
-	private string[]	Number6			= new string[] {
-		" ___ ",
-		"| __|",
-		"| . |",
-		"|   |",
-		" ¯¯¯ "
-	};
-	private string[]	Number7			= new string[] {
-		" ___ ",
-		"|__ |",
-		"  | |",
-		"  | |",
-		"   ¯ "
-	};
-	private string[]	Number8			= new string[] {
-		" ___ ",
-		"| . |",
-		"| , |",
-		"|   |",
-		" ¯¯¯ "
-	};
-	private string[]	Number9			= new string[] {
-		" ___ ",
-		"| . |",
-		"|__ |",
-		"|   |",
-		" ¯¯¯ "
+	private string[]	Number			= new string[] {
+		" ███ ",
+		"█  ██",
+		"█ █ █",
+		"██  █",
+		" ███ ",
+		"  █  ",
+		" ██  ",
+		"  █  ",
+		"  █  ",
+		" ███ ",
+		"█████",
+		"    █",
+		"█████",
+		"█    ",
+		"█████",
+		"████ ",
+		"    █",
+		"████ ",
+		"    █",
+		"████ ",
+		"█    ",
+		"█  █ ",
+		"█████",
+		"   █ ",
+		"   █ ",
+		"█████",
+		"█    ",
+		"█████",
+		"    █",
+		"████ ",
+		" ███ ",
+		"█    ",
+		"████ ",
+		"█   █",
+		" ███ ",
+		"█████",
+		"   █ ",
+		"  █  ",
+		" █   ",
+		"█    ",
+		" ███ ",
+		"█   █",
+		" ███ ",
+		"█   █",
+		" ███ ",
+		" ███ ",
+		"█   █",
+		" ████",
+		"    █",
+		" ███ "
 	};
 
 
@@ -125,7 +107,7 @@ public class APPFlappy : SHGUIappbase {
 		"/__o\\_",
 		"\\___/-'",
 		" ___",
-		"/\\\\o\\_",
+		"/\\\\O\\_",
 		"\\___/-'"
 	};
 	private string[]	DeadBird			= new string[] {
@@ -168,6 +150,8 @@ public class APPFlappy : SHGUIappbase {
 	private	float		FlyTime				= 0f; //czas wznoszenia się (jeśli jest na minusie leci do góry gdy jest >= 0 spada)
 	
 	private	float		HeightFactor		= 5f; //wartość wzlotu podczas skoku
+
+	private	float		resetBlocker		= 1f; //blokowanie na chwile mozliwości zresetowania gry by po przegranej nie przeklikać przypadkiem final screena
 
 	//napisy
 	private	int			Score				= 0; //wynik w obecnej rozgrywce
@@ -276,9 +260,11 @@ public class APPFlappy : SHGUIappbase {
 			}
 			else if(Height < 18)
 			{
-				endFall = 0.1f;
+				endFall = 0.1f - (0.01f * (Height/2));
 				++Height;
 			}
+
+			resetBlocker -= Time.unscaledDeltaTime;
 		}
 
 	}
@@ -294,7 +280,7 @@ public class APPFlappy : SHGUIappbase {
 			{
 				for(int j = 1; j < 24; ++j) //rysowanie ziemi
 				{
-					SHGUI.current.SetPixelBack('█', i, j, 'w');
+					SHGUI.current.SetPixelFront('█', i, j, 'w');
 				}
 			}
 		}
@@ -302,9 +288,9 @@ public class APPFlappy : SHGUIappbase {
 		{
 			for(int i = 0; i < 62; ++i) //rysowanie ziemi
 			{
-				SHGUI.current.SetPixelBack(Ground[0][0], i + 1, 20, 'z');
-				if(i % 3 != 0 + distanceGroud) SHGUI.current.SetPixelBack(Ground[1][0], i + 1, 21, 'z');
-				SHGUI.current.SetPixelBack(Ground[2][0], i + 1, 22, 'z');
+				SHGUI.current.SetPixelFront(Ground[0][0], i + 1, 20, 'z');
+				if(i % 3 != 0 + distanceGroud) SHGUI.current.SetPixelFront(Ground[1][0], i + 1, 21, 'z');
+				SHGUI.current.SetPixelFront(Ground[2][0], i + 1, 22, 'z');
 			}
 
 			for(int k = 0; k < Wall.Length; ++k) //rysowanie ścian
@@ -316,7 +302,7 @@ public class APPFlappy : SHGUIappbase {
 					{
 						if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
 						{
-							SHGUI.current.SetPixelBack(LookPipe[i][j], (int)Wall[k].posX + j, (int)Wall[k].border + i, 'z');
+							SHGUI.current.SetPixelFront(LookPipe[i][j], (int)Wall[k].posX + j, (int)Wall[k].border + i, 'z');
 						}
 					}
 				}
@@ -326,7 +312,7 @@ public class APPFlappy : SHGUIappbase {
 					{
 						if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
 						{
-							SHGUI.current.SetPixelBack(LookWall[0][j], (int)Wall[k].posX + j, m, 'z');
+							SHGUI.current.SetPixelFront(LookWall[0][j], (int)Wall[k].posX + j, m, 'z');
 						}
 					}
 				}
@@ -334,7 +320,7 @@ public class APPFlappy : SHGUIappbase {
 				{
 					if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
 					{
-						SHGUI.current.SetPixelBack(LookWallOnGround[0][j], (int)Wall[k].posX + j, 20, 'z');
+						SHGUI.current.SetPixelFront(LookWallOnGround[0][j], (int)Wall[k].posX + j, 20, 'z');
 					}
 				}
 				//górna część
@@ -344,7 +330,7 @@ public class APPFlappy : SHGUIappbase {
 					{
 						if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
 						{
-							SHGUI.current.SetPixelBack(LookPipeUp[i][j], (int)Wall[k].posX + j, (int)Wall[k].border - 9 + i, 'z');
+							SHGUI.current.SetPixelFront(LookPipeUp[i][j], (int)Wall[k].posX + j, (int)Wall[k].border - 9 + i, 'z');
 						}
 					}
 				}
@@ -354,7 +340,7 @@ public class APPFlappy : SHGUIappbase {
 					{
 						if((int)Wall[k].posX + j > 0 && (int)Wall[k].posX + j < 63)
 						{
-							SHGUI.current.SetPixelBack(LookWall[0][j], (int)Wall[k].posX + j, m, 'z');
+							SHGUI.current.SetPixelFront(LookWall[0][j], (int)Wall[k].posX + j, m, 'z');
 						}
 					}
 				}
@@ -408,20 +394,24 @@ public class APPFlappy : SHGUIappbase {
 			{
 				SHGUI.current.SetPixelFront(menuHint[j], 32 - menuHint.Length/2 + j, 11, 'w');
 			}
-			for(int j = 0; j < BSString.Length; ++j)
+			if(BestScore > 0)
 			{
-				SHGUI.current.SetPixelFront(BSString[j], 32 - BSString.Length/2 + j, 15, 'w');
-			}
-			BestScoreString = "" + BestScore; 
-			for(int j = 0; j < BestScoreString.Length; ++j)
-			{
-				SHGUI.current.SetPixelFront(BestScoreString[j], 32 - BestScoreString.Length/2 + j, 16, 'w');
+				for(int j = 0; j < BSString.Length; ++j)
+				{
+					SHGUI.current.SetPixelFront(BSString[j], 32 - BSString.Length/2 + j, 15, 'w');
+				}
+
+				BestScoreString = "" + BestScore; 
+				for(int j = 0; j < BestScoreString.Length; ++j)
+				{
+					SHGUI.current.SetPixelFront(BestScoreString[j], 32 - BestScoreString.Length/2 + j, 16, 'w');
+				}
 			}
 
 		}
 		if(Lose && endFleshTimer <= 0f) //rysowanie napisów po przegranej
 		{
-			menuHint = "PRESS ENTER TO RESTART";
+			menuHint = "[=PRESS ENTER TO RESTART=]";
 
 			for(int j = 0; j < menuHint.Length; ++j) //press to start
 			{
@@ -461,34 +451,17 @@ public class APPFlappy : SHGUIappbase {
 					{
 						if(Lose)
 						{
-							if(ScoreString[k] == '0') SHGUI.current.SetPixelFront(Number0[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'r');
-							else if(ScoreString[k] == '1') SHGUI.current.SetPixelFront(Number1[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'r');
-							else if(ScoreString[k] == '2') SHGUI.current.SetPixelFront(Number2[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'r');
-							else if(ScoreString[k] == '3') SHGUI.current.SetPixelFront(Number3[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'r');
-							else if(ScoreString[k] == '4') SHGUI.current.SetPixelFront(Number4[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'r');
-							else if(ScoreString[k] == '5') SHGUI.current.SetPixelFront(Number5[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'r');
-							else if(ScoreString[k] == '6') SHGUI.current.SetPixelFront(Number6[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'r');
-							else if(ScoreString[k] == '7') SHGUI.current.SetPixelFront(Number7[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'r');
-							else if(ScoreString[k] == '8') SHGUI.current.SetPixelFront(Number8[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'r');
-							else if(ScoreString[k] == '9') SHGUI.current.SetPixelFront(Number9[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'r');
+							SHGUI.current.SetPixelFront(Number[i+(int.Parse(ScoreString[k].ToString()) * 5)][j], leftPadding + j + k * 6 + 1, 2 + i, 'r');
 						}
 						else
 						{
-							if(ScoreString[k] == '0') SHGUI.current.SetPixelFront(Number0[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'w');
-							else if(ScoreString[k] == '1') SHGUI.current.SetPixelFront(Number1[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'w');
-							else if(ScoreString[k] == '2') SHGUI.current.SetPixelFront(Number2[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'w');
-							else if(ScoreString[k] == '3') SHGUI.current.SetPixelFront(Number3[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'w');
-							else if(ScoreString[k] == '4') SHGUI.current.SetPixelFront(Number4[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'w');
-							else if(ScoreString[k] == '5') SHGUI.current.SetPixelFront(Number5[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'w');
-							else if(ScoreString[k] == '6') SHGUI.current.SetPixelFront(Number6[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'w');
-							else if(ScoreString[k] == '7') SHGUI.current.SetPixelFront(Number7[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'w');
-							else if(ScoreString[k] == '8') SHGUI.current.SetPixelFront(Number8[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'w');
-							else if(ScoreString[k] == '9') SHGUI.current.SetPixelFront(Number9[i][j], leftPadding + j + k * 6 + 1, 1 + i, 'w');
+							SHGUI.current.SetPixelFront(Number[i+(int.Parse(ScoreString[k].ToString()) * 5)][j], leftPadding + j + k * 6 + 1, 2 + i, 'w');
 						}
 					}
 				}
 			}
-		}
+
+		}//koniec rysowanie wyniku podczas rozgrywki
 
 
 	}
@@ -499,11 +472,11 @@ public class APPFlappy : SHGUIappbase {
 		{
 			if(PlayGame)
 			{
-				birdAnimTime = 0.4f;
+				birdAnimTime = 0.5f;
 				LastHeight 	= Height;
 				FlyTime		= -Mathf.Sqrt(HeightFactor);
 			}
-			else
+			else if(resetBlocker <= 0f || Lose == false)
 			{
 				//Start/Reset Gry
 				for(int i = 0; i < Wall.Length; ++i) Wall[i] = new pipe(70 + 30f * i, (float)Random.Range(11, 15));
@@ -511,6 +484,7 @@ public class APPFlappy : SHGUIappbase {
 				LastHeight			= 15f;
 				endFleshTimer		= 0.1f;
 				endFall				= 0.1f;
+				resetBlocker		= 0.45f;
 				
 				Fall				= 15f;
 				FlyTime				= 0f;
