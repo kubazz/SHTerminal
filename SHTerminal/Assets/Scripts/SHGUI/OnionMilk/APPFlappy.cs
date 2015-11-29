@@ -163,6 +163,9 @@ public class APPFlappy : SHGUIappbase {
 	private	string		newBSString			= "NEW PERSONAL BEST";
 	private	string		BSString			= "PERSONAL BEST";
 
+	bool				onHintText			= true;
+	float				timeHintText		= 0.9f;
+
 	//przeszkody
 	private pipe[]		Wall				= new pipe[4]; //przeszkody
 
@@ -188,6 +191,15 @@ public class APPFlappy : SHGUIappbase {
 	public override void Update()
 	{
 		base.Update();
+
+		timeHintText -= Time.unscaledDeltaTime;
+		if(timeHintText <= 0f)
+		{
+			if(onHintText) onHintText = false;
+			else onHintText = true;
+
+			timeHintText = 0.4f;
+		}
 
 		if(PlayGame)
 		{
@@ -392,7 +404,10 @@ public class APPFlappy : SHGUIappbase {
 			}
 			for(int j = 0; j < menuHint.Length; ++j)
 			{
-				SHGUI.current.SetPixelFront(menuHint[j], 32 - menuHint.Length/2 + j, 11, 'w');
+				if(onHintText)
+				{
+					SHGUI.current.SetPixelFront(menuHint[j], 32 - menuHint.Length/2 + j, 11, 'w');
+				}
 			}
 			if(BestScore > 0)
 			{
@@ -415,7 +430,10 @@ public class APPFlappy : SHGUIappbase {
 
 			for(int j = 0; j < menuHint.Length; ++j) //press to start
 			{
-				SHGUI.current.SetPixelFront(menuHint[j], 32 - menuHint.Length/2 + j, 11, 'r');
+				if(onHintText)
+				{
+					SHGUI.current.SetPixelFront(menuHint[j], 32 - menuHint.Length/2 + j, 11, 'r');
+				}
 			}
 
 			if(Score > BestScore)

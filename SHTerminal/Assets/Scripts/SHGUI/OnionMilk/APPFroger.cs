@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -62,40 +62,94 @@ public class coin
 public class APPFroger : SHGUIappbase {
 
 	//---------------------grafiki------------------------
+	//liczby
+	private string[]	Number			= new string[] {
+		" ███ ",
+		"█  ██",
+		"█ █ █",
+		"██  █",
+		" ███ ",
+		"  █  ",
+		" ██  ",
+		"  █  ",
+		"  █  ",
+		" ███ ",
+		"█████",
+		"    █",
+		"█████",
+		"█    ",
+		"█████",
+		"████ ",
+		"    █",
+		"████ ",
+		"    █",
+		"████ ",
+		"█    ",
+		"█  █ ",
+		"█████",
+		"   █ ",
+		"   █ ",
+		"█████",
+		"█    ",
+		"█████",
+		"    █",
+		"████ ",
+		" ███ ",
+		"█    ",
+		"████ ",
+		"█   █",
+		" ███ ",
+		"█████",
+		"   █ ",
+		"  █  ",
+		" █   ",
+		"█    ",
+		" ███ ",
+		"█   █",
+		" ███ ",
+		"█   █",
+		" ███ ",
+		" ███ ",
+		"█   █",
+		" ████",
+		"    █",
+		" ███ "
+	};
+
 	private string[]			cars	= new string[]
 	{
-		"  o ",
-		" /# ",
+		"??o?",
+		"?/#?",
 		"o--o",
-		"   __",
-		" _/0 \\_ ",
+		"???__???",
+		"?_/0 \\_?",
 		"'-o--o-'",
-		"   __   ",
-		" _/# \\_",
+		"???__???",
+		"?_/# \\_",
 		"'0---0--",
-		" ______ ",
+		"?______?",
 		"/][]  +|",
 		"'-o---o'",
-		" __ _________",
+		"?__ _________",
 		"|#  |||||||||",
 		"\\-0--0--0--0/",
-		" _____<__ ",
+		"?_____<__?",
 		"(`===HOT=|",
 		"=o-o--o-o^",
-		"_____________ ",
+		"_____________?",
 		"H==EXPRESS==H|",
 		"-oo-------oo-^"
 	};
 	private string[]			carsRev	= new string[]
 	{
-		" o  ",
-		" #\\ ",
+		"?o??",
+		"?#\\?",
 		"o--o",
-		"   __   ",
-		" _/ 0\\_ ",
+		"???__???",
+		"?_/ 0\\_?",
 		"'-o--o-'",
-		"   __   ",
-		" _/ #\\_",
+		"???__???",
+		"?_/ #\\_",
 		"--0---0-'",
 		" ______ ",
 		"|+  [][\\",
@@ -103,10 +157,10 @@ public class APPFroger : SHGUIappbase {
 		"_________ __ ",
 		"|||||||||  #|",
 		"\\0--0--0--0-/",
-		" __>_____ ",
+		"?__>_____?",
 		"|=HOT===`)",
 		"^o-o--o-o=",
-		" _____________",
+		"?_____________",
 		"|H==EXPRESS==H",
 		"^-oo-------oo-"
 	};
@@ -191,6 +245,8 @@ public class APPFroger : SHGUIappbase {
 
 	//kasa
 	public			List<coin>		coinList = new List<coin>(); //lista przechowujące monety
+	bool			onMoney			= true;
+	float			timeShowMoney	= 0.3f;
 
 	//mechanika
 	bool			menu			= true; //czy jesteś w menu
@@ -240,8 +296,19 @@ public class APPFroger : SHGUIappbase {
 			//za ile ma się zrespić kolejne autko
 			stepCounter[i] = Random.Range(8, 15);
 		}
+
+
 	}
-	
+	/*
+	//PARTIKLE - tekst który się pokazuje na pewien okres czasu
+	void Particle(){
+		var ziom = new SHGUItext(SHGUI.current.GetASCIIartFromFont("235"), 5, 5, 'w'); //treść napisu miejsce i kolor
+		var temp = new SHGUItempview(.3f); //czs po którym się on wyłącza
+		temp.overrideFadeInSpeed = .5f; //mnożnik przyśpieszenia wejścia
+		temp.overrideFadeOutSpeed = .5f; //mnożnik przyśpieszenia wyjścia
+		temp.AddSubView(ziom); //podpięcie napisu pod czas życia
+		AddSubView(temp); //dodanie widoku do widocznej sceny
+	}*/
 	public override void Update() 
 	{
 		base.Update();
@@ -250,6 +317,15 @@ public class APPFroger : SHGUIappbase {
 		{
 			stepTime -= Time.unscaledDeltaTime;
 			stepTrainTime -= Time.unscaledDeltaTime;
+
+			timeShowMoney -= Time.unscaledDeltaTime;
+			if(timeShowMoney <= 0f)
+			{
+				if(onMoney) onMoney = false;
+				else onMoney = true;
+
+				timeShowMoney = 0.4f;
+			}
 
 			//-----------------------podczas gry-------------------------------
 			if(!lose) 
@@ -548,23 +624,26 @@ public class APPFroger : SHGUIappbase {
 					{
 						for(int i = 0; i < 62; ++i)
 						{
-							if(backAnimal)
+							if((i%2 == 0 && j%2 == 0) || (i%2 == 1 && j%2 == 1))
 							{
-								if(20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
+								if(backAnimal)
 								{
-									if(20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+									if(20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
 									{
-										SHGUI.current.SetPixelFront(grass, i + 1, 20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+										if(20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+										{
+											SHGUI.current.SetPixelFront(',', i + 1, 20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+										}
 									}
 								}
-							}
-							else
-							{
-								if(20 - (posY - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
+								else
 								{
-									if(20 - (posY - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+									if(20 - (posY - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
 									{
-										SHGUI.current.SetPixelFront(grass, i + 1, 20 - (posY - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+										if(20 - (posY - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+										{
+											SHGUI.current.SetPixelFront(',', i + 1, 20 - (posY - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+										}
 									}
 								}
 							}
@@ -573,11 +652,34 @@ public class APPFroger : SHGUIappbase {
 				}
 				else if(roadsMap[l] == 2) //rysowanie torów
 				{
-					for(int j = 0; j < 3; ++j)
+					for(int j = 1; j < 3; ++j)
 					{
 						for(int i = 0; i < 62; ++i)
 						{
-							if(j == 2 && i%2 == 0)
+							if(j == 1 && i%2 == 1)
+							{
+								if(backAnimal)
+								{
+									if(20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
+									{
+										if(20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+										{
+											SHGUI.current.SetPixelFront('_', i + 1, 20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+										}
+									}
+								}
+								else
+								{
+									if(20 - (posY - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
+									{
+										if(20 - (posY - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+										{
+											SHGUI.current.SetPixelFront('_', i + 1, 20 - (posY - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+										}
+									}
+								}
+							}
+							else if(j == 2 && i%2 == 0)
 							{
 								if(backAnimal)
 								{
@@ -600,6 +702,29 @@ public class APPFroger : SHGUIappbase {
 									}
 								}
 							}
+							else if(j == 2 && i%2 == 1)
+							{
+								if(backAnimal)
+								{
+									if(20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
+									{
+										if(20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+										{
+											SHGUI.current.SetPixelFront('_', i + 1, 20 - (posY + 3 - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+										}
+									}
+								}
+								else
+								{
+									if(20 - (posY - cameraHeight) + j - (l * 3) + 9 < 23) //jeśli nie wychodzi za dolną krawędz
+									{
+										if(20 - (posY - cameraHeight) + j - (l * 3) + 9 > 0) //jesli nie wychodzi za górną krawędz
+										{
+											SHGUI.current.SetPixelFront('_', i + 1, 20 - (posY - cameraHeight) + j - (l * 3) + 9, 'z'); //rysowanie trawy
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -609,23 +734,25 @@ public class APPFroger : SHGUIappbase {
 
 			//-------------------------------rysowanie monetek-----------------------------------
 
-			for(int i = 0; i < coinList.Count; ++i)
+			if(onMoney)
 			{
-				for(int y = 0; y < 3; ++y)
+				for(int i = 0; i < coinList.Count; ++i)
 				{
-					if(22 - (coinList[i].posY - cameraHeight) + y > 0 && 20 - (coinList[i].posY - cameraHeight) + y < 23) //żeby nie właziły na krawędź górną
+					for(int y = 0; y < 3; ++y)
 					{
-						for(int x = 0; x < coinLook[y].Length; ++x)
+						if(22 - (coinList[i].posY - cameraHeight) + y > 0 && 20 - (coinList[i].posY - cameraHeight) + y < 23) //żeby nie właziły na krawędź górną
 						{
-							if((20 - (coinList[i].posY - cameraHeight) + y) > 0 && (20 - (coinList[i].posY - cameraHeight) + y) < 23)
+							for(int x = 0; x < coinLook[y].Length; ++x)
 							{
-								SHGUI.current.SetPixelFront(coinLook[y][x], coinList[i].posX + x, 20 - (coinList[i].posY - cameraHeight) + y, 'z');
+								if((20 - (coinList[i].posY - cameraHeight) + y) > 0 && (20 - (coinList[i].posY - cameraHeight) + y) < 23)
+								{
+									SHGUI.current.SetPixelFront(coinLook[y][x], coinList[i].posX + x, 20 - (coinList[i].posY - cameraHeight) + y, 'z');
+								}
 							}
 						}
 					}
 				}
 			}
-
 
 			//---------------------------koniec rysowania monetek--------------------------------
 
@@ -679,7 +806,10 @@ public class APPFroger : SHGUIappbase {
 								{
 									if((20 - (vehicle[i].posY - cameraHeight) + y) > 0 && (20 - (vehicle[i].posY - cameraHeight) + y) < 23)
 									{
-										SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+										if(cars[vehicle[i].graphic * 3 + y][x] != '?') //sprawdzanie maski przeźroczystości
+										{
+											SHGUI.current.SetPixelFront(cars[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+										}
 									}
 								}
 							}
@@ -689,7 +819,10 @@ public class APPFroger : SHGUIappbase {
 								{
 									if((20 - (vehicle[i].posY - cameraHeight) + y) > 0 && (20 - (vehicle[i].posY - cameraHeight) + y) < 23)
 									{
-										SHGUI.current.SetPixelFront(carsRev[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+										if(carsRev[vehicle[i].graphic * 3 + y][x] != '?') //sprawdzanie maski przeźroczystości
+										{
+											SHGUI.current.SetPixelFront(carsRev[vehicle[i].graphic * 3 + y][x], vehicle[i].posX + x, 20 - (vehicle[i].posY - cameraHeight) + y, 'z');
+										}
 									}
 								}
 							}
@@ -711,7 +844,10 @@ public class APPFroger : SHGUIappbase {
 								{
 									if((20 - (train[i].posY - cameraHeight) + y) > 0 && (20 - (train[i].posY - cameraHeight) + y) < 23)
 									{
-										SHGUI.current.SetPixelFront(cars[train[i].graphic * 3 + y][x], train[i].posX + x, 20 - (train[i].posY - cameraHeight) + y, 'z');
+										if(cars[train[i].graphic * 3 + y][x] != '?')
+										{
+											SHGUI.current.SetPixelFront(cars[train[i].graphic * 3 + y][x], train[i].posX + x, 20 - (train[i].posY - cameraHeight) + y, 'z');
+										}
 									}
 								}
 							}
@@ -721,7 +857,10 @@ public class APPFroger : SHGUIappbase {
 								{
 									if((20 - (train[i].posY - cameraHeight) + y) > 0 && (20 - (train[i].posY - cameraHeight) + y) < 23)
 									{
-										SHGUI.current.SetPixelFront(carsRev[train[i].graphic * 3 + y][x], train[i].posX + x, 20 - (train[i].posY - cameraHeight) + y, 'z');
+										if(carsRev[train[i].graphic * 3 + y][x] != '?')
+										{
+											SHGUI.current.SetPixelFront(carsRev[train[i].graphic * 3 + y][x], train[i].posX + x, 20 - (train[i].posY - cameraHeight) + y, 'z');
+										}
 									}
 								}
 							}
@@ -762,12 +901,6 @@ public class APPFroger : SHGUIappbase {
 			//----------------------------rysowanie pieniędzy i punktów-------------------------
 			if(!lose)
 			{
-				gameScoreText = "Score " + score;
-				for(int n = 0; n < gameScoreText.Length; ++n)
-				{
-					SHGUI.current.SetPixelFront(gameScoreText[n], n + 1, 1, 'w');
-				}
-
 				gameMoneyText = "" + piniadze + "$";
 				for(int n = 0; n < gameMoneyText.Length; ++n)
 				{
@@ -777,10 +910,31 @@ public class APPFroger : SHGUIappbase {
 				gameBestText = "Top " + best;
 				for(int n = 0; n < gameBestText.Length; ++n)
 				{
-					SHGUI.current.SetPixelFront(gameBestText[n], n + 1, 2, 'w');
+					SHGUI.current.SetPixelFront(gameBestText[n], n + 1, 7, 'w');
+				}
+
+				gameScoreText = "" + score;
+				
+				for(int k = 0; k < gameScoreText.Length; ++k)
+				{
+					for(int i = 0; i < 5; ++i)
+					{
+						for(int j = 0; j < 5; ++j) //rysowanie wyniku
+						{
+							SHGUI.current.SetPixelFront(Number[i+(int.Parse(gameScoreText[k].ToString()) * 5)][j], j + k * 6 + 1, 1 + i, 'w');
+						}
+					}
 				}
 			}
 			//----------------------koniec rysowania pieniędzy i punktów-----------------------
+
+			for (int i = 1; i < 63; ++i) //pożeranie mapy :v
+			{
+				for (int j = 0; j < 1; ++j)
+				{
+					SHGUI.current.SetPixelFront(StringScrambler.GetGlitchChar(), i, 22-j, 'z');
+				}
+			}
 		}
 	}
 	
@@ -811,7 +965,7 @@ public class APPFroger : SHGUIappbase {
 		{
 			if(!menu && !lose && jumpTimer <= 0) //poruszanie w górę
 			{
-				jumpTimer = 0.3f;
+				jumpTimer = 0.2f;
 
 				posY += 3; //przesuwanie do góry
 
@@ -837,7 +991,7 @@ public class APPFroger : SHGUIappbase {
 				{
 					posY -= 3;
 					yourDirection = 0;
-					jumpTimer = 0.3f;
+					jumpTimer = 0.2f;
 					backAnimal = true;
 				}
 			}
@@ -846,9 +1000,9 @@ public class APPFroger : SHGUIappbase {
 		{
 			if(!menu && !lose && jumpTimer2 <= 0) //poruszanie w prawo
 			{
-				if(posX < 56)
+				if(posX < 54)
 				{
-					++posX;
+					posX+=3;
 					jumpTimer2 = 0.1f;
 				}
 			}
@@ -860,11 +1014,11 @@ public class APPFroger : SHGUIappbase {
 		}
 		if (key == SHGUIinput.left)
 		{
-			if(!menu && !lose) //poruszanie w lewo
+			if(!menu && !lose && jumpTimer2 <= 0) //poruszanie w lewo
 			{
-				if(posX > 1 && jumpTimer2 <= 0)
+				if(posX > 3)
 				{
-					--posX;
+					posX-=3;
 					jumpTimer2 = 0.1f;
 				}
 			}
