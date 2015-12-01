@@ -268,6 +268,8 @@ public class APPFroger : SHGUIappbase {
 	string			endText			= "==PRESS ESCAPE TO BECK MENU==";
 	string			endPointsText	= "SCORE ";
 	string			endBestText		= "NEW TOP SCORE";
+	bool			mryga			= true;
+	float			mrygaTimer		= 0.3f;
 
 	//zapis
 	bool[]			lockTab			= new bool[] {false, true, true, true , true}; //zablokowane / odblokowane postacie
@@ -321,10 +323,16 @@ public class APPFroger : SHGUIappbase {
 			timeShowMoney -= Time.unscaledDeltaTime;
 			if(timeShowMoney <= 0f)
 			{
-				if(onMoney) onMoney = false;
-				else onMoney = true;
-
-				timeShowMoney = 0.4f;
+				if(onMoney)
+				{
+					onMoney = false;
+					timeShowMoney = 0.3f;
+				}
+				else
+				{
+					onMoney = true;
+					timeShowMoney = 0.6f;
+				}
 			}
 
 			//-----------------------podczas gry-------------------------------
@@ -535,6 +543,21 @@ public class APPFroger : SHGUIappbase {
 			else
 			{
 				if(best > oldBest) oldBest = best;
+
+				mrygaTimer -= Time.unscaledDeltaTime;
+				if(mrygaTimer <= 0)
+				{
+					if(mryga)
+					{
+						mryga = false;
+						mrygaTimer = 0.3f;
+					}
+					else
+					{
+						mryga = true;
+						mrygaTimer = 0.6f;
+					}
+				}
 
 			}
 		}
@@ -873,28 +896,95 @@ public class APPFroger : SHGUIappbase {
 			//----------------------------rysowanie napisów po przegranej-------------------------
 			if(lose)
 			{
-				for(int n = 0; n < restartText.Length; ++n)
+				if(!lockTab[yourLook]) //zablokowany / odblokowany zwierzak
 				{
-					SHGUI.current.SetPixelFront(restartText[n], (62 - restartText.Length) / 2 + n, 8, 'w');
+					if(mryga) //klik to restart
+					{
+						for(int n = 0; n < restartText.Length; ++n)
+						{
+							SHGUI.current.SetPixelFront(restartText[n], (62 - restartText.Length) / 2 + n, 14, 'r');
+						}
+					}
 				}
-				for(int n = 0; n < endText.Length; ++n)
+				else if(piniadze >= 100) //klik to buy
 				{
-					SHGUI.current.SetPixelFront(endText[n], (62 - endText.Length) / 2 + n, 10, 'w');
+					for(int i = 0; i < unlockText.Length; ++i)
+					{
+						SHGUI.current.SetPixelFront(unlockText[i], 31 - (unlockText.Length / 2) + i, 14, 'w');
+					}
+				}
+				else //brak hajsów
+				{
+					for(int i = 0; i < unlockText.Length; ++i)
+					{
+						SHGUI.current.SetPixelFront(unlockText[i], 31 - (unlockText.Length / 2) + i, 14, 'w');
+					}
 				}
 
-				endPointsText = "SCORE " + score;
-
-				for(int n = 0; n < endPointsText.Length; ++n)
+				for(int n = 0; n < endText.Length; ++n) //powrót do menu
 				{
-					SHGUI.current.SetPixelFront(endPointsText[n], (62 - endPointsText.Length) / 2 + n, 12, 'w');
+					SHGUI.current.SetPixelFront(endText[n], (62 - endText.Length) / 2 + n, 21, 'w');
 				}
-				if(score == best)
+
+				//rysowanie wyniku
+				gameScoreText = "" + score;
+				int tempPaddingLeft = 31 - (gameScoreText.Length*3); //wyznaczanie środka
+				
+				for(int k = 0; k < gameScoreText.Length; ++k)
+				{
+					for(int i = 0; i < 5; ++i)
+					{
+						for(int j = 0; j < 5; ++j)
+						{
+							SHGUI.current.SetPixelFront(Number[i+(int.Parse(gameScoreText[k].ToString()) * 5)][j], j + k * 6 + tempPaddingLeft, 8 + i, 'w');
+						}
+					}
+				}
+
+				if(score == best) //nowy najlepszy wynik
 				{
 					for(int n = 0; n < endBestText.Length; ++n)
 					{
-						SHGUI.current.SetPixelFront(endBestText[n], (62 - endBestText.Length) / 2 + n, 14, 'w');
+						SHGUI.current.SetPixelFront(endBestText[n], (62 - endBestText.Length) / 2 + n, 6, 'w');
 					}
 				}
+				else //obecny najlepszy
+				{
+					bestText = "PERSONAL TOP: " + best;
+
+					for(int n = 0; n < bestText.Length; ++n)
+					{
+						SHGUI.current.SetPixelFront(bestText[n], (62 - bestText.Length) / 2 + n, 6, 'w');
+					}
+				}
+			
+				for(int i = 1; i < 62; ++i) 
+				{
+					for(int j = 15; j < 20; ++j)
+					{
+						SHGUI.current.SetPixelFront(' ', i, j, 'w'); //zaciemnienie za postacią
+					}
+				}
+
+				for(int j = 0; j < 3; ++j) //postać
+				{
+					for(int i = 0; i < 7; ++i)
+					{
+						if(animal[j + (yourLook * 3)][i] != '?')
+						{
+							SHGUI.current.SetPixelFront(animal[j + (yourLook * 3)][i], 31 - (animal[j + (yourLook * 3)].Length / 2) + i, 17 + j, 'w');
+						}
+					}
+				}
+				
+				SHGUI.current.SetPixelFront('>', 37, 18, 'w'); //szczałki
+				SHGUI.current.SetPixelFront('<', 25, 18, 'w');
+			
+				for(int n = 0; n < gameMoneyText.Length; ++n)
+				{
+					SHGUI.current.SetPixelFront(gameMoneyText[n], 62 - gameMoneyText.Length + 1 + n, 1, 'r');
+				}
+
 			}
 			//-----------------------koniec rysowania napisów po przegranej---------------------
 
@@ -928,13 +1018,13 @@ public class APPFroger : SHGUIappbase {
 			}
 			//----------------------koniec rysowania pieniędzy i punktów-----------------------
 
-			for (int i = 1; i < 63; ++i) //pożeranie mapy :v
+			/*for (int i = 1; i < 63; ++i) //pożeranie mapy :v
 			{
 				for (int j = 0; j < 1; ++j)
 				{
 					SHGUI.current.SetPixelFront(StringScrambler.GetGlitchChar(), i, 22-j, 'z');
 				}
-			}
+			}*/
 		}
 	}
 	
@@ -943,7 +1033,7 @@ public class APPFroger : SHGUIappbase {
 	{
 		if(key == SHGUIinput.enter)
 		{
-			if(menu)
+			if(menu || lose)
 			{
 				if(!lockTab[yourLook]) //startowanie gry
 				{
@@ -955,10 +1045,6 @@ public class APPFroger : SHGUIappbase {
 					piniadze -= 100;
 					lockTab[yourLook] = false;
 				}
-			}
-			else if(!menu && lose)
-			{
-				resetGame();
 			}
 		}
 		if (key == SHGUIinput.up)
@@ -1006,7 +1092,7 @@ public class APPFroger : SHGUIappbase {
 					jumpTimer2 = 0.1f;
 				}
 			}
-			else if(menu)
+			else if(menu || lose)
 			{
 				++yourLook;
 				if(yourLook > 4) yourLook = 0;
@@ -1022,7 +1108,7 @@ public class APPFroger : SHGUIappbase {
 					jumpTimer2 = 0.1f;
 				}
 			}
-			else if(menu)
+			else if(menu || lose)
 			{
 				--yourLook;
 				if(yourLook < 0) yourLook = 4;
