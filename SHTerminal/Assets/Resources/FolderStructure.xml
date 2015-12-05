@@ -219,7 +219,7 @@ I also like the silliness of writing notes to myself. Like anyone would read tha
 		<item type="app" name ="2048.exe" appclass="APP2048"/>
 		<item type="app" name ="flappy.exe" appclass="APPFlappy"/>
 		<item type="app" name ="hotslot.exe" appclass="APPHotSlot"/>
-		<item type="app" name ="hotroads.exe" appclass="APPFroger"/>
+		<item type="app" name ="hotroads.exe" appclass="APPHotRoads"/>
 		<item type="app" name ="logo.exe" appclass="APPOnionMilkLogo"/>
 		<item type="app" name ="maze.exe" appclass="APPColorMaze"/>
 		<item type="app" name ="onionman.exe" appclass="APPOnionMan"/>
