@@ -33,7 +33,7 @@ public class APPSnakeGame {
 			2
 	*/
 	public float	snakeSpeedTimer	= 0;
-	public float	snakeSpeed		= 0.3f;
+	public float	snakeSpeed		= 0.4f;
 	public bool		snakeDead		= false;
 
 	public APPSnakeGame() {
@@ -196,10 +196,9 @@ public class APPSnakeGame {
 		else {
 			snakeSpeed	= 0.95f * snakeSpeed;
 			map[x, y]	= 2;
-			if (Random.value < 0.25f) {
+			if (Random.value < 0.15f) {
 				generateFood();
 				if (Random.value < 0.0001f) {
-					generateFood();
 					generateFood();
 					generateFood();
 					generateFood();

@@ -4,13 +4,11 @@ using System.Collections;
 public class APPSnakeMenu {
 	//Public
 	
-	public string	menuOptionsBar		= "  [ WITH BONUSES ]      [ CLASSIC ]           [ EXIT ]      ";
+	public string	menuOptionsBar		= "[ PRESS ANYTHING TO START ]";
 	public int		currentOption		= 0;
 	public int		optionsOffset		= 0;
 	public float	optionsOffsetTarget	= 0;
 	public float	optionsAnimTimer	= 0;
-
-	public int		gameSwitch			= 0;	/* 1 - klasyczna / 2 - z bonusami */
 
 public string[]		menuLogo = new string[5] {
 	"        █████ ██████ ██████ ██    █ █████ █  █ █████            ",
@@ -75,7 +73,7 @@ public string[]		menuLogo = new string[5] {
 			if (snakePosY < 0) {
 				snakePosY	= map.GetLength(1) - 1;
 			}
-			map[snakePosX, snakePosY]	= (int)Mathf.Abs(snakeLength);
+			map[snakePosX, snakePosY]	= snakeLength;
 
 			for(int y = 0; y < map.GetLength(1); ++y)
 				for(int x = 0; x < map.GetLength(0); ++x)
@@ -87,8 +85,8 @@ public string[]		menuLogo = new string[5] {
 			
 			if (snakeGrowTimer > 1f) {
 				++snakeLength;
-				if (snakeLength > 50)
-					snakeLength	= -50;
+				if (snakeLength > 62)
+					snakeLength	= -62;
 				//--
 			}
 
@@ -96,7 +94,7 @@ public string[]		menuLogo = new string[5] {
 		}
 	}
 
-	public bool InputUpdate(SHGUIinput key) {
+	public int InputUpdate(SHGUIinput key) {
 		if (optionsOffsetTarget == 0) {
 			if (key == SHGUIinput.right || key == SHGUIinput.down) {
 				optionsOffsetTarget	= 20;
@@ -113,27 +111,14 @@ public string[]		menuLogo = new string[5] {
 		}
 
 		if (key == SHGUIinput.enter) {
-			switch(currentOption) {
-				case(0): {
-					gameSwitch	= 1;
-					break;
-				}
-				case(2): {
-					gameSwitch	= 2;
-					break;
-				}
-				case(1): {
-					return false;
-					break;
-				}
-			}
+			return 2;
 		}
 
 		if (key == SHGUIinput.esc)
-			return false;
+			return 0;
 		//--
 		
-		return true;
+		return 1;
 	}
 
 	void generateFood() {
