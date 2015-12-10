@@ -111,12 +111,14 @@ public string[]		menuLogo = new string[5] {
 		}
 
 		if (key == SHGUIinput.enter) {
+			clearSnake();
 			return 2;
 		}
 
-		if (key == SHGUIinput.esc)
+		if (key == SHGUIinput.esc) {
+			clearSnake();
 			return 0;
-		//--
+		}
 		
 		return 1;
 	}
@@ -134,5 +136,15 @@ public string[]		menuLogo = new string[5] {
 		}
 		
 		return;
+	}
+
+	void clearSnake() {
+		for(int y = 0; y < map.GetLength(1); ++y)
+			for(int x = 0; x < map.GetLength(0); ++x)
+				if (map[x, y] != 0)
+					map[x, y]	= 0;
+				//--
+			//--
+		//--
 	}
 }

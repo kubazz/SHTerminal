@@ -11,21 +11,32 @@ public class APPSnakeGame {
 		'█',	
 		'⁰',	//2	- jedzonko
 		'₀',
-		'8'
+		'8',
+		//==================//
+		'\\', '/',
+		'/', '\\'
 	};
 
 	public char[]	snakeGfx = {
 		'▀', '▄', '█'
 	};
+	public char[]	snakeInGameGfx = {
+		'▒',	//Tail
+		'▓',	//Body
+		'█'		//Head
+	};
+
 	public char	snakeColor		= 'r';
 	
 		//Mapa
 	//62x22
-	public int[,]	map				= new int[62, 44];
+	//public int[,]	map				= new int[62, 44];
+	//31x11
+	public int[,]	map				= new int[30, 10];
 
 		//Snake
 	public Vector2	snakePos		= Vector2.zero;
-	public int[,]	snakeTailMap	= new int[62, 44];
+	public int[,]	snakeTailMap	= new int[30, 10];
 	public int		snakeTailLength	= 5;
 	public int		snakeDirecton	= 0; /*
 			0
@@ -33,8 +44,10 @@ public class APPSnakeGame {
 			2
 	*/
 	public float	snakeSpeedTimer	= 0;
-	public float	snakeSpeed		= 0.4f;
+	public float	snakeSpeed		= 0.3f;
 	public bool		snakeDead		= false;
+
+	public int		foodAmount		= 0;
 
 	public APPSnakeGame() {
 		restart();
@@ -56,7 +69,10 @@ public class APPSnakeGame {
 		snakeDirecton	= 0;
 		snakeSpeed		= 0.3f;
 		snakeDead		= false;
-		snakePos		= new Vector2(31, 10);
+		snakePos		= new Vector2(
+			Mathf.FloorToInt(map.GetLength(0) / 2),
+			Mathf.FloorToInt(map.GetLength(1) / 2)
+		);
 		for(int y = (int)snakePos.y; y < Mathf.FloorToInt(snakePos.y + 5); ++y) {
 			snakeTailMap[(int)snakePos.x, y]	= snakeTailLength + (((int)snakePos.y) - y);
 		}
@@ -93,8 +109,9 @@ public class APPSnakeGame {
 			//--
 		}
 		
-		if (key == SHGUIinput.enter)
-			generateFood();
+		//Food Debug
+		//if (key == SHGUIinput.enter)
+		//	generateFood();
 		//--
 
 		if (key == SHGUIinput.esc)
@@ -167,6 +184,7 @@ public class APPSnakeGame {
 		} else if (map[(int)snakePos.x, (int)snakePos.y] == 2) {
 			map[(int)snakePos.x, (int)snakePos.y]	=	0;
 			snakeTailLength							+=	1;
+			--foodAmount;
 			generateFood();
 		} else {
 			//NICZ
@@ -188,20 +206,28 @@ public class APPSnakeGame {
 	}
 
 	void generateFood() {
-		int	x	= Mathf.FloorToInt(Random.value * (map.GetLength(0) - 4)) + 2;
-		int	y	= Mathf.FloorToInt(Random.value * (map.GetLength(1) - 4)) + 2;
+		if (foodAmount > 3 && Random.value > 0.1f) {
+			--foodAmount;
+			return;
+		}
 
-		if (snakeTailMap[x, y] != 0 || map[x, y] != 0)
+		int	x	= Mathf.FloorToInt(Random.value * map.GetLength(0));
+		int	y	= Mathf.FloorToInt(Random.value * map.GetLength(1));
+
+		if (snakeTailMap[x, y] != 0 || map[x, y] != 0) {
 			generateFood();
-		else {
+			foodAmount	+= 1;
+		} else {
 			snakeSpeed	= 0.95f * snakeSpeed;
 			map[x, y]	= 2;
 			if (Random.value < 0.15f) {
 				generateFood();
-				if (Random.value < 0.0001f) {
+				foodAmount	+= 1;
+				if (Random.value < 0.0001f && foodAmount <= 2) {
 					generateFood();
 					generateFood();
 					generateFood();
+					foodAmount	+= 3;
 				}
 			}
 		}
