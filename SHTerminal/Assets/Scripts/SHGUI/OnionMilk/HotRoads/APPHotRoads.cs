@@ -6,7 +6,6 @@ public partial class APPHotRoads : SHGUIappbase {
 	
 	//---------------------grafiki------------------------
 	HRgfx				gfx				= new HRgfx();
-	HRUpdateInGame		HRUIG			= new HRUpdateInGame(); //wszystko co dzieje się podczas update gdy gra jest odpalona, a ty nie przegrałeś
 	HRTextManager		HRTM			= new HRTextManager();
 	
 	//-------Kolizje i rysowanie podlega zasadzie lewogo górnego rogu-------
