@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class APPHotRoads : SHGUIappbase {
+public partial class APPHotRoads : SHGUIappbase {
 	
 	//---------------------grafiki------------------------
-	HRgfx			gfx				= new HRgfx();
+	HRgfx				gfx				= new HRgfx();
+	HRUpdateInGame		HRUIG			= new HRUpdateInGame(); //wszystko co dzieje się podczas update gdy gra jest odpalona, a ty nie przegrałeś
+	HRTextManager		HRTM			= new HRTextManager();
 	
 	//-------Kolizje i rysowanie podlega zasadzie lewogo górnego rogu-------
 	
@@ -32,8 +34,10 @@ public class APPHotRoads : SHGUIappbase {
 	
 	//kasa
 	public			List<coin>		coinList = new List<coin>(); //lista przechowujące monety
-	bool			onMoney			= true;
-	float			timeShowMoney	= 0.3f;
+
+	public			int 			frameMoneyAnim = 0; //obecna klatka animacji kupna
+	public			float 			timeFrameMoneyAnim = 0.1f; //czas między klatkami animacji kupna
+	public			bool 			startMoneyAnim = false; //czy animacja kupna ma by odtwarzana
 	
 	//mechanika
 	bool			menu			= true; //czy jesteś w menu
@@ -43,33 +47,13 @@ public class APPHotRoads : SHGUIappbase {
 	bool[]			roadsDirection	= new bool[15]; //w którą stronę po danej ulicy się jeździ
 	int				actualStep		= 5; //ilość skoków mapy od początku gry
 	int				backAnimal		= 0; //jeśli się cofniesz pilnowanie by trawa się nie rozjeżdżała
-	
-	//manu
-	string			pressText		= "==PRESS ENTER TO START==";
-	string			unlockText		= "UNLOCK COST: 100";
-	string			bestText		= "PERSONAL TOP: 0";
-	string			moneyText		= "YOUR MONEY: 0";
-	
-	//end game
-	string			restartText		= "==PRESS ENTER TO RESTART==";
-	string			endText			= "==PRESS ESCAPE TO BECK MENU==";
-	string			endPointsText	= "SCORE ";
-	string			endBestText		= "NEW TOP SCORE";
-	bool			mryga			= true;
-	float			mrygaTimer		= 0.3f;
-	
-	//zapis
-	bool[]			lockTab			= new bool[] {false, true, true, true , true}; //zablokowane / odblokowane postacie
-	int				piniadze		= 100; //ilość pinieniędzy
-	int				best			= 0; //najlepszy osobisty wynik
-	int				score			= 0; //obecny wynik podczas rozgrywki
-	int				oldBest			= 0; //nallepszy wynik jaki był w poprzedniej rundzie
-	string			gameMoneyText	= "0$";
-	string			gameScoreText	= "Score ";
-	string			gameBestText	= "Top ";
-	
-	//---------------------------------------------------------------------
-	
+
+	//lose
+	float			loseMoveTime	= 0.2f;
+	int				heightLose		= 22;
+	int				endVehicleID	= 0;
+	bool			typeCrash		= true;
+
 	public APPHotRoads() : base("hot_roads-v5.5.5-by-onionmilk")
 	{
 		for(int i = 0; i < roadsMap.Length; ++i)
@@ -85,10 +69,11 @@ public class APPHotRoads : SHGUIappbase {
 			//za ile ma się zrespić kolejne autko
 			stepCounter[i] = Random.Range(8, 15);
 		}
-		
-		
 	}
-	
+
+	//================================================================================================================
+	//								Update
+	//================================================================================================================	
 	public override void Update() 
 	{
 		base.Update();
@@ -98,33 +83,23 @@ public class APPHotRoads : SHGUIappbase {
 			stepTime -= Time.unscaledDeltaTime;
 			stepTrainTime -= Time.unscaledDeltaTime;
 			
-			timeShowMoney -= Time.unscaledDeltaTime;
-			if(timeShowMoney <= 0f)
-			{
-				if(onMoney)
-				{
-					onMoney = false;
-					timeShowMoney = 0.3f;
-				}
-				else
-				{
-					onMoney = true;
-					timeShowMoney = 0.6f;
-				}
-			}
+			HRTM.UpdateMoneyVisible();
 			
 			//-----------------------podczas gry-------------------------------
 			if(!lose) 
 			{
-				if(score < (posY / 3)) score = posY / 3;
-				if(best < score) best = score;
+				HRTM.UpdateBestScore(posY);
 				
-				if(cameraHeight - 2 > posY) lose = true; //jeśli za długo stoisz w jednym miejscu
+				if(cameraHeight - 2 > posY)
+				{
+					lose = true; //jeśli za długo stoisz w jednym miejscu
+					endVehicleID = -1;
+				}
 				
 				jumpTimer -= Time.unscaledDeltaTime;
 				jumpTimer2 -= Time.unscaledDeltaTime;
 				
-				cameraJump -= Time.unscaledDeltaTime;
+				cameraJump -= Time.unscaledDeltaTime;  //przesuwanie kamery
 				if(cameraJump <= 0f)
 				{
 					++cameraHeight;
@@ -134,31 +109,21 @@ public class APPHotRoads : SHGUIappbase {
 				//-----------------------------usówanie zbędnych monet------------------------
 				for(int i = 0; i < coinList.Count;) //jeżeli minąłeś już jakąś monete i wyleciała poza obszar renderu to ją wywalamy
 				{
-					if(coinList[i].posY < (posY - 8))
-					{
-						coinList.RemoveAt(i);
-					}
-					else
-					{
-						++i;
-					}
+					if(coinList[i].posY < (posY - 8)) coinList.RemoveAt(i);
+					else ++i;
 				}
 				
-				//---------------------------przesuwanie pojazdu-------------------------------
+				//================================================================================================================
+				//											RUCH POJAZDÓW
+				//================================================================================================================
 				if(stepTime <= 0f)
 				{
 					stepTime = 0.07f;
 					
 					for(int i = 0; i < vehicle.Count;) //jeżeli minąłeś już jakieś auto i wyleciało poza obszar renderu to je wywalamy
 					{
-						if(vehicle[i].posY < (posY - 8))
-						{
-							vehicle.RemoveAt(i);
-						}
-						else
-						{
-							++i;
-						}
+						if(vehicle[i].posY < (posY - 8)) vehicle.RemoveAt(i);
+						else ++i;
 					}
 					
 					for(int b = 0; b < roadsMap.Length; ++b) //generowanie nowych pojazdów
@@ -195,14 +160,9 @@ public class APPHotRoads : SHGUIappbase {
 					
 					for(int i = 0; i < train.Count;) //jeżeli minąłeś już jakieś pociąg i wyleciał on poza obszar renderu to go wywalamy
 					{
-						if(train[i].posY < (posY - 8))
-						{
-							train.RemoveAt(i);
-						}
-						else
-						{
-							++i;
-						}
+						if(train[i].posY < (posY - 8)) train.RemoveAt(i);
+						else ++i;
+
 					}
 					
 					for(int b = 0; b < roadsMap.Length; ++b) //generowanie nowych pociągów
@@ -232,10 +192,10 @@ public class APPHotRoads : SHGUIappbase {
 						}
 					}
 				}
-				//-----------------------koniec przesuwania pojazdu-------------------------------
-				
-				
-				//-----------------------kolizja-----------------------
+					
+				//================================================================================================================
+				//											KOLIZJA
+				//================================================================================================================
 				for(int i = 0; i < vehicle.Count; ++i)
 				{
 					if(vehicle[i].posY == posY) //jeśli jest na wysokości pojazdu
@@ -245,6 +205,8 @@ public class APPHotRoads : SHGUIappbase {
 							if(vehicle[i].posX < posX + 7)
 							{
 								lose = true;
+								endVehicleID = i;
+								typeCrash = true;
 							}
 						}
 						else if(posX > vehicle[i].posX) //jeśli zwierzak jest z prawej strony auta
@@ -252,11 +214,15 @@ public class APPHotRoads : SHGUIappbase {
 							if(vehicle[i].posX + vehicle[i].width > posX)
 							{
 								lose = true;
+								endVehicleID = i;
+								typeCrash = true;
 							}
 						}
 						else //wpadł równo
 						{
 							lose = true;
+							endVehicleID = i;
+							typeCrash = true;
 						}
 					}
 					
@@ -270,6 +236,8 @@ public class APPHotRoads : SHGUIappbase {
 							if(train[i].posX < posX + 7)
 							{
 								lose = true;
+								endVehicleID = i;
+								typeCrash = false;
 							}
 						}
 						else if(posX > train[i].posX) //jeśli zwierzak jest z prawej strony auta
@@ -277,17 +245,22 @@ public class APPHotRoads : SHGUIappbase {
 							if(train[i].posX + train[i].width > posX)
 							{
 								lose = true;
+								endVehicleID = i;
+								typeCrash = false;
 							}
 						}
 						else //wpadł równo
 						{
 							lose = true;
+							endVehicleID = i;
+							typeCrash = false;
 						}
 					}
-					
 				}
-				//---------------------zbieranie piniądzów------------------
-				
+
+				//================================================================================================================
+				//								ZBIERANIE PIENIĘDZY I ANIMACJA KUPNA
+				//================================================================================================================
 				for(int i = 0; i < coinList.Count; ++i)
 				{
 					if(coinList[i].posY == posY)
@@ -297,7 +270,7 @@ public class APPHotRoads : SHGUIappbase {
 							if(coinList[i].posX < posX + 5)
 							{
 								coinList.RemoveAt(i);
-								++piniadze;
+								++HRTM.piniadze;
 							}
 						}
 						else if(posX > coinList[i].posX) //jeśli zwierzak jest z prawej strony monetki
@@ -305,67 +278,52 @@ public class APPHotRoads : SHGUIappbase {
 							if(coinList[i].posX + 5 > posX)
 							{
 								coinList.RemoveAt(i);
-								++piniadze;
+								++HRTM.piniadze;
 							}
 						}
 						else //wpadł równo
 						{
 							coinList.RemoveAt(i);
-							++piniadze;
+							++HRTM.piniadze;
 						}
 					}
 					
 				}
-				//-----------------------koniec kolizji-----------------------
 			}
 			else
 			{
-				if(best > oldBest) oldBest = best;
-				
-				mrygaTimer -= Time.unscaledDeltaTime;
-				if(mrygaTimer <= 0)
-				{
-					if(mryga)
-					{
-						mryga = false;
-						mrygaTimer = 0.3f;
-					}
-					else
-					{
-						mryga = true;
-						mrygaTimer = 0.6f;
-					}
-				}
-				
+				HRTM.UpdateLoseInGame();
 			}
 		}
 		else //--------------------------uaktualnianie tekstów-----------------
 		{
-			bestText		= "PERSONAL TOP: " + best;
-			moneyText		= "YOUR MONEY: " + piniadze + "$";
-			
-			if(lockTab[yourLook])
+			HRTM.UpdateInMenu(yourLook);
+		}
+
+		if(startMoneyAnim) //ustalanie klatki animacji od kupowania
+		{
+			timeFrameMoneyAnim -= Time.unscaledDeltaTime;
+			if(timeFrameMoneyAnim <= 0f)
 			{
-				if(piniadze >= 100)
+				timeFrameMoneyAnim = 0.05f;
+				++frameMoneyAnim;
+				if(frameMoneyAnim >= 9)
 				{
-					pressText		= "==PRESS ENTER TO BUY==";
-				}
-				else
-				{
-					pressText		= "";
+					frameMoneyAnim = 0;
+					startMoneyAnim = false;
 				}
 			}
-			else
-			{
-				pressText		= "==PRESS ENTER TO START==";
-			}
-		}//-----------------koniec uaktualniania tekstów-----------------
+		}
 	}
-	//*******************************************************************************************
+	
+	//================================================================================================================
+	//												RYSOWANIE
+	//================================================================================================================
 	public override void Redraw(int offx, int offy)
 	{
-		base.Redraw(offx, offy);
-		
+		//================================================================================================================
+		//											RYSOWANIE MENU
+		//================================================================================================================
 		if(menu)
 		{
 			//----------------Rysowanie tytułu---------------------------------------------
@@ -377,9 +335,9 @@ public class APPHotRoads : SHGUIappbase {
 				}
 			}
 			//------------------hint czym się włącza grę lub kupuje zwierzaka---------------
-			for(int i = 0; i < pressText.Length; ++i) 
+			for(int i = 0; i < HRTM.pressText.Length; ++i) 
 			{
-				SHGUI.current.SetPixelFront(pressText[i], 31 - (pressText.Length / 2) + i, 10, 'w');
+				SHGUI.current.SetPixelFront(HRTM.pressText[i], 31 - (HRTM.pressText.Length / 2) + i, 10, 'w');
 			}
 			//---------------------------rysowanie postaci---------------------------------
 			for(int j = 0; j < 3; ++j) 
@@ -396,26 +354,30 @@ public class APPHotRoads : SHGUIappbase {
 			SHGUI.current.SetPixelFront('>', 37, 16, 'w');
 			SHGUI.current.SetPixelFront('<', 25, 16, 'w');
 			
-			if(lockTab[yourLook]) //zablokowany / odblokowany zwierzak
+			if(HRTM.lockTab[yourLook]) //zablokowany / odblokowany zwierzak
 			{
-				for(int i = 0; i < unlockText.Length; ++i)
+				for(int i = 0; i < HRTM.unlockText.Length; ++i)
 				{
-					SHGUI.current.SetPixelFront(unlockText[i], 31 - (unlockText.Length / 2) + i, 13, 'z');
+					SHGUI.current.SetPixelFront(HRTM.unlockText[i], 31 - (HRTM.unlockText.Length / 2) + i, 13, 'z');
 				}
 			}
 			
-			for(int i = 0; i < bestText.Length; ++i)
+			for(int i = 0; i < HRTM.bestText.Length; ++i)
 			{
-				SHGUI.current.SetPixelFront(bestText[i], 31 - (bestText.Length / 2) + i, 20, 'w');
+				SHGUI.current.SetPixelFront(HRTM.bestText[i], 31 - (HRTM.bestText.Length / 2) + i, 20, 'w');
 			}
 			
-			for(int i = 0; i < moneyText.Length; ++i)
+			for(int i = 0; i < HRTM.moneyText.Length; ++i)
 			{
-				SHGUI.current.SetPixelFront(moneyText[i], 31 - (moneyText.Length / 2) + i, 21, 'z');
+				SHGUI.current.SetPixelFront(HRTM.moneyText[i], 31 - (HRTM.moneyText.Length / 2) + i, 21, 'z');
 			}
 		}
-		else //))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+		else if(!menu)
 		{
+			//================================================================================================================
+			//											RYSOWANIE MAPY
+			//================================================================================================================
+			base.Redraw(offx, offy);
 			//--------------------------------rysowanie mapy----------------------------------
 			for(int l = 0; l < roadsMap.Length; ++l)
 			{
@@ -481,11 +443,11 @@ public class APPHotRoads : SHGUIappbase {
 				}
 			}
 			
-			//---------------------------koniec rysowania mapy----------------------------------
+			//================================================================================================================
+			//											RYSOWANIE MONET
+			//================================================================================================================
 			
-			//-------------------------------rysowanie monetek-----------------------------------
-			
-			if(onMoney)
+			if(HRTM.onMoney)
 			{
 				for(int i = 0; i < coinList.Count; ++i)
 				{
@@ -505,9 +467,9 @@ public class APPHotRoads : SHGUIappbase {
 				}
 			}
 			
-			//---------------------------koniec rysowania monetek--------------------------------
-			
-			//------------------------------rysowanie postaci---------------------------------
+			//================================================================================================================
+			//											RYSOWANIE POSTACI
+			//================================================================================================================
 			for(int j = 0; j < 3; ++j)
 			{
 				for(int i = 0; i < 7; ++i)
@@ -540,9 +502,9 @@ public class APPHotRoads : SHGUIappbase {
 					}
 				}
 			}
-			//----------------------koniec rysowania postaci---------------------------
-			
-			//-------------------------rysowanie pojazdów------------------------------
+			//================================================================================================================
+			//											RYSOWANIE POJAZDÓW
+			//================================================================================================================
 			for(int i = 0; i < vehicle.Count; ++i)
 			{
 				for(int y = 0; y < 3; ++y)
@@ -619,73 +581,128 @@ public class APPHotRoads : SHGUIappbase {
 					}
 				}
 			}
-			//--------------------------koniec rysowania pojazdów----------------------------------
-			
-			//----------------------------rysowanie napisów po przegranej-------------------------
-			if(lose)
+			//================================================================================================================
+			//										RYSOWANIE PIENIĘDZY I PUNKTÓW
+			//================================================================================================================
+			if(!lose)
 			{
-				if(!lockTab[yourLook]) //zablokowany / odblokowany zwierzak
+				HRTM.gameMoneyText = "" + HRTM.piniadze + "$";
+				for(int n = 0; n < HRTM.gameMoneyText.Length; ++n)
 				{
-					if(mryga) //klik to restart
+					SHGUI.current.SetPixelFront(HRTM.gameMoneyText[n], 62 - HRTM.gameMoneyText.Length + 1 + n, 1, 'w');
+				}
+				
+				HRTM.gameBestText = "Best " + HRTM.best;
+				for(int n = 0; n < HRTM.gameBestText.Length; ++n)
+				{
+					SHGUI.current.SetPixelFront(HRTM.gameBestText[n], n + 1, 7, 'w');
+				}
+				
+				HRTM.gameScoreText = "" + HRTM.score;
+				
+				for(int k = 0; k < HRTM.gameScoreText.Length; ++k)
+				{
+					for(int i = 0; i < 5; ++i)
 					{
-						for(int n = 0; n < restartText.Length; ++n)
+						for(int j = 0; j < 5; ++j) //rysowanie wyniku
 						{
-							SHGUI.current.SetPixelFront(restartText[n], (62 - restartText.Length) / 2 + n, 14, 'r');
+							SHGUI.current.SetPixelFront(gfx.Number[i+(int.Parse(HRTM.gameScoreText[k].ToString()) * 5)][j], j + k * 6 + 1, 1 + i, 'w');
 						}
 					}
 				}
-				else if(piniadze >= 100) //klik to buy
+			}
+			//================================================================================================================
+			//											RYSOWANIE INTERFACE PO PRZEGRANEJ
+			//================================================================================================================
+			if(lose)
+			{
+				if(heightLose > 0)
 				{
-					for(int i = 0; i < unlockText.Length; ++i)
+					loseMoveTime -= Time.unscaledDeltaTime;
+					if(loseMoveTime <= 0f)
 					{
-						SHGUI.current.SetPixelFront(unlockText[i], 31 - (unlockText.Length / 2) + i, 14, 'w');
+						loseMoveTime = 0.08f;
+						--heightLose;
+					}
+				}
+
+				for(int i = 1; i < 63; ++i) //zaciemnienie mapy
+				{
+					for(int j = 1; j < 23; ++j)
+					{
+						SHGUI.current.SetPixelFront(' ', i, j + heightLose, 'w'); 
+					}
+				}
+
+
+				if(!HRTM.lockTab[yourLook]) //zablokowany / odblokowany zwierzak
+				{
+					if(HRTM.mryga) //klik to restart
+					{
+						for(int n = 0; n < HRTM.restartText.Length; ++n)
+						{
+							SHGUI.current.SetPixelFront(HRTM.restartText[n], (62 - HRTM.restartText.Length) / 2 + n, 14 + heightLose, 'r');
+						}
+					}
+				}
+				else if(HRTM.piniadze >= 100) //klik to buy
+				{
+					for(int i = 0; i < HRTM.unlockText.Length; ++i)
+					{
+						SHGUI.current.SetPixelFront(HRTM.unlockText[i], 31 - (HRTM.unlockText.Length / 2) + i, 14 + heightLose, 'w');
 					}
 				}
 				else //brak hajsów
 				{
-					for(int i = 0; i < unlockText.Length; ++i)
+					for(int i = 0; i < HRTM.unlockText.Length; ++i)
 					{
-						SHGUI.current.SetPixelFront(unlockText[i], 31 - (unlockText.Length / 2) + i, 14, 'w');
+						SHGUI.current.SetPixelFront(HRTM.unlockText[i], 31 - (HRTM.unlockText.Length / 2) + i, 14 + heightLose, 'w');
 					}
 				}
 				
 				//rysowanie wyniku
-				gameScoreText = "" + score;
-				int tempPaddingLeft = 31 - (gameScoreText.Length*3); //wyznaczanie środka
+				HRTM.gameScoreText = "" + HRTM.score;
+				int tempPaddingLeft = 31 - (HRTM.gameScoreText.Length*3); //wyznaczanie środka
 				
-				for(int k = 0; k < gameScoreText.Length; ++k)
+				for(int k = 0; k < HRTM.gameScoreText.Length; ++k)
 				{
 					for(int i = 0; i < 5; ++i)
 					{
 						for(int j = 0; j < 5; ++j)
 						{
-							SHGUI.current.SetPixelFront(gfx.Number[i+(int.Parse(gameScoreText[k].ToString()) * 5)][j], j + k * 6 + tempPaddingLeft, 8 + i, 'w');
+							SHGUI.current.SetPixelFront(gfx.Number[i+(int.Parse(HRTM.gameScoreText[k].ToString()) * 5)][j], j + k * 6 + tempPaddingLeft, 8 + i + heightLose, 'w');
 						}
 					}
 				}
 				
-				if(score == best) //nowy najlepszy wynik
+				if(HRTM.score == HRTM.best) //nowy najlepszy wynik
 				{
-					for(int n = 0; n < endBestText.Length; ++n)
+					for(int n = 0; n < HRTM.endBestText.Length; ++n)
 					{
-						SHGUI.current.SetPixelFront(endBestText[n], (62 - endBestText.Length) / 2 + n, 6, 'w');
+						SHGUI.current.SetPixelFront(HRTM.endBestText[n], (62 - HRTM.endBestText.Length) / 2 + n, 6 + heightLose, 'w');
 					}
 				}
 				else //obecny najlepszy
 				{
-					bestText = "PERSONAL TOP: " + best;
+					HRTM.bestText = "PERSONAL BEST: " + HRTM.best;
 					
-					for(int n = 0; n < bestText.Length; ++n)
+					for(int n = 0; n < HRTM.bestText.Length; ++n)
 					{
-						SHGUI.current.SetPixelFront(bestText[n], (62 - bestText.Length) / 2 + n, 6, 'w');
+						SHGUI.current.SetPixelFront(HRTM.bestText[n], (62 - HRTM.bestText.Length) / 2 + n, 6 + heightLose, 'w');
 					}
 				}
-				
-				for(int i = 1; i < 62; ++i) 
+
+				if(startMoneyAnim) //animacja kupowania
 				{
-					for(int j = 15; j < 23; ++j)
+					for(int j = 0; j < 6; ++j) 
 					{
-						SHGUI.current.SetPixelFront(' ', i, j, 'w'); //zaciemnienie za postacią
+						for(int i = 0; i < 9; ++i)
+						{
+							if(gfx.moneyEffect[j + frameMoneyAnim * 6][i] != ' ')
+							{
+								SHGUI.current.SetPixelFront(gfx.moneyEffect[j + frameMoneyAnim * 6][i], 31 - (gfx.moneyEffect[0].Length) / 2 + i, 15 + j + heightLose, 'w');
+							}
+						}
 					}
 				}
 				
@@ -695,54 +712,23 @@ public class APPHotRoads : SHGUIappbase {
 					{
 						if(gfx.animal[j + (yourLook * 3)][i] != '?')
 						{
-							SHGUI.current.SetPixelFront(gfx.animal[j + (yourLook * 3)][i], 31 - (gfx.animal[j + (yourLook * 3)].Length / 2) + i, 17 + j, 'w');
+							SHGUI.current.SetPixelFront(gfx.animal[j + (yourLook * 3)][i], 31 - (gfx.animal[j + (yourLook * 3)].Length / 2) + i, 17 + j + heightLose, 'w');
 						}
 					}
 				}
-
-				for(int n = 0; n < endText.Length; ++n) //powrót do menu
+				
+				for(int n = 0; n < HRTM.endText.Length; ++n) //wyjdź z gry
 				{
-					SHGUI.current.SetPixelFront(endText[n], (62 - endText.Length) / 2 + n, 21, 'w');
+					SHGUI.current.SetPixelFront(HRTM.endText[n], (62 - HRTM.endText.Length) / 2 + n, 22 + heightLose, 'w');
 				}
 				
-				SHGUI.current.SetPixelFront('>', 37, 18, 'w'); //szczałki do przerzucania grafiki zwierzątek
-				SHGUI.current.SetPixelFront('<', 25, 18, 'w');
+				SHGUI.current.SetPixelFront('>', 37, 18 + heightLose, 'w'); //szczałki do przerzucania grafiki zwierzątek
+				SHGUI.current.SetPixelFront('<', 25, 18 + heightLose, 'w');
 				
-				gameMoneyText = "" + piniadze + "$";
-				for(int n = 0; n < gameMoneyText.Length; ++n)
+				HRTM.gameMoneyText = "" + HRTM.piniadze + "$";
+				for(int n = 0; n < HRTM.gameMoneyText.Length; ++n)
 				{
-					SHGUI.current.SetPixelFront(gameMoneyText[n], 62 - gameMoneyText.Length + 1 + n, 1, 'r');
-				}
-				
-			}
-			//-----------------------koniec rysowania napisów po przegranej---------------------
-			
-			//----------------------------rysowanie pieniędzy i punktów-------------------------
-			if(!lose)
-			{
-				gameMoneyText = "" + piniadze + "$";
-				for(int n = 0; n < gameMoneyText.Length; ++n)
-				{
-					SHGUI.current.SetPixelFront(gameMoneyText[n], 62 - gameMoneyText.Length + 1 + n, 1, 'w');
-				}
-				
-				gameBestText = "Top " + best;
-				for(int n = 0; n < gameBestText.Length; ++n)
-				{
-					SHGUI.current.SetPixelFront(gameBestText[n], n + 1, 7, 'w');
-				}
-				
-				gameScoreText = "" + score;
-				
-				for(int k = 0; k < gameScoreText.Length; ++k)
-				{
-					for(int i = 0; i < 5; ++i)
-					{
-						for(int j = 0; j < 5; ++j) //rysowanie wyniku
-						{
-							SHGUI.current.SetPixelFront(gfx.Number[i+(int.Parse(gameScoreText[k].ToString()) * 5)][j], j + k * 6 + 1, 1 + i, 'w');
-						}
-					}
+					SHGUI.current.SetPixelFront(HRTM.gameMoneyText[n], 32 - HRTM.gameMoneyText.Length / 2 + n, 21 + heightLose, 'z');
 				}
 			}
 		}
@@ -755,16 +741,17 @@ public class APPHotRoads : SHGUIappbase {
 		{
 			if(menu || lose)
 			{
-				if(!lockTab[yourLook]) //startowanie gry
+				if(!HRTM.lockTab[yourLook]) //startowanie gry
 				{
 					resetGame();
-					
 				}
-				else if(piniadze >= 100)
+				else if(HRTM.piniadze >= 100)
 				{
-					piniadze -= 100;
-					lockTab[yourLook] = false;
-					gameMoneyText = "" + piniadze + "$";
+					startMoneyAnim = true;
+					frameMoneyAnim = 0;
+					HRTM.piniadze -= 100;
+					HRTM.lockTab[yourLook] = false;
+					HRTM.gameMoneyText = "" + HRTM.piniadze + "$";
 				}
 			}
 		}
@@ -815,8 +802,15 @@ public class APPHotRoads : SHGUIappbase {
 			}
 			else if(menu || lose)
 			{
-				++yourLook;
-				if(yourLook > 4) yourLook = 0;
+				if(lose && heightLose > 10)
+				{
+					//blokada żeby po przegranej nie można było odrazu zmienic postaci zanim kurtyna trochę nie wiedzie do góry
+				}
+				else
+				{
+					++yourLook;
+					if(yourLook > 4) yourLook = 0;
+				}
 			}
 		}
 		if (key == SHGUIinput.left)
@@ -831,20 +825,21 @@ public class APPHotRoads : SHGUIappbase {
 			}
 			else if(menu || lose)
 			{
-				--yourLook;
-				if(yourLook < 0) yourLook = 4;
+				if(lose && heightLose > 10) 
+				{
+					//blokada żeby po przegranej nie można było odrazu zmienic postaci zanim kurtyna trochę nie wiedzie do góry
+				}
+				else
+				{
+					--yourLook;
+					if(yourLook < 0) yourLook = 4;
+				}
 			}
 		}
 		
 		if (key == SHGUIinput.esc)
 		{
-			if(menu) SHGUI.current.PopView();
-			else if(!menu)
-			{
-				menu = true;
-				lose = false;
-			}
-			
+			SHGUI.current.PopView();
 		}
 	}
 	//==============================koniec sterowania=================================
@@ -930,11 +925,15 @@ public class APPHotRoads : SHGUIappbase {
 		
 		actualStep		= 5;
 		
-		backAnimal = 0;
+		backAnimal		= 0;
 		
 		//kamera
-		cameraHeight	= 0;
+		cameraHeight	= -3;
 		cameraJump		= 1f; //czas pomiędzy kolejnym przejściem kamery
+
+		loseMoveTime	= 0.2f;
+		heightLose		= 22;
+		endVehicleID	= 0;
 		
 		//mapa
 		//ustawianie ulic i trawy
@@ -971,7 +970,7 @@ public class APPHotRoads : SHGUIappbase {
 		}
 		menu = false;
 		lose = false;
-		score = 0;
+		HRTM.score = 0;
 		
 		//wstepne autka
 		for(int b = 5; b < roadsMap.Length; ++b)
@@ -982,7 +981,6 @@ public class APPHotRoads : SHGUIappbase {
 				vehicle.Add(newCar);
 			}
 		}
-		//hue
 	}
 	
 	void moveMap()
@@ -1024,7 +1022,7 @@ public class APPHotRoads : SHGUIappbase {
 			vehicle.Add(newCar);
 		}
 		
-		if(Random.value > 0.95)
+		if(Random.value > 0.9f)
 		{
 			coin newCoin = new coin(Random.Range(15, 40), (actualStep + 11) * 3);
 			coinList.Add(newCoin);

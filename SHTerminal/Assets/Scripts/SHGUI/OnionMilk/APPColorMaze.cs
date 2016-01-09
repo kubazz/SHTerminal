@@ -3,6 +3,44 @@ using System.Collections;
 
 public class APPColorMaze : SHGUIappbase {
 
+	private string[] Title = new string[]
+	{
+		"███ █ █ ██  ███ ██    █   █ ███ ███ ███",
+		"█   █ █ █ █ █   █ █   ██ ██ █ █   █ █  ",
+		"███ █ █ ██  ███ ██    █ █ █ ███  █  ███",
+		"  █ █ █ █   █   █ █   █   █ █ █ █   █  ",
+		"███ ███ █   ███ █ █   █   █ █ █ ███ ███"
+	};
+	private string[] endText1 = new string[]
+	{
+		"█ █ █ █ █ █",
+		"█ █ █ █ █ █",
+		"███ █ █ █ █",
+		" █  █ █ █ █",
+		" █  ███ ███"
+	};
+	private string[] endText2 = new string[]
+	{
+		"█   █ █ ██  █",
+		"█   █ █ █ █ █",
+		"█ █ █ █ █ █ █",
+		"█ █ █ █ █  ██",
+		"██ ██ █ █  ██"
+	};
+
+	private	string		menuHint			= "[PRESS ENTER TO START]";
+	private	string		endHint				= "[PRESS ESCAPE TO QUIT]";
+	private	float		timeHintText		= 0f;
+	private	bool		onHintText			= true;
+	private string		BestString			= "0";
+	private	string		BestStr				= "BEST TIME";
+	private	string		TimeStr				= "YOUR TIME";
+
+	private float		youTimer			= 0.2f + Random.value * 0.25f;
+	private	float 		winTimer			= 0.2f + Random.value * 0.25f;
+	private	bool		onYouText			= true;
+	private	bool		onWinText			= true;
+
 	//mapa
 	private enum CellState : byte {
 		Black = 0,
@@ -23,7 +61,7 @@ public class APPColorMaze : SHGUIappbase {
 	char ground = '█';
 	char portal = '░';
 
-	float[] Timers = new float[13];
+	float 	gameTimer = 0f;
 	string	TimersString = "";
 
 	//postać
@@ -31,143 +69,308 @@ public class APPColorMaze : SHGUIappbase {
 	int posY = 0;
 	int kolor = 0;
 
+	//menu
+	bool inMenu = true;
+
+	//rzeczy do zapisania
+	float	bestTime = 0;
+	bool 	firstGame = true;
+
 	public APPColorMaze() : base("super_maze-v3.1-by-onionmilk")
 	{
-		for(int i = 0; i < Timers.Length; ++i) Timers[i] = 0f;
+		gameTimer = 0f;
 
-		loadLvl(1);
+		lvl = 13;
+		loadLvl(13);
 	}
 
 	public override void Update()
 	{
 		base.Update();
-		APPLABEL.text = "super_maze-v3.1-by-onionmilk level: " + lvl;
+		if(lvl < 13) APPLABEL.text = "super_maze-v3.1-by-onionmilk level: " + lvl;
+		else APPLABEL.text = "super_maze-v3.1-by-onionmilk";
 
-		if(startPosX == posX && startPosY == posY) APPINSTRUCTION.text = "ESC-to-quit";
-		else APPINSTRUCTION.text = "ESC-to-reset";
-
-		if(lvl == 0) APPINSTRUCTION.text = "ESC-to-quit";
-
-		if(map[posX, posY] == CellState.Portal)
+		if(!inMenu)
 		{
-			if(kolor == 0)
+			if(lvl < 13)
 			{
-				map[posX, posY] = CellState.Black;
-				kolor = 1;
+				if(startPosX == posX && startPosY == posY || lvl == 13) APPINSTRUCTION.text = "ESC-to-quit";
+				else APPINSTRUCTION.text = "ESC-to-reset";
+
+				if(lvl == 0) APPINSTRUCTION.text = "ESC-to-quit";
+
+				if(map[posX, posY] == CellState.Portal)
+				{
+					if(kolor == 0)
+					{
+						map[posX, posY] = CellState.Black;
+						kolor = 1;
+					}
+					else if(kolor == 1)
+					{
+						map[posX, posY] = CellState.White;
+						kolor = 0;
+					}
+				}
+				if(map[posX, posY] == CellState.End)
+				{
+					loadLvl(lvl + 1);
+				}
+
+				gameTimer += Time.unscaledDeltaTime;
 			}
-			else if(kolor == 1)
+			else
 			{
-				map[posX, posY] = CellState.White;
-				kolor = 0;
+				youTimer -= Time.unscaledDeltaTime;
+				winTimer -= Time.unscaledDeltaTime;
+				if(youTimer <= 0f)
+				{
+					if(onYouText)
+					{
+						onYouText = false;
+						youTimer = 0.4f + Random.value * 0.25f;
+					}
+					else
+					{
+						onYouText = true;
+						youTimer = 0.7f + Random.value * 0.25f;
+					}
+				}
+				if(winTimer <= 0f)
+				{
+					if(onWinText)
+					{
+						onWinText = false;
+						winTimer = 0.4f + Random.value * 0.25f;
+					}
+					else
+					{
+						onWinText = true;
+						winTimer = 0.7f + Random.value * 0.25f;
+					}
+				}
+			}
+
+			if(firstGame && lvl == 13) //jeśli to była pierwsza gra to zawsze nadpisujemy wynik
+			{
+				firstGame = false;
+
+				BestStr = "NEW BEST TIME";
+				bestTime = gameTimer;
+			}
+			else if(lvl == 13) //jeśli skończyłeś grę sprawdzane jest czy nasz besta
+			{
+				if(bestTime > gameTimer)
+				{
+					BestStr = "NEW BEST TIME";
+					bestTime = gameTimer;
+				}
+				HintMenuTimerFunc();
 			}
 		}
-		if(map[posX, posY] == CellState.End)
+		else
 		{
-			loadLvl(lvl + 1);
+			HintMenuTimerFunc();
 		}
-		if(lvl < 13)
-		{
-			Timers[lvl] += Time.unscaledDeltaTime;
-		}
+
 	}
 
-	public override void Redraw(int offx, int offy) {
-		base.Redraw(offx, offy);
-		for(int i = 0; i < 62; ++i) //rysowanie mapy
+	public override void Redraw(int offx, int offy)
+	{
+		if(!inMenu) //-----------------------------Rozgrywka-----------------------------------
 		{
-			for(int j = 0; j < 22; ++j)
+			base.Redraw(offx, offy);
+
+			if(lvl > 12) //rysowanie wyników na koniec
 			{
-				if(map[i, j] == CellState.White) SHGUI.current.SetPixelBack(ground, i + 1, j + 1, 'z');
-				else if(map[i, j] == CellState.Portal) SHGUI.current.SetPixelFront(portal, i + 1, j + 1, 'r');
-				else if(map[i, j] == CellState.End) SHGUI.current.SetPixelBack(ground, i + 1, j + 1, 'r');
-			}
-		}
-
-		if(kolor == 0) //rysowanie postaci
-		{
-			SHGUI.current.SetPixelFront(sleeker, posX + 1, posY + 1, '0');
-		}
-		else if(kolor == 1)
-		{
-			SHGUI.current.SetPixelFront(sleeker, posX + 1, posY + 1, 'w');
-		}
-
-		if(lvl > 12) //rysowanie wyników na koniec
-		{
-			for(int i = 1; i < 13; ++i)
-			{
-				string tempI = "" + i;
-
-				SHGUI.current.SetPixelFront('l', 46, i + 1, 'w');
-				SHGUI.current.SetPixelFront('v', 47, i + 1, 'w');
-				SHGUI.current.SetPixelFront('l', 48, i + 1, 'w');
-				if(tempI.Length == 1)
+				if(onYouText)
 				{
-					SHGUI.current.SetPixelFront('0', 49, i + 1, 'w');
-					SHGUI.current.SetPixelFront(tempI[0], 50, i + 1, 'w');
-					SHGUI.current.SetPixelFront(':', 51, i + 1, 'w');
+					for(int i = 0; i < 5; ++i) //napis YOU
+					{
+						for(int j = 0; j < endText1[i].Length; ++j)
+						{
+							SHGUI.current.SetPixelFront(endText1[i][j], 20 + j, 3 + i, 'w');
+						}
+					}
 				}
-				if(tempI.Length == 2)
+				if(onWinText)
 				{
-					SHGUI.current.SetPixelFront(tempI[0], 49, i + 1, 'w');
-					SHGUI.current.SetPixelFront(tempI[1], 50, i + 1, 'w');
-					SHGUI.current.SetPixelFront(':', 51, i + 1, 'w');
+					for(int i = 0; i < 5; ++i) //napis WIN
+					{
+						for(int j = 0; j < endText2[i].Length; ++j)
+						{
+							SHGUI.current.SetPixelFront(endText2[i][j], 34 + j, 3 + i, 'w');
+						}
+					}
 				}
 
-
-				TimersString = Timers[i].ToString("F2");
+				for(int j = 0; j < TimeStr.Length; ++j) //obecny czas przejścia
+				{
+					SHGUI.current.SetPixelFront(TimeStr[j], 32 - TimeStr.Length/2 + j, 11, 'w');
+				}
+				TimersString = gameTimer.ToString("F2");
 				for(int j = 0; j < TimersString.Length; ++j)
 				{
-					SHGUI.current.SetPixelFront(TimersString[j], 53 + j, i + 1, 'w');
+					SHGUI.current.SetPixelFront(TimersString[j], 32 - TimersString.Length/2 + j, 12, 'w');
+				}
+
+				if(!firstGame) //rysowanie najepszego czasu
+				{
+					for(int j = 0; j < BestStr.Length; ++j)
+					{
+						SHGUI.current.SetPixelFront(BestStr[j], 32 - BestStr.Length/2 + j, 17, 'w');
+					}
+					
+					BestString = bestTime.ToString();
+
+					for(int j = 0; j < BestString.Length; ++j)
+					{
+						SHGUI.current.SetPixelFront(BestString[j], 32 - BestString.Length/2 + j, 18, 'w');
+					}
+				}
+
+				if(onHintText) //rysowanie podpowiedzie co zrobi żeby wyłaczyc grę
+				{
+					for(int j = 0; j < endHint.Length; ++j) 
+					{
+						SHGUI.current.SetPixelFront(endHint[j], 32 - endHint.Length/2 + j, 20, 'r');
+					}
 				}
 			}
-			SHGUI.current.SetPixelFront('t', 46, 15, 'w');
-			SHGUI.current.SetPixelFront('o', 47, 15, 'w');
-			SHGUI.current.SetPixelFront('t', 48, 15, 'w');
-			SHGUI.current.SetPixelFront('a', 49, 15, 'w');
-			SHGUI.current.SetPixelFront('l', 50, 15, 'w');
-			SHGUI.current.SetPixelFront(':', 51, 15, 'w');
-			TimersString = Timers[0].ToString("F2");
-			for(int j = 0; j < TimersString.Length; ++j)
+			else
 			{
-				SHGUI.current.SetPixelFront(TimersString[j], 53 + j, 15, 'w');
+				for(int i = 0; i < 62; ++i) //rysowanie mapy
+				{
+					for(int j = 0; j < 22; ++j)
+					{
+						if(map[i, j] == CellState.White) SHGUI.current.SetPixelBack(ground, i + 1, j + 1, 'z');
+						else if(map[i, j] == CellState.Portal) SHGUI.current.SetPixelFront(portal, i + 1, j + 1, 'r');
+						else if(map[i, j] == CellState.End) SHGUI.current.SetPixelBack(ground, i + 1, j + 1, 'r');
+					}
+				}
+				//rysowanie postaci
+				if(kolor == 0) SHGUI.current.SetPixelFront(sleeker, posX + 1, posY + 1, '0');
+				else if(kolor == 1) SHGUI.current.SetPixelFront(sleeker, posX + 1, posY + 1, 'w');
+			}
+		}
+		else
+		{
+			//----------------------------menu---------------------------------
+			for(int i = 0; i < 5; ++i) //rysowanie tytułu w menu
+			{
+				for(int j = 0; j < Title[i].Length; ++j)
+				{
+					SHGUI.current.SetPixelFront(Title[i][j], 14 + j, 3 + i, 'w');
+				}
+			}
+
+			for(int j = 0; j < menuHint.Length; ++j) //rysowanie podpowiedzie co zrobi rzeby odpalc
+			{
+				if(onHintText)
+				{
+					SHGUI.current.SetPixelFront(menuHint[j], 32 - menuHint.Length/2 + j, 11, 'w');
+				}
+			}
+
+			if(!firstGame) //rysowanie najepszego czasu
+			{
+				for(int j = 0; j < BestStr.Length; ++j)
+				{
+					SHGUI.current.SetPixelFront(BestStr[j], 32 - BestStr.Length/2 + j, 15, 'w');
+				}
+
+				BestString = bestTime.ToString("F2"); //zapisanie wyniku do ciągu znaków
+
+				for(int j = 0; j < BestString.Length; ++j)
+				{
+					SHGUI.current.SetPixelFront(BestString[j], 32 - BestString.Length/2 + j, 16, 'w');
+				}
 			}
 		}
 	}
 
-	public override void ReactToInputKeyboard(SHGUIinput key) {
-		//sterowanie
-		if (key == SHGUIinput.up) {
-			if(posY > 0)
+	public override void ReactToInputKeyboard(SHGUIinput key)
+	{
+		if(!inMenu && lvl < 13)
+		{
+			//sterowanie
+			if (key == SHGUIinput.up)
 			{
-				if(kolor == 0 && map[posX, posY - 1] != CellState.Black) --posY;
-				else if(kolor == 1 && map[posX, posY - 1] != CellState.White) --posY;
+				if(posY > 0)
+				{
+					if(kolor == 0 && map[posX, posY - 1] != CellState.Black) --posY;
+					else if(kolor == 1 && map[posX, posY - 1] != CellState.White) --posY;
+				}
+			}
+			if (key == SHGUIinput.down)
+			{
+				if(posY < 21)
+				{
+					if(kolor == 0 && map[posX, posY + 1] != CellState.Black) ++posY;
+					else if(kolor == 1 && map[posX, posY + 1] != CellState.White) ++posY;
+				}
+			}
+			if (key == SHGUIinput.right)
+			{
+				if(posX < 61)
+				{
+					if(kolor == 0 && map[posX + 1, posY] != CellState.Black) ++posX;
+					else if(kolor == 1 && map[posX + 1, posY] != CellState.White) ++posX;
+				}
+			}
+			if (key == SHGUIinput.left)
+			{
+				if(posX > 0)
+				{
+					if(kolor == 0 && map[posX - 1, posY] != CellState.Black) --posX;
+					else if(kolor == 1 && map[posX - 1, posY] != CellState.White) --posX;
+				}
+			}
+			if (key == SHGUIinput.esc)
+			{
+				if(posX == startPosX && posY == startPosY || lvl == 0 || lvl == 13) SHGUI.current.PopView();
+				else loadLvl(lvl);
 			}
 		}
-		if (key == SHGUIinput.down) {
-			if(posY < 21)
+		else if(lvl < 13)
+		{
+			if(key == SHGUIinput.enter)
 			{
-				if(kolor == 0 && map[posX, posY + 1] != CellState.Black) ++posY;
-				else if(kolor == 1 && map[posX, posY + 1] != CellState.White) ++posY;
+				inMenu = false;
+			}
+			if(key == SHGUIinput.esc)
+			{
+				SHGUI.current.PopView();
 			}
 		}
-		if (key == SHGUIinput.right) {
-			if(posX < 61)
+		else
+		{
+			if(key == SHGUIinput.enter)
 			{
-				if(kolor == 0 && map[posX + 1, posY] != CellState.Black) ++posX;
-				else if(kolor == 1 && map[posX + 1, posY] != CellState.White) ++posX;
+				inMenu = false;
+			}
+			if(key == SHGUIinput.esc)
+			{
+				SHGUI.current.PopView();
 			}
 		}
-		if (key == SHGUIinput.left) {
-			if(posX > 0)
+	}
+
+	void HintMenuTimerFunc()
+	{
+		timeHintText -= Time.unscaledDeltaTime;
+		if(timeHintText <= 0f)
+		{
+			if(onHintText)
 			{
-				if(kolor == 0 && map[posX - 1, posY] != CellState.Black) --posX;
-				else if(kolor == 1 && map[posX - 1, posY] != CellState.White) --posX;
+				onHintText = false;
+				timeHintText = 0.4f;
 			}
-		}
-		if (key == SHGUIinput.esc) {
-			if(posX == startPosX && posY == startPosY || lvl == 0) SHGUI.current.PopView();
-			else loadLvl(lvl);
+			else
+			{
+				onHintText = true;
+				timeHintText = 0.8f;
+			}
 		}
 	}
 
@@ -729,28 +932,28 @@ public class APPColorMaze : SHGUIappbase {
 			//Plansza
 			int[,] temp_plansza = {
 				//0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //0
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //1
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //2
-				{1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //3
-				{1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //4
-				{1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //5
-				{1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //6
-				{1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //7
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //8
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //9
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //10
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //11
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //12
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //13
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //14
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //15
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //16
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //17
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //18
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //19
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //20
-				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //21
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //0
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //1
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //2
+				{1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //3
+				{1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //4
+				{1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //5
+				{1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //6
+				{1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //7
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //8
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //9
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //10
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //11
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //12
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //13
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //14
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //15
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //16
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //17
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //18
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //19
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //20
+				{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //21
 			};
 			startPosX = 21;
 			startPosY = 15;
@@ -767,11 +970,6 @@ public class APPColorMaze : SHGUIappbase {
 					else if(temp_plansza[j, i] == 2)map[i, j] = CellState.Portal;
 					else if(temp_plansza[j, i] == 3)map[i, j] = CellState.End;
 				}
-			}
-
-			if(lvl == 13) //przeliczenia czasu na przejście
-			{
-				for(int i = 1; i < 13; ++i) Timers[0] += Timers[i];
 			}
 		}
 	}

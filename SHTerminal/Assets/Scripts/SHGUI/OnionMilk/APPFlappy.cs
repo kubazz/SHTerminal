@@ -159,7 +159,7 @@ public class APPFlappy : SHGUIappbase {
 	private	string		BestScoreString		= "";
 	private	string		ScoreString			= "";
 	
-	private	string		menuHint			= "[=PRESS ENTER TO START=]";
+	private	string		menuHint			= "[PRESS ENTER TO START]";
 	private	string		newBSString			= "NEW PERSONAL BEST";
 	private	string		BSString			= "PERSONAL BEST";
 
@@ -177,10 +177,11 @@ public class APPFlappy : SHGUIappbase {
 
 	//animacje
 	private	float		birdAnimTime		= 0f;
-	private	float		endFleshTimer		= 0.1f;
-	private	float		endFall				= 0.1f;
-	private	int			distanceGroud		= 0;
+	private	float		endFleshTimer		= 0.1f; //czas błysku
+	private	float		endFall				= 0.1f; //czas pomiędzy kolejnym obniżeniem postaco po śmierci
+	private	int			distanceGroud		= 0; //odległosć od ziemi
 	private	int			moduloMem			= 0;
+	private	float		holdAfterDead		= 0.3f; //czas trzymania sie jeszcze w powietrzu po śmierci
 
 
 	public APPFlappy() : base("super_flappy-v1.2.3-by-onionmilk")
@@ -266,17 +267,24 @@ public class APPFlappy : SHGUIappbase {
 		}
 		if(Lose)
 		{
-			if(endFall > 0f && Height < 18)
+			if(holdAfterDead <= 0f)
 			{
-				endFall -= Time.deltaTime;
-			}
-			else if(Height < 18)
-			{
-				endFall = 0.1f - (0.01f * (Height/2));
-				++Height;
-			}
+				if(endFall > 0f && Height < 18)
+				{
+					endFall -= Time.deltaTime;
+				}
+				else if(Height < 18)
+				{
+					endFall = 0.1f - (0.01f * (Height/2));
+					++Height;
+				}
 
-			resetBlocker -= Time.unscaledDeltaTime;
+				resetBlocker -= Time.unscaledDeltaTime;
+			}
+			else
+			{
+				holdAfterDead -= Time.unscaledDeltaTime;
+			}
 		}
 
 	}
@@ -426,7 +434,7 @@ public class APPFlappy : SHGUIappbase {
 		}
 		if(Lose && endFleshTimer <= 0f) //rysowanie napisów po przegranej
 		{
-			menuHint = "[=PRESS ENTER TO RESTART=]";
+			menuHint = "[PRESS ENTER TO RESTART]";
 
 			for(int j = 0; j < menuHint.Length; ++j) //press to start
 			{
@@ -469,7 +477,7 @@ public class APPFlappy : SHGUIappbase {
 					{
 						if(Lose)
 						{
-							SHGUI.current.SetPixelFront(Number[i+(int.Parse(ScoreString[k].ToString()) * 5)][j], leftPadding + j + k * 6 + 1, 2 + i, 'r');
+							SHGUI.current.SetPixelFront(Number[i+(int.Parse(ScoreString[k].ToString()) * 5)][j], leftPadding + j + k * 6 + 1, 4 + i, 'r');
 						}
 						else
 						{
@@ -502,7 +510,8 @@ public class APPFlappy : SHGUIappbase {
 				LastHeight			= 15f;
 				endFleshTimer		= 0.1f;
 				endFall				= 0.1f;
-				resetBlocker		= 0.45f;
+				resetBlocker		= 0.6f;
+				holdAfterDead		= 0.5f;
 				
 				Fall				= 15f;
 				FlyTime				= 0f;
