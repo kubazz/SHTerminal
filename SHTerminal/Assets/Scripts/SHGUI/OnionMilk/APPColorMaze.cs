@@ -3,33 +3,11 @@ using System.Collections;
 
 public class APPColorMaze : SHGUIappbase {
 
-	private string[] Title = new string[]
-	{
-		"███ █ █ ██  ███ ██    █   █ ███ ███ ███",
-		"█   █ █ █ █ █   █ █   ██ ██ █ █   █ █  ",
-		"███ █ █ ██  ███ ██    █ █ █ ███  █  ███",
-		"  █ █ █ █   █   █ █   █   █ █ █ █   █  ",
-		"███ ███ █   ███ █ █   █   █ █ █ ███ ███"
-	};
-	private string[] endText1 = new string[]
-	{
-		"█ █ █ █ █ █",
-		"█ █ █ █ █ █",
-		"███ █ █ █ █",
-		" █  █ █ █ █",
-		" █  ███ ███"
-	};
-	private string[] endText2 = new string[]
-	{
-		"█   █ █ ██  █",
-		"█   █ █ █ █ █",
-		"█ █ █ █ █ █ █",
-		"█ █ █ █ █  ██",
-		"██ ██ █ █  ██"
-	};
+	ColorMazeGraphics	gfx;
 
 	private	string		menuHint			= "[PRESS ENTER TO START]";
 	private	string		endHint				= "[PRESS ESCAPE TO QUIT]";
+	private string		storyHint			= "[PRESS ENTER TO SKIP]";
 	private	float		timeHintText		= 0f;
 	private	bool		onHintText			= true;
 	private string		BestString			= "0";
@@ -72,25 +50,55 @@ public class APPColorMaze : SHGUIappbase {
 	//menu
 	bool inMenu = true;
 
+	//story
+	bool 	inStory = true;
+	int 	sceneStory = 0;
+	float 	timerStory = 1.3f;
+
 	//rzeczy do zapisania
 	float	bestTime = 0;
 	bool 	firstGame = true;
 
 	public APPColorMaze() : base("super_maze-v3.1-by-onionmilk")
 	{
+		gfx = new ColorMazeGraphics();
 		gameTimer = 0f;
 
-		lvl = 13;
-		loadLvl(13);
+		lvl = 1;
+		loadLvl(1);
 	}
 
 	public override void Update()
 	{
 		base.Update();
-		if(lvl < 13) APPLABEL.text = "super_maze-v3.1-by-onionmilk level: " + lvl;
+		if(lvl < 13 && !inStory) APPLABEL.text = "super_maze-v3.1-by-onionmilk level: " + lvl;
 		else APPLABEL.text = "super_maze-v3.1-by-onionmilk";
 
-		if(!inMenu)
+		if(inStory)
+		{
+			timerStory -= Time.unscaledDeltaTime;
+			if(timerStory <= 0.0f)
+			{
+				++sceneStory;
+
+				if(sceneStory == 1) timerStory = 0.8f; //it
+				else if(sceneStory == 2) timerStory = 0.8f; //is
+				else if(sceneStory == 3) timerStory = 2.3f; //you
+				else if(sceneStory == 4) timerStory = 0.8f; //you
+				else if(sceneStory == 5) timerStory = 0.8f; //are
+				else if(sceneStory == 6) timerStory = 0.8f; //have to
+				else if(sceneStory == 7) timerStory = 2.3f; //found
+				else if(sceneStory == 8) timerStory = 1.5f; //this
+				else if(sceneStory == 9) timerStory = 0.8f; //this
+				else if(sceneStory == 10) timerStory = 0.8f; //is
+				else if(sceneStory == 11) timerStory = 2.3f; //exit
+				else if(sceneStory == 12)
+				{
+					inStory = false;
+				}
+			}
+		}
+		else if(!inMenu)
 		{
 			if(lvl < 13)
 			{
@@ -177,8 +185,148 @@ public class APPColorMaze : SHGUIappbase {
 
 	public override void Redraw(int offx, int offy)
 	{
-		if(!inMenu) //-----------------------------Rozgrywka-----------------------------------
+		//=====================================================================================================================
+		//													Story
+		//=====================================================================================================================
+		if(inStory)
 		{
+			if(sceneStory == 0)
+			{
+				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
+			}
+			else if(sceneStory == 1)
+			{
+				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
+
+				for(int i = 0; i < 5; ++i) //napis IT
+					for(int j = 0; j < gfx.itText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.itText[i][j], 15 + j, 4 + i, 'w');
+			}
+			else if(sceneStory == 2)
+			{
+				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
+
+				for(int i = 0; i < 5; ++i) //napis IT
+					for(int j = 0; j < gfx.itText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.itText[i][j], 15 + j, 4 + i, 'w');
+				for(int i = 0; i < 5; ++i) //napis IS
+					for(int j = 0; j < gfx.isText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.isText[i][j], 40 + j, 7 + i, 'w');
+			}
+			else if(sceneStory == 3)
+			{
+				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
+
+				for(int i = 0; i < 5; ++i) //napis IT
+					for(int j = 0; j < gfx.itText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.itText[i][j], 15 + j, 4 + i, 'w');
+				for(int i = 0; i < 5; ++i) //napis IS
+					for(int j = 0; j < gfx.isText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.isText[i][j], 40 + j, 7 + i, 'w');
+				for(int i = 0; i < 5; ++i) //napis you
+					for(int j = 0; j < gfx.youText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.youText[i][j], 17 + j, 19 + i, 'w');
+			}
+			//---------------------------part2-----------------------------------------
+			else if(sceneStory == 4)
+			{
+				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
+
+				for(int i = 0; i < 5; ++i) //napis you
+					for(int j = 0; j < gfx.youText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.youText[i][j], 15 + j, 4 + i, 'w');
+			}
+			else if(sceneStory == 5)
+			{
+				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
+
+				for(int i = 0; i < 5; ++i) //napis you
+					for(int j = 0; j < gfx.youText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.youText[i][j], 15 + j, 4 + i, 'w');
+				for(int i = 0; i < 5; ++i) //napis are
+					for(int j = 0; j < gfx.areText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.areText[i][j], 35 + j, 7 + i, 'w');
+			}
+			else if(sceneStory == 6)
+			{
+				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
+
+				for(int i = 0; i < 5; ++i) //napis you
+					for(int j = 0; j < gfx.youText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.youText[i][j], 15 + j, 4 + i, 'w');
+				for(int i = 0; i < 5; ++i) //napis are
+					for(int j = 0; j < gfx.areText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.areText[i][j], 35 + j, 7 + i, 'w');
+						for(int i = 0; i < 5; ++i) //napis have to
+					for(int j = 0; j < gfx.havetoText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.havetoText[i][j], 3 + j, 12 + i, 'w');
+			}
+			else if(sceneStory == 7)
+			{
+				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
+
+				for(int i = 0; i < 5; ++i) //napis you
+					for(int j = 0; j < gfx.youText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.youText[i][j], 15 + j, 4 + i, 'w');
+				for(int i = 0; i < 5; ++i) //napis are
+					for(int j = 0; j < gfx.areText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.areText[i][j], 35 + j, 7 + i, 'w');
+				for(int i = 0; i < 5; ++i) //napis have to
+					for(int j = 0; j < gfx.havetoText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.havetoText[i][j], 3 + j, 12 + i, 'w');
+				for(int i = 0; i < 5; ++i) //napis found
+					for(int j = 0; j < gfx.foundText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.foundText[i][j], 20 + j, 18 + i, 'w');
+			}
+			//---------------------------part3-----------------------------------------
+			else if(sceneStory == 8)
+			{
+				SHGUI.current.SetPixelFront('█', 32, 14, 'r');
+
+				for(int i = 0; i < 5; ++i) //napis this
+					for(int j = 0; j < gfx.thisText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.thisText[i][j], 16 + j, 6 + i, 'w');
+			}
+			else if(sceneStory == 9)
+			{
+				SHGUI.current.SetPixelFront('█', 32, 14, 'r');
+
+				for(int i = 0; i < 5; ++i) //napis this
+					for(int j = 0; j < gfx.thisText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.thisText[i][j], 10 + j, 15 + i, 'w');
+			}
+			else if(sceneStory == 10)
+			{
+				SHGUI.current.SetPixelFront('█', 32, 14, 'r');
+
+				for(int i = 0; i < 5; ++i) //napis is
+					for(int j = 0; j < gfx.isText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.isText[i][j], 30 + j, 5 + i, 'w');
+				for(int i = 0; i < 5; ++i) //napis this
+					for(int j = 0; j < gfx.thisText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.thisText[i][j], 10 + j, 15 + i, 'w');
+			}
+			else if(sceneStory == 11)
+			{
+				SHGUI.current.SetPixelFront('█', 32, 14, 'r');
+
+				for(int i = 0; i < 5; ++i) //napis is
+					for(int j = 0; j < gfx.isText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.isText[i][j], 30 + j, 5 + i, 'w');
+				for(int i = 0; i < 5; ++i) //napis this
+					for(int j = 0; j < gfx.thisText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.thisText[i][j], 10 + j, 15 + i, 'w');
+				for(int i = 0; i < 5; ++i) //napis exit
+					for(int j = 0; j < gfx.exitText[i].Length; ++j)
+						SHGUI.current.SetPixelFront(gfx.exitText[i][j], 34 + j, 18 + i, 'w');
+			}
+
+		}
+		else if(!inMenu)
+		{
+			//=====================================================================================================================
+			//													Rozgrywka
+			//=====================================================================================================================
 			base.Redraw(offx, offy);
 
 			if(lvl > 12) //rysowanie wyników na koniec
@@ -187,9 +335,9 @@ public class APPColorMaze : SHGUIappbase {
 				{
 					for(int i = 0; i < 5; ++i) //napis YOU
 					{
-						for(int j = 0; j < endText1[i].Length; ++j)
+						for(int j = 0; j < gfx.youText[i].Length; ++j)
 						{
-							SHGUI.current.SetPixelFront(endText1[i][j], 20 + j, 3 + i, 'w');
+							SHGUI.current.SetPixelFront(gfx.youText[i][j], 20 + j, 3 + i, 'w');
 						}
 					}
 				}
@@ -197,9 +345,9 @@ public class APPColorMaze : SHGUIappbase {
 				{
 					for(int i = 0; i < 5; ++i) //napis WIN
 					{
-						for(int j = 0; j < endText2[i].Length; ++j)
+						for(int j = 0; j < gfx.endText[i].Length; ++j)
 						{
-							SHGUI.current.SetPixelFront(endText2[i][j], 34 + j, 3 + i, 'w');
+							SHGUI.current.SetPixelFront(gfx.endText[i][j], 34 + j, 3 + i, 'w');
 						}
 					}
 				}
@@ -221,7 +369,7 @@ public class APPColorMaze : SHGUIappbase {
 						SHGUI.current.SetPixelFront(BestStr[j], 32 - BestStr.Length/2 + j, 17, 'w');
 					}
 					
-					BestString = bestTime.ToString();
+					BestString = bestTime.ToString("F2");
 
 					for(int j = 0; j < BestString.Length; ++j)
 					{
@@ -255,12 +403,14 @@ public class APPColorMaze : SHGUIappbase {
 		}
 		else
 		{
-			//----------------------------menu---------------------------------
+			//=====================================================================================================================
+			//													menu
+			//=====================================================================================================================
 			for(int i = 0; i < 5; ++i) //rysowanie tytułu w menu
 			{
-				for(int j = 0; j < Title[i].Length; ++j)
+				for(int j = 0; j < gfx.Title[i].Length; ++j)
 				{
-					SHGUI.current.SetPixelFront(Title[i][j], 14 + j, 3 + i, 'w');
+					SHGUI.current.SetPixelFront(gfx.Title[i][j], 14 + j, 3 + i, 'w');
 				}
 			}
 
@@ -291,7 +441,14 @@ public class APPColorMaze : SHGUIappbase {
 
 	public override void ReactToInputKeyboard(SHGUIinput key)
 	{
-		if(!inMenu && lvl < 13)
+		if(inStory)
+		{
+			if(key == SHGUIinput.enter)
+			{
+				inStory = false;
+			}
+		}
+		else if(!inMenu && lvl < 13)
 		{
 			//sterowanie
 			if (key == SHGUIinput.up)
