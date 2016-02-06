@@ -15,7 +15,6 @@ public partial class APPHotRoads : SHGUIappbase {
 	int				posY			= 0;
 	
 	int				yourDirection	= 1; //0 - przód | 1 - tył
-	int				yourLook		= 0; //0 - królik | 1 - kot | 2 - ptak | 3 - świnka | 4 - żaba
 	
 	float			jumpTimer		= 0f; //do góry i dołu
 	float			jumpTimer2		= 0f; //na boki
@@ -30,13 +29,7 @@ public partial class APPHotRoads : SHGUIappbase {
 	
 	public			List<crash>		train = new List<crash>(); //lista przechowująca pociągi
 	float			stepTrainTime	= 0.03f; //ruch pociągu
-	
-	//kasa
-	public			List<coin>		coinList = new List<coin>(); //lista przechowujące monety
 
-	public			int 			frameMoneyAnim = 0; //obecna klatka animacji kupna
-	public			float 			timeFrameMoneyAnim = 0.1f; //czas między klatkami animacji kupna
-	public			bool 			startMoneyAnim = false; //czy animacja kupna ma by odtwarzana
 	
 	//mechanika
 	bool			menu			= true; //czy jesteś w menu
@@ -82,8 +75,6 @@ public partial class APPHotRoads : SHGUIappbase {
 			stepTime -= Time.unscaledDeltaTime;
 			stepTrainTime -= Time.unscaledDeltaTime;
 			
-			HRTM.UpdateMoneyVisible();
-			
 			//-----------------------podczas gry-------------------------------
 			if(!lose) 
 			{
@@ -103,13 +94,6 @@ public partial class APPHotRoads : SHGUIappbase {
 				{
 					++cameraHeight;
 					cameraJump = 1f;
-				}
-				
-				//-----------------------------usówanie zbędnych monet------------------------
-				for(int i = 0; i < coinList.Count;) //jeżeli minąłeś już jakąś monete i wyleciała poza obszar renderu to ją wywalamy
-				{
-					if(coinList[i].posY < (posY - 8)) coinList.RemoveAt(i);
-					else ++i;
 				}
 				
 				//================================================================================================================
@@ -256,38 +240,6 @@ public partial class APPHotRoads : SHGUIappbase {
 						}
 					}
 				}
-
-				//================================================================================================================
-				//								ZBIERANIE PIENIĘDZY I ANIMACJA KUPNA
-				//================================================================================================================
-				for(int i = 0; i < coinList.Count; ++i)
-				{
-					if(coinList[i].posY == posY)
-					{
-						if(posX < coinList[i].posX) //jeśli zwierzak jest z lewej strony monetki
-						{
-							if(coinList[i].posX < posX + 5)
-							{
-								coinList.RemoveAt(i);
-								++HRTM.piniadze;
-							}
-						}
-						else if(posX > coinList[i].posX) //jeśli zwierzak jest z prawej strony monetki
-						{
-							if(coinList[i].posX + 5 > posX)
-							{
-								coinList.RemoveAt(i);
-								++HRTM.piniadze;
-							}
-						}
-						else //wpadł równo
-						{
-							coinList.RemoveAt(i);
-							++HRTM.piniadze;
-						}
-					}
-					
-				}
 			}
 			else
 			{
@@ -296,22 +248,7 @@ public partial class APPHotRoads : SHGUIappbase {
 		}
 		else //--------------------------uaktualnianie tekstów-----------------
 		{
-			HRTM.UpdateInMenu(yourLook);
-		}
-
-		if(startMoneyAnim) //ustalanie klatki animacji od kupowania
-		{
-			timeFrameMoneyAnim -= Time.unscaledDeltaTime;
-			if(timeFrameMoneyAnim <= 0f)
-			{
-				timeFrameMoneyAnim = 0.05f;
-				++frameMoneyAnim;
-				if(frameMoneyAnim >= 9)
-				{
-					frameMoneyAnim = 0;
-					startMoneyAnim = false;
-				}
-			}
+			HRTM.UpdateInMenu();
 		}
 	}
 	
@@ -333,7 +270,7 @@ public partial class APPHotRoads : SHGUIappbase {
 					SHGUI.current.SetPixelFront(gfx.titleText[j][i], 31 - (gfx.titleText[j].Length / 2) + i, j + 3, 'w');
 				}
 			}
-			//------------------hint czym się włącza grę lub kupuje zwierzaka---------------
+			//------------------hint czym się włącza grę---------------
 			for(int i = 0; i < HRTM.pressText.Length; ++i) 
 			{
 				SHGUI.current.SetPixelFront(HRTM.pressText[i], 31 - (HRTM.pressText.Length / 2) + i, 10, 'w');
@@ -343,32 +280,16 @@ public partial class APPHotRoads : SHGUIappbase {
 			{
 				for(int i = 0; i < 7; ++i)
 				{
-					if(gfx.animal[j + (yourLook * 3)][i] != '?')
+					if(gfx.animal[j][i] != '?')
 					{
-						SHGUI.current.SetPixelFront(gfx.animal[j + (yourLook * 3)][i], 31 - (gfx.animal[j + (yourLook * 3)].Length / 2) + i, 15 + j, 'w');
+						SHGUI.current.SetPixelFront(gfx.animal[j][i], 31 - (gfx.animal[j].Length / 2) + i, 15 + j, 'w');
 					}
 				}
 			}
-			
-			SHGUI.current.SetPixelFront('>', 37, 16, 'w');
-			SHGUI.current.SetPixelFront('<', 25, 16, 'w');
-			
-			if(HRTM.lockTab[yourLook]) //zablokowany / odblokowany zwierzak
-			{
-				for(int i = 0; i < HRTM.unlockText.Length; ++i)
-				{
-					SHGUI.current.SetPixelFront(HRTM.unlockText[i], 31 - (HRTM.unlockText.Length / 2) + i, 13, 'z');
-				}
-			}
-			
+
 			for(int i = 0; i < HRTM.bestText.Length; ++i)
 			{
 				SHGUI.current.SetPixelFront(HRTM.bestText[i], 31 - (HRTM.bestText.Length / 2) + i, 20, 'w');
-			}
-			
-			for(int i = 0; i < HRTM.moneyText.Length; ++i)
-			{
-				SHGUI.current.SetPixelFront(HRTM.moneyText[i], 31 - (HRTM.moneyText.Length / 2) + i, 21, 'z');
 			}
 		}
 		else if(!menu)
@@ -443,30 +364,6 @@ public partial class APPHotRoads : SHGUIappbase {
 			}
 			
 			//================================================================================================================
-			//											RYSOWANIE MONET
-			//================================================================================================================
-			
-			if(HRTM.onMoney)
-			{
-				for(int i = 0; i < coinList.Count; ++i)
-				{
-					for(int y = 0; y < 3; ++y)
-					{
-						if(22 - (coinList[i].posY - cameraHeight) + y > 0 && 20 - (coinList[i].posY - cameraHeight) + y < 23) //żeby nie właziły na krawędź górną
-						{
-							for(int x = 0; x < gfx.coinLook[y].Length; ++x)
-							{
-								if((20 - (coinList[i].posY - cameraHeight) + y) > 0 && (20 - (coinList[i].posY - cameraHeight) + y) < 23)
-								{
-									SHGUI.current.SetPixelFront(gfx.coinLook[y][x], coinList[i].posX + x, 20 - (coinList[i].posY - cameraHeight) + y, 'z');
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			//================================================================================================================
 			//											RYSOWANIE POSTACI
 			//================================================================================================================
 			for(int j = 0; j < 3; ++j)
@@ -477,12 +374,12 @@ public partial class APPHotRoads : SHGUIappbase {
 					{
 						if(20 - (posY - cameraHeight) + j < 23)
 						{
-							if(gfx.animal[j + (yourLook * 3)][i] != '?')
+							if(gfx.animal[j][i] != '?')
 							{
 								if(lose)
-									SHGUI.current.SetPixelFront(gfx.animal[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'r');
+									SHGUI.current.SetPixelFront(gfx.animal[j][i], posX + i, 20 - (posY - cameraHeight) + j, 'r');
 								else
-									SHGUI.current.SetPixelFront(gfx.animal[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
+									SHGUI.current.SetPixelFront(gfx.animal[j][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
 							}
 						}
 					}
@@ -490,12 +387,12 @@ public partial class APPHotRoads : SHGUIappbase {
 					{
 						if(20 - (posY - cameraHeight) + j < 23)
 						{
-							if(gfx.animalBack[j + (yourLook * 3)][i] != '?')
+							if(gfx.animalBack[j][i] != '?')
 							{
 								if(lose)
-									SHGUI.current.SetPixelFront(gfx.animalBack[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'r');
+									SHGUI.current.SetPixelFront(gfx.animalBack[j][i], posX + i, 20 - (posY - cameraHeight) + j, 'r');
 								else
-									SHGUI.current.SetPixelFront(gfx.animalBack[j + (yourLook * 3)][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
+									SHGUI.current.SetPixelFront(gfx.animalBack[j][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
 							}
 						}
 					}
@@ -581,16 +478,10 @@ public partial class APPHotRoads : SHGUIappbase {
 				}
 			}
 			//================================================================================================================
-			//										RYSOWANIE PIENIĘDZY I PUNKTÓW
+			//										RYSOWANIE I PUNKTÓW
 			//================================================================================================================
 			if(!lose)
-			{
-				HRTM.gameMoneyText = "" + HRTM.piniadze + "$";
-				for(int n = 0; n < HRTM.gameMoneyText.Length; ++n)
-				{
-					SHGUI.current.SetPixelFront(HRTM.gameMoneyText[n], 62 - HRTM.gameMoneyText.Length + 1 + n, 1, 'w');
-				}
-				
+			{				
 				HRTM.gameBestText = "Best " + HRTM.best;
 				for(int n = 0; n < HRTM.gameBestText.Length; ++n)
 				{
@@ -620,7 +511,7 @@ public partial class APPHotRoads : SHGUIappbase {
 					loseMoveTime -= Time.unscaledDeltaTime;
 					if(loseMoveTime <= 0f)
 					{
-						loseMoveTime = 0.08f;
+						loseMoveTime = 0.04f;
 						--heightLose;
 					}
 				}
@@ -630,32 +521,6 @@ public partial class APPHotRoads : SHGUIappbase {
 					for(int j = 1; j < 23; ++j)
 					{
 						SHGUI.current.SetPixelFront(' ', i, j + heightLose, 'w'); 
-					}
-				}
-
-
-				if(!HRTM.lockTab[yourLook]) //zablokowany / odblokowany zwierzak
-				{
-					if(HRTM.mryga) //klik to restart
-					{
-						for(int n = 0; n < HRTM.restartText.Length; ++n)
-						{
-							SHGUI.current.SetPixelFront(HRTM.restartText[n], (62 - HRTM.restartText.Length) / 2 + n, 14 + heightLose, 'r');
-						}
-					}
-				}
-				else if(HRTM.piniadze >= 100) //klik to buy
-				{
-					for(int i = 0; i < HRTM.unlockText.Length; ++i)
-					{
-						SHGUI.current.SetPixelFront(HRTM.unlockText[i], 31 - (HRTM.unlockText.Length / 2) + i, 14 + heightLose, 'w');
-					}
-				}
-				else //brak hajsów
-				{
-					for(int i = 0; i < HRTM.unlockText.Length; ++i)
-					{
-						SHGUI.current.SetPixelFront(HRTM.unlockText[i], 31 - (HRTM.unlockText.Length / 2) + i, 14 + heightLose, 'w');
 					}
 				}
 				
@@ -690,45 +555,23 @@ public partial class APPHotRoads : SHGUIappbase {
 						SHGUI.current.SetPixelFront(HRTM.bestText[n], (62 - HRTM.bestText.Length) / 2 + n, 6 + heightLose, 'w');
 					}
 				}
-
-				if(startMoneyAnim) //animacja kupowania
-				{
-					for(int j = 0; j < 6; ++j) 
-					{
-						for(int i = 0; i < 9; ++i)
-						{
-							if(gfx.moneyEffect[j + frameMoneyAnim * 6][i] != ' ')
-							{
-								SHGUI.current.SetPixelFront(gfx.moneyEffect[j + frameMoneyAnim * 6][i], 31 - (gfx.moneyEffect[0].Length) / 2 + i, 15 + j + heightLose, 'w');
-							}
-						}
-					}
-				}
 				
 				for(int j = 0; j < 3; ++j) //postać
 				{
 					for(int i = 0; i < 7; ++i)
 					{
-						if(gfx.animal[j + (yourLook * 3)][i] != '?')
+						if(gfx.animal[j][i] != '?')
 						{
-							SHGUI.current.SetPixelFront(gfx.animal[j + (yourLook * 3)][i], 31 - (gfx.animal[j + (yourLook * 3)].Length / 2) + i, 17 + j + heightLose, 'w');
+							SHGUI.current.SetPixelFront(gfx.animal[j][i], 31 - (gfx.animal[j].Length / 2) + i, 17 + j + heightLose, 'w');
 						}
 					}
 				}
 				
-				for(int n = 0; n < HRTM.endText.Length; ++n) //wyjdź z gry
+				for(int n = 0; n < HRTM.pressText.Length; ++n) //czym się resetuje grę
 				{
-					SHGUI.current.SetPixelFront(HRTM.endText[n], (62 - HRTM.endText.Length) / 2 + n, 22 + heightLose, 'w');
+					SHGUI.current.SetPixelFront(HRTM.pressText[n], (62 - HRTM.pressText.Length) / 2 + n, 22 + heightLose, 'w');
 				}
-				
-				SHGUI.current.SetPixelFront('>', 37, 18 + heightLose, 'w'); //szczałki do przerzucania grafiki zwierzątek
-				SHGUI.current.SetPixelFront('<', 25, 18 + heightLose, 'w');
-				
-				HRTM.gameMoneyText = "" + HRTM.piniadze + "$";
-				for(int n = 0; n < HRTM.gameMoneyText.Length; ++n)
-				{
-					SHGUI.current.SetPixelFront(HRTM.gameMoneyText[n], 32 - HRTM.gameMoneyText.Length / 2 + n, 21 + heightLose, 'z');
-				}
+					
 			}
 		}
 	}
@@ -740,18 +583,7 @@ public partial class APPHotRoads : SHGUIappbase {
 		{
 			if(menu || lose)
 			{
-				if(!HRTM.lockTab[yourLook]) //startowanie gry
-				{
-					resetGame();
-				}
-				else if(HRTM.piniadze >= 100)
-				{
-					startMoneyAnim = true;
-					frameMoneyAnim = 0;
-					HRTM.piniadze -= 100;
-					HRTM.lockTab[yourLook] = false;
-					HRTM.gameMoneyText = "" + HRTM.piniadze + "$";
-				}
+				resetGame();
 			}
 		}
 		if (key == SHGUIinput.up)
@@ -799,18 +631,6 @@ public partial class APPHotRoads : SHGUIappbase {
 					jumpTimer2 = 0.1f;
 				}
 			}
-			else if(menu || lose)
-			{
-				if(lose && heightLose > 10)
-				{
-					//blokada żeby po przegranej nie można było odrazu zmienic postaci zanim kurtyna trochę nie wiedzie do góry
-				}
-				else
-				{
-					++yourLook;
-					if(yourLook > 4) yourLook = 0;
-				}
-			}
 		}
 		if (key == SHGUIinput.left)
 		{
@@ -820,18 +640,6 @@ public partial class APPHotRoads : SHGUIappbase {
 				{
 					posX-=3;
 					jumpTimer2 = 0.1f;
-				}
-			}
-			else if(menu || lose)
-			{
-				if(lose && heightLose > 10) 
-				{
-					//blokada żeby po przegranej nie można było odrazu zmienic postaci zanim kurtyna trochę nie wiedzie do góry
-				}
-				else
-				{
-					--yourLook;
-					if(yourLook < 0) yourLook = 4;
 				}
 			}
 		}
@@ -919,12 +727,11 @@ public partial class APPHotRoads : SHGUIappbase {
 		posY			= 0;
 		
 		yourDirection	= 0; //0 - przód | 1 - tył
-		
+		backAnimal		= 0;
+
 		stepTime		= 0.07f; //ruchu
 		
 		actualStep		= 5;
-		
-		backAnimal		= 0;
 		
 		//kamera
 		cameraHeight	= -3;
@@ -1019,12 +826,6 @@ public partial class APPHotRoads : SHGUIappbase {
 		{
 			crash newCar = new crash(Random.Range(0, 5), roadsDirection[14], Random.Range(15, 40), (actualStep + 11) * 3);
 			vehicle.Add(newCar);
-		}
-		
-		if(Random.value > 0.9f)
-		{
-			coin newCoin = new coin(Random.Range(15, 40), (actualStep + 11) * 3);
-			coinList.Add(newCoin);
 		}
 	}
 }

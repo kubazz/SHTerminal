@@ -14,7 +14,7 @@ public class ColorMazeGraphics
 	};
 	public string[] youText = new string[]
 	{
-		"█ █ █ █ █ █",
+		"█ █ ███ █ █",
 		"█ █ █ █ █ █",
 		"███ █ █ █ █",
 		" █  █ █ █ █",
@@ -85,10 +85,12 @@ public class ColorMazeGraphics
 
 	public string[] foundText = new string[]
 	{
-		"███ ███ █ █ █   █ ██ ",
-		"█   █ █ █ █ ██  █ █ █",
-		"███ █ █ █ █ █ █ █ █ █",
-		"█   █ █ █ █ █  ██ █ █",
-		"█   ███ ███ █   █ ██ "
+		"███ █ █   █ ██ ",
+		"█   █ ██  █ █ █",
+		"███ █ █ █ █ █ █",
+		"█   █ █  ██ █ █",
+		"█   █ █   █ ██ "
 	};
+
+	
 }

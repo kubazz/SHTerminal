@@ -45,6 +45,10 @@ public class APPOnionMilkLogo : SHGUIappbase {
 		//--
 	}
 
+	public override void Update()
+	{
+		base.Update();
+	}
 	public override void ReactToInputKeyboard(SHGUIinput key) {
 		//if (key == SHGUIinput.enter) {
 			//Wciśnięto enter

@@ -23,7 +23,6 @@ public class HRTextManager
 	public	int				best			= 0; //najlepszy osobisty wynik
 	public	int				score			= 0; //obecny wynik podczas rozgrywki
 	public	int				oldBest			= 0; //nallepszy wynik jaki był w poprzedniej rundzie
-	public	string			gameMoneyText	= "0$";
 	public	string			gameScoreText	= "Score ";
 	public	string			gameBestText	= "Best ";
 
@@ -32,44 +31,10 @@ public class HRTextManager
 	public	float			timeShowMoney	= 0.3f;
 
 	//to co dzieje się podczas update gdy gra jest odpalona, a ty przegrales
-	public void UpdateInMenu(int yourLook)
+	public void UpdateInMenu()
 	{
 		bestText		= "PERSONAL BEST: " + best;
-		moneyText		= "YOUR MONEY: " + piniadze + "$";
-		
-		if(lockTab[yourLook])
-		{
-			if(piniadze >= 100)
-			{
-				pressText		= "PRESS ENTER TO BUY";
-			}
-			else
-			{
-				pressText		= "";
-			}
-		}
-		else
-		{
-			pressText		= "PRESS ENTER TO START";
-		}
-	}
-
-	public void UpdateMoneyVisible()
-	{
-		timeShowMoney -= Time.unscaledDeltaTime; //mryganie napisu z kasą
-		if(timeShowMoney <= 0f)
-		{
-			if(onMoney)
-			{
-				onMoney = false;
-				timeShowMoney = 0.3f;
-			}
-			else
-			{
-				onMoney = true;
-				timeShowMoney = 0.6f;
-			}
-		}
+		pressText		= "PRESS ENTER TO START";
 	}
 
 	public void UpdateLoseInGame()

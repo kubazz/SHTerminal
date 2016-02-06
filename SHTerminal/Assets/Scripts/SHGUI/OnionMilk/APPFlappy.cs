@@ -275,7 +275,7 @@ public class APPFlappy : SHGUIappbase {
 				}
 				else if(Height < 18)
 				{
-					endFall = 0.1f - (0.01f * (Height/2));
+					endFall = 0.05f - (0.01f * (Height/2));
 					++Height;
 				}
 
@@ -440,25 +440,20 @@ public class APPFlappy : SHGUIappbase {
 			{
 				if(onHintText)
 				{
-					SHGUI.current.SetPixelFront(menuHint[j], 32 - menuHint.Length/2 + j, 11, 'r');
+					SHGUI.current.SetPixelFront(menuHint[j], 32 - menuHint.Length/2 + j, 11, 'w');
 				}
 			}
 
 			if(Score > BestScore)
 			{
-				BSString = "NEW PERSONAL BEST SCORE";
+				BSString = "NEW BEST SCORE: " + BestScore.ToString();
 				BestScore = Score;
 			}
-			else BSString = "PERSONAL BEST SCORE";
+			else BSString = "BEST SCORE: " + BestScore.ToString();
 
 			for(int j = 0; j < BSString.Length; ++j)
 			{
-				SHGUI.current.SetPixelFront(BSString[j], 32 - BSString.Length/2 + j, 15, 'r');
-			}
-			BestScoreString = "" + BestScore; 
-			for(int j = 0; j < BestScoreString.Length; ++j)
-			{
-				SHGUI.current.SetPixelFront(BestScoreString[j], 32 - BestScoreString.Length/2 + j, 16, 'r');
+				SHGUI.current.SetPixelFront(BSString[j], 32 - BSString.Length/2 + j, 15, 'w');
 			}
 		}
 
@@ -475,14 +470,7 @@ public class APPFlappy : SHGUIappbase {
 				{
 					for(int j = 0; j < 5; ++j) //rysowanie wyniku
 					{
-						if(Lose)
-						{
-							SHGUI.current.SetPixelFront(Number[i+(int.Parse(ScoreString[k].ToString()) * 5)][j], leftPadding + j + k * 6 + 1, 4 + i, 'r');
-						}
-						else
-						{
-							SHGUI.current.SetPixelFront(Number[i+(int.Parse(ScoreString[k].ToString()) * 5)][j], leftPadding + j + k * 6 + 1, 2 + i, 'w');
-						}
+						SHGUI.current.SetPixelFront(Number[i+(int.Parse(ScoreString[k].ToString()) * 5)][j], leftPadding + j + k * 6 + 1, 2 + i, 'w');
 					}
 				}
 			}
@@ -509,7 +497,7 @@ public class APPFlappy : SHGUIappbase {
 				Height				= 15f;
 				LastHeight			= 15f;
 				endFleshTimer		= 0.1f;
-				endFall				= 0.1f;
+				endFall				= 0.05f;
 				resetBlocker		= 0.6f;
 				holdAfterDead		= 0.5f;
 				
