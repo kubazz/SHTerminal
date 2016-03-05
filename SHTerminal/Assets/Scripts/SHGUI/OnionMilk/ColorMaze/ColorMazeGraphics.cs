@@ -3,6 +3,13 @@ using System.Collections;
 
 public class ColorMazeGraphics
 {
+	public string[]		begin = new string[]
+	{
+		"THIS IS YOU",
+		"YOU HAVE TO FIND",
+		"THIS",
+		"THIS IS YOUR DESTINATION"
+	};
 
 	public string[] Title = new string[]
 	{
@@ -12,85 +19,5 @@ public class ColorMazeGraphics
 		"  █ █ █ █   █   █ █   █   █ █ █ █   █  ",
 		"███ ███ █   ███ █ █   █   █ █ █ ███ ███"
 	};
-	public string[] youText = new string[]
-	{
-		"█ █ ███ █ █",
-		"█ █ █ █ █ █",
-		"███ █ █ █ █",
-		" █  █ █ █ █",
-		" █  ███ ███"
-	};
-	public string[] endText = new string[]
-	{
-		"█   █ █ ██  █",
-		"█   █ █ █ █ █",
-		"█ █ █ █ █ █ █",
-		"█ █ █ █ █  ██",
-		"██ ██ █ █  ██"
-	};
 
-	public string[] itText = new string[]
-	{
-		"█ █████",
-		"█   █  ",
-		"█   █  ",
-		"█   █  ",
-		"█   █  "
-	};
-
-	public string[] isText = new string[]
-	{
-		"█ ███",
-		"█ █  ",
-		"█ ███",
-		"█   █",
-		"█ ███"
-	};
-
-	public string[] areText = new string[]
-	{
-		"███ ██  ███",
-		"█ █ █ █ █  ",
-		"███ ██  ███",
-		"█ █ █ █ █  ",
-		"█ █ █ █ ███"
-	};
-
-	public string[] havetoText = new string[]
-	{
-		"█ █ ███ █ █ ███   █████ ███",
-		"█ █ █ █ █ █ █       █   █ █",
-		"███ ███ █ █ ███     █   █ █",
-		"█ █ █ █ █ █ █       █   █ █",
-		"█ █ █ █  █  ███     █   ███"
-	};
-
-	public string[] thisText = new string[]
-	{
-		"█████ █ █ █ ███",
-		"  █   █ █ █ █  ",
-		"  █   ███ █ ███",
-		"  █   █ █ █   █",
-		"  █   █ █ █ ███"
-	};
-
-	public string[] exitText = new string[]
-	{
-		"███ █ █ █ █████",
-		"█   █ █ █   █  ",
-		"███  █  █   █  ",
-		"█   █ █ █   █  ",
-		"███ █ █ █   █  "
-	};
-
-	public string[] foundText = new string[]
-	{
-		"███ █ █   █ ██ ",
-		"█   █ ██  █ █ █",
-		"███ █ █ █ █ █ █",
-		"█   █ █  ██ █ █",
-		"█   █ █   █ ██ "
-	};
-
-	
 }

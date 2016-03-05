@@ -17,6 +17,9 @@ public class HRTextManager
 	public	bool			mryga			= true;
 	public	float			mrygaTimer		= 0.3f;
 
+	public	string			failPrize		= "";
+	public	bool			firstFeil		= true; //służy do jednorazowego odświerzenia tekstu z tym ile się powinno nabić punktów
+
 	//zapis
 	public	bool[]			lockTab			= new bool[] {false, true, true, true , true}; //zablokowane / odblokowane postacie
 	public	int				piniadze		= 100; //ilość pinieniędzy
@@ -29,6 +32,8 @@ public class HRTextManager
 	//kasa
 	public	bool			onMoney			= true;
 	public	float			timeShowMoney	= 0.3f;
+
+
 
 	//to co dzieje się podczas update gdy gra jest odpalona, a ty przegrales
 	public void UpdateInMenu()
@@ -55,6 +60,8 @@ public class HRTextManager
 				mrygaTimer = 0.5f;
 			}
 		}
+
+
 	}
 
 	public void UpdateBestScore(int posY)

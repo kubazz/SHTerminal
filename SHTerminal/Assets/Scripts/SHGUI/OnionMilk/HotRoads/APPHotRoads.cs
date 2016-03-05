@@ -18,6 +18,9 @@ public partial class APPHotRoads : SHGUIappbase {
 	
 	float			jumpTimer		= 0f; //do góry i dołu
 	float			jumpTimer2		= 0f; //na boki
+
+	int				sideAnim		= 0; //dodatkowa wysokość przy animowaniu chodzenia w bok
+	float			sideAnimTime	= 0f; //czas bycia w powietrzu podczas chodzenia na boki
 	
 	//kamera
 	int				cameraHeight	= 0;
@@ -74,6 +77,16 @@ public partial class APPHotRoads : SHGUIappbase {
 		{
 			stepTime -= Time.unscaledDeltaTime;
 			stepTrainTime -= Time.unscaledDeltaTime;
+
+			if(sideAnimTime >= 0)
+			{
+				sideAnimTime -= Time.unscaledDeltaTime;
+				sideAnim = 1;
+			}
+			else
+			{
+				sideAnim = 0;
+			}
 			
 			//-----------------------podczas gry-------------------------------
 			if(!lose) 
@@ -244,6 +257,12 @@ public partial class APPHotRoads : SHGUIappbase {
 			else
 			{
 				HRTM.UpdateLoseInGame();
+
+				if(HRTM.firstFeil)
+				{
+					HRTM.failPrize = "You score " + (HRTM.best + Random.Range(3, 6)) + " points to get prize";
+					HRTM.firstFeil = false;
+				}
 			}
 		}
 		else //--------------------------uaktualnianie tekstów-----------------
@@ -255,6 +274,17 @@ public partial class APPHotRoads : SHGUIappbase {
 	//================================================================================================================
 	//												RYSOWANIE
 	//================================================================================================================
+	void drawGrass(int l, int i, int j)
+	{
+		if(20 - (posY + backAnimal * 3 - cameraHeight) + j - (l * 3) + 15 < 23) //jeśli nie wychodzi za dolną krawędz
+		{
+			if(20 - (posY + backAnimal * 3 - cameraHeight) + j - (l * 3) + 15 > 0) //jesli nie wychodzi za górną krawędz
+			{
+				SHGUI.current.SetPixelFront(',', i + 1, 20 - (posY + backAnimal * 3 - cameraHeight) + j - (l * 3) + 15, 'z'); //rysowanie trawy
+			}
+		}
+	}
+
 	public override void Redraw(int offx, int offy)
 	{
 		//================================================================================================================
@@ -307,14 +337,18 @@ public partial class APPHotRoads : SHGUIappbase {
 					{
 						for(int i = 0; i < 62; ++i)
 						{
-							if((i%2 == 0 && j%2 == 0) || (i%2 == 1 && j%2 == 1))
+							if((l%2 == 0 && posY%2 == 0) || (l%2 == 1 && posY%2 == 1))
 							{
-								if(20 - (posY + backAnimal * 3 - cameraHeight) + j - (l * 3) + 15 < 23) //jeśli nie wychodzi za dolną krawędz
+								if((i%6 == 0 && j%3 == 0) || (i%6 == 3 && j%3 == 1) || (i%6 == 0 && j%3 == 2))
 								{
-									if(20 - (posY + backAnimal * 3 - cameraHeight) + j - (l * 3) + 15 > 0) //jesli nie wychodzi za górną krawędz
-									{
-										SHGUI.current.SetPixelFront(',', i + 1, 20 - (posY + backAnimal * 3 - cameraHeight) + j - (l * 3) + 15, 'z'); //rysowanie trawy
-									}
+									drawGrass(l, i, j);
+								}
+							}
+							if((l%2 == 1 && posY%2 == 0) || (l%2 == 0 && posY%2 == 1))
+							{
+								if((i%6 == 3 && j%3 == 0) || (i%6 == 0 && j%3 == 1) || (i%6 == 3 && j%3 == 2))
+								{
+									drawGrass(l, i, j);
 								}
 							}
 						}
@@ -332,7 +366,7 @@ public partial class APPHotRoads : SHGUIappbase {
 								{
 									if(20 - (posY + backAnimal * 3 - cameraHeight) + j - (l * 3) + 15 > 0) //jesli nie wychodzi za górną krawędz
 									{
-										SHGUI.current.SetPixelFront('_', i + 1, 20 - (posY + 3 * backAnimal - cameraHeight) + j - (l * 3) + 15, 'z'); //rysowanie trawy
+										SHGUI.current.SetPixelFront('_', i + 1, 20 - (posY + 3 * backAnimal - cameraHeight) + j - (l * 3) + 15, 'z'); //rysowanie szyny
 									}
 									
 								}
@@ -343,7 +377,7 @@ public partial class APPHotRoads : SHGUIappbase {
 								{
 									if(20 - (posY + backAnimal * 3 - cameraHeight) + j - (l * 3) + 15 > 0) //jesli nie wychodzi za górną krawędz
 									{
-										SHGUI.current.SetPixelFront('/', i + 1, 20 - (posY + 3 * backAnimal - cameraHeight) + j - (l * 3) + 15, 'z'); //rysowanie trawy
+										SHGUI.current.SetPixelFront('/', i + 1, 20 - (posY + 3 * backAnimal - cameraHeight) + j - (l * 3) + 15, 'z'); //rysowanie podkładów
 									}
 								}
 								
@@ -354,7 +388,7 @@ public partial class APPHotRoads : SHGUIappbase {
 								{
 									if(20 - (posY + backAnimal * 3 - cameraHeight) + j - (l * 3) + 15 > 0) //jesli nie wychodzi za górną krawędz
 									{
-										SHGUI.current.SetPixelFront('_', i + 1, 20 - (posY + 3 * backAnimal - cameraHeight) + j - (l * 3) + 15, 'z'); //rysowanie trawy
+										SHGUI.current.SetPixelFront('_', i + 1, 20 - (posY + 3 * backAnimal - cameraHeight) + j - (l * 3) + 15, 'z'); //rysowanie szyny
 									}
 								}
 							}
@@ -362,42 +396,7 @@ public partial class APPHotRoads : SHGUIappbase {
 					}
 				}
 			}
-			
-			//================================================================================================================
-			//											RYSOWANIE POSTACI
-			//================================================================================================================
-			for(int j = 0; j < 3; ++j)
-			{
-				for(int i = 0; i < 7; ++i)
-				{
-					if(yourDirection == 0)
-					{
-						if(20 - (posY - cameraHeight) + j < 23)
-						{
-							if(gfx.animal[j][i] != '?')
-							{
-								if(lose)
-									SHGUI.current.SetPixelFront(gfx.animal[j][i], posX + i, 20 - (posY - cameraHeight) + j, 'r');
-								else
-									SHGUI.current.SetPixelFront(gfx.animal[j][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
-							}
-						}
-					}
-					else
-					{
-						if(20 - (posY - cameraHeight) + j < 23)
-						{
-							if(gfx.animalBack[j][i] != '?')
-							{
-								if(lose)
-									SHGUI.current.SetPixelFront(gfx.animalBack[j][i], posX + i, 20 - (posY - cameraHeight) + j, 'r');
-								else
-									SHGUI.current.SetPixelFront(gfx.animalBack[j][i], posX + i, 20 - (posY - cameraHeight) + j, 'w');
-							}
-						}
-					}
-				}
-			}
+
 			//================================================================================================================
 			//											RYSOWANIE POJAZDÓW
 			//================================================================================================================
@@ -478,7 +477,42 @@ public partial class APPHotRoads : SHGUIappbase {
 				}
 			}
 			//================================================================================================================
-			//										RYSOWANIE I PUNKTÓW
+			//											RYSOWANIE POSTACI
+			//================================================================================================================
+			for(int j = 0; j < 3; ++j)
+			{
+				for(int i = 0; i < 7; ++i)
+				{
+					if(yourDirection == 0)
+					{
+						if(20 - (posY - cameraHeight) + j < 23)
+						{
+							if(gfx.animal[j][i] != '?')
+							{
+								if(lose)
+									SHGUI.current.SetPixelFront(gfx.animal[j][i], posX + i, 20 - (posY - cameraHeight + sideAnim) + j, 'r');
+								else
+									SHGUI.current.SetPixelFront(gfx.animal[j][i], posX + i, 20 - (posY - cameraHeight + sideAnim) + j, 'w');
+							}
+						}
+					}
+					else
+					{
+						if(20 - (posY - cameraHeight) + j < 23)
+						{
+							if(gfx.animalBack[j][i] != '?')
+							{
+								if(lose)
+									SHGUI.current.SetPixelFront(gfx.animalBack[j][i], posX + i, 20 - (posY - cameraHeight + sideAnim) + j, 'r');
+								else
+									SHGUI.current.SetPixelFront(gfx.animalBack[j][i], posX + i, 20 - (posY - cameraHeight + sideAnim) + j, 'w');
+							}
+						}
+					}
+				}
+			}
+			//================================================================================================================
+			//										RYSOWANIE PUNKTÓW
 			//================================================================================================================
 			if(!lose)
 			{				
@@ -523,7 +557,13 @@ public partial class APPHotRoads : SHGUIappbase {
 						SHGUI.current.SetPixelFront(' ', i, j + heightLose, 'w'); 
 					}
 				}
-				
+
+				//rysowanie omyłkowej wiadomości
+				for(int n = 0; n < HRTM.failPrize.Length; ++n)
+				{
+					SHGUI.current.SetPixelFront(HRTM.failPrize[n], (62 - HRTM.failPrize.Length) / 2 + n, 4 + heightLose, 'w');
+				}
+
 				//rysowanie wyniku
 				HRTM.gameScoreText = "" + HRTM.score;
 				int tempPaddingLeft = 31 - (HRTM.gameScoreText.Length*3); //wyznaczanie środka
@@ -628,7 +668,8 @@ public partial class APPHotRoads : SHGUIappbase {
 				if(posX < 54)
 				{
 					posX+=3;
-					jumpTimer2 = 0.1f;
+					jumpTimer2 = 0.15f;
+					sideAnimTime = 0.1f;
 				}
 			}
 		}
@@ -639,7 +680,8 @@ public partial class APPHotRoads : SHGUIappbase {
 				if(posX > 3)
 				{
 					posX-=3;
-					jumpTimer2 = 0.1f;
+					jumpTimer2 = 0.15f;
+					sideAnimTime = 0.1f;
 				}
 			}
 		}
@@ -730,6 +772,8 @@ public partial class APPHotRoads : SHGUIappbase {
 		backAnimal		= 0;
 
 		stepTime		= 0.07f; //ruchu
+		sideAnimTime	= 0f;
+		sideAnim		= 0;
 		
 		actualStep		= 5;
 		
@@ -777,6 +821,7 @@ public partial class APPHotRoads : SHGUIappbase {
 		menu = false;
 		lose = false;
 		HRTM.score = 0;
+		HRTM.firstFeil = true;
 		
 		//wstepne autka
 		for(int b = 5; b < roadsMap.Length; ++b)

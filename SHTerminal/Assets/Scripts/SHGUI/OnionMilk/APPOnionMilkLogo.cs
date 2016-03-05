@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class APPOnionMilkLogo : SHGUIappbase {
+
 	//Private
 	string[]	onionMilkLogo	= new string[18] {
 "    ____",

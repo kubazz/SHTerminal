@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class APPColorMaze : SHGUIappbase {
+public class APPColorMaze : SHGUIappbase
+{
 
 	ColorMazeGraphics	gfx;
+
+	SHGUIview[] begin = new SHGUIview[4];
 
 	private	string		menuHint			= "[PRESS ENTER TO START]";
 	private	string		endHint				= "[PRESS ESCAPE TO QUIT]";
@@ -16,6 +19,8 @@ public class APPColorMaze : SHGUIappbase {
 
 	private	bool		onYouText			= true;
 	private	bool		onWinText			= true;
+
+	private	float		timerGame			= 0f;
 
 	//mapa
 	private enum CellState : byte {
@@ -59,11 +64,34 @@ public class APPColorMaze : SHGUIappbase {
 
 	public APPColorMaze() : base("super_maze-v3.1-by-onionmilk")
 	{
+		APPFRAME.Kill ();
+		APPLABEL.Kill ();
+		APPINSTRUCTION.Kill ();
+
 		gfx = new ColorMazeGraphics();
 		gameTimer = 0f;
 
 		lvl = 1;
 		loadLvl(1);
+
+		prepereView();
+	}
+
+	void prepereView()
+	{
+		for(int i = 0; i < 4; ++i)
+		{
+			begin[i] = new SHGUIview();
+			SHGUIprompter tempPromp = new SHGUIprompter (20, 10, 'w');
+
+			if(i == 0)  tempPromp = new SHGUIprompter (20, 10, 'w');
+			else if(i == 1) tempPromp = new SHGUIprompter (26, 16, 'w');
+			else if(i == 2) tempPromp = new SHGUIprompter (22, 14, 'w');
+			else if(i == 3) tempPromp = new SHGUIprompter (19, 11, 'w');
+
+			tempPromp.SetInput (gfx.begin[i]);
+			begin[i].AddSubView(tempPromp);
+		}
 	}
 
 	public override void Update()
@@ -77,27 +105,43 @@ public class APPColorMaze : SHGUIappbase {
 			{
 				++sceneStory;
 
-				if(sceneStory == 1) timerStory = 0.8f; //it
-				else if(sceneStory == 2) timerStory = 0.8f; //is
-				else if(sceneStory == 3) timerStory = 2.3f; //you
-				else if(sceneStory == 4) timerStory = 0.8f; //you
-				else if(sceneStory == 5) timerStory = 0.8f; //are
-				else if(sceneStory == 6) timerStory = 0.8f; //have to
-				else if(sceneStory == 7) timerStory = 2.3f; //found
-				else if(sceneStory == 8) timerStory = 1.5f; //this
-				else if(sceneStory == 9) timerStory = 0.8f; //this
-				else if(sceneStory == 10) timerStory = 0.8f; //is
-				else if(sceneStory == 11) timerStory = 2.3f; //exit
-				else if(sceneStory == 12)
+				if(sceneStory == 1)
+				{
+					timerStory = 3f; //THIS IS YOU
+					AddSubView(begin[0]);
+				}
+				else if(sceneStory == 2)
+				{
+					timerStory = 4f; //YOU HAVE TO FIND
+					AddSubView(begin[1]);
+					begin[0].Kill();
+				}
+				else if(sceneStory == 3)
+				{
+					timerStory = 2f; //THIS
+					AddSubView(begin[2]);
+					begin[1].Kill();
+				}
+				else if(sceneStory == 4)
+				{
+					timerStory = 4f; //THIS IS YOUR DESTINATION
+					AddSubView(begin[3]);
+					begin[2].Kill();
+				}
+				else if(sceneStory == 5)
 				{
 					inStory = false;
+					begin[3].Kill();
 				}
+
 			}
 		}
 		else if(!inMenu) //rozgrywka
 		{
 			if(lvl < 11)
 			{
+				timerGame += Time.unscaledDeltaTime;
+
 				if(startPosX == posX && startPosY == posY || lvl == 11) APPINSTRUCTION.text = "ESC-to-quit";
 				else APPINSTRUCTION.text = "ESC-to-reset";
 
@@ -171,135 +215,15 @@ public class APPColorMaze : SHGUIappbase {
 		//=====================================================================================================================
 		if(inStory)
 		{
-			if(sceneStory == 0)
+			base.Redraw(offx, offy);
+			if(sceneStory < 3)
 			{
 				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
 			}
-			else if(sceneStory == 1)
-			{
-				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
-
-				for(int i = 0; i < 5; ++i) //napis IT
-					for(int j = 0; j < gfx.itText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.itText[i][j], 15 + j, 4 + i, 'w');
-			}
-			else if(sceneStory == 2)
-			{
-				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
-
-				for(int i = 0; i < 5; ++i) //napis IT
-					for(int j = 0; j < gfx.itText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.itText[i][j], 15 + j, 4 + i, 'w');
-				for(int i = 0; i < 5; ++i) //napis IS
-					for(int j = 0; j < gfx.isText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.isText[i][j], 40 + j, 7 + i, 'w');
-			}
-			else if(sceneStory == 3)
-			{
-				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
-
-				for(int i = 0; i < 5; ++i) //napis IT
-					for(int j = 0; j < gfx.itText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.itText[i][j], 15 + j, 4 + i, 'w');
-				for(int i = 0; i < 5; ++i) //napis IS
-					for(int j = 0; j < gfx.isText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.isText[i][j], 40 + j, 7 + i, 'w');
-				for(int i = 0; i < 5; ++i) //napis you
-					for(int j = 0; j < gfx.youText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.youText[i][j], 17 + j, 19 + i, 'w');
-			}
-			//---------------------------part2-----------------------------------------
-			else if(sceneStory == 4)
-			{
-				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
-
-				for(int i = 0; i < 5; ++i) //napis you
-					for(int j = 0; j < gfx.youText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.youText[i][j], 15 + j, 4 + i, 'w');
-			}
-			else if(sceneStory == 5)
-			{
-				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
-
-				for(int i = 0; i < 5; ++i) //napis you
-					for(int j = 0; j < gfx.youText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.youText[i][j], 15 + j, 4 + i, 'w');
-				for(int i = 0; i < 5; ++i) //napis are
-					for(int j = 0; j < gfx.areText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.areText[i][j], 35 + j, 7 + i, 'w');
-			}
-			else if(sceneStory == 6)
-			{
-				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
-
-				for(int i = 0; i < 5; ++i) //napis you
-					for(int j = 0; j < gfx.youText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.youText[i][j], 15 + j, 4 + i, 'w');
-				for(int i = 0; i < 5; ++i) //napis are
-					for(int j = 0; j < gfx.areText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.areText[i][j], 35 + j, 7 + i, 'w');
-						for(int i = 0; i < 5; ++i) //napis have to
-					for(int j = 0; j < gfx.havetoText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.havetoText[i][j], 3 + j, 12 + i, 'w');
-			}
-			else if(sceneStory == 7)
-			{
-				SHGUI.current.SetPixelFront('*', 32, 14, 'w');
-
-				for(int i = 0; i < 5; ++i) //napis you
-					for(int j = 0; j < gfx.youText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.youText[i][j], 15 + j, 4 + i, 'w');
-				for(int i = 0; i < 5; ++i) //napis are
-					for(int j = 0; j < gfx.areText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.areText[i][j], 35 + j, 7 + i, 'w');
-				for(int i = 0; i < 5; ++i) //napis have to
-					for(int j = 0; j < gfx.havetoText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.havetoText[i][j], 3 + j, 12 + i, 'w');
-				for(int i = 0; i < 5; ++i) //napis found
-					for(int j = 0; j < gfx.foundText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.foundText[i][j], 20 + j, 18 + i, 'w');
-			}
-			//---------------------------part3-----------------------------------------
-			else if(sceneStory == 8)
+			else if(sceneStory >= 3)
 			{
 				SHGUI.current.SetPixelFront('█', 32, 14, 'r');
 
-				for(int i = 0; i < 5; ++i) //napis this
-					for(int j = 0; j < gfx.thisText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.thisText[i][j], 16 + j, 6 + i, 'w');
-			}
-			else if(sceneStory == 9)
-			{
-				SHGUI.current.SetPixelFront('█', 32, 14, 'r');
-
-				for(int i = 0; i < 5; ++i) //napis this
-					for(int j = 0; j < gfx.thisText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.thisText[i][j], 10 + j, 15 + i, 'w');
-			}
-			else if(sceneStory == 10)
-			{
-				SHGUI.current.SetPixelFront('█', 32, 14, 'r');
-
-				for(int i = 0; i < 5; ++i) //napis is
-					for(int j = 0; j < gfx.isText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.isText[i][j], 30 + j, 5 + i, 'w');
-				for(int i = 0; i < 5; ++i) //napis this
-					for(int j = 0; j < gfx.thisText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.thisText[i][j], 10 + j, 15 + i, 'w');
-			}
-			else if(sceneStory == 11)
-			{
-				SHGUI.current.SetPixelFront('█', 32, 14, 'r');
-
-				for(int i = 0; i < 5; ++i) //napis is
-					for(int j = 0; j < gfx.isText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.isText[i][j], 30 + j, 5 + i, 'w');
-				for(int i = 0; i < 5; ++i) //napis this
-					for(int j = 0; j < gfx.thisText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.thisText[i][j], 10 + j, 15 + i, 'w');
-				for(int i = 0; i < 5; ++i) //napis exit
-					for(int j = 0; j < gfx.exitText[i].Length; ++j)
-						SHGUI.current.SetPixelFront(gfx.exitText[i][j], 34 + j, 18 + i, 'w');
 			}
 
 		}
@@ -315,6 +239,13 @@ public class APPColorMaze : SHGUIappbase {
 				{
 					SHGUI.current.SetPixelFront(endGameText[j], 24 + j, 10, 'w');
 				}
+
+				string tempTime = "Time: " + timerGame.ToString("F2");
+				for(int j = 0; j < tempTime.Length; ++j) 
+				{
+					SHGUI.current.SetPixelFront(tempTime[j], 3 + j, 20, 'w');
+				}
+				
 			}
 			else
 			{
@@ -834,7 +765,7 @@ public class APPColorMaze : SHGUIappbase {
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //9
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //10
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //11
-				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //12
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //12
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //13
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //14
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //15
